@@ -6,7 +6,7 @@ CREATE TABLE projects (
   fiscal_year INTEGER NOT NULL,
   budget_requested NUMERIC NOT NULL,
   budget_approved NUMERIC NOT NULL,
-  budget_average NUMERIC, -- Added for งบประมาณเฉลี่ย
+  budget_average NUMERIC,
   status TEXT GENERATED ALWAYS AS (
     CASE
       WHEN budget_approved = 0 THEN 'ไม่อนุมัติ'
@@ -15,6 +15,15 @@ CREATE TABLE projects (
     END
   ) STORED,
   notes TEXT,
+  -- New Columns for Phase 2 (Project Details)
+  responsible_person TEXT,
+  advisor TEXT,
+  activity_type TEXT,
+  rationale TEXT,
+  objectives TEXT[], -- Array of strings
+  targets TEXT,
+  sdg_goals TEXT[], -- Array of strings
+  budget_breakdown JSONB, -- Detailed budget items
   is_published BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
@@ -29,3 +38,31 @@ CREATE POLICY "Allow public read access" ON projects
 -- Create policy to allow full access for authenticated users (admins)
 CREATE POLICY "Allow full access for authenticated users" ON projects
   FOR ALL USING (auth.role() = 'authenticated');
+
+-- Create project_files table
+CREATE TABLE project_files (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  project_id BIGINT REFERENCES projects(id) ON DELETE CASCADE,
+  file_name TEXT NOT NULL,
+  file_url TEXT NOT NULL,
+  file_type TEXT NOT NULL,
+  category TEXT, -- e.g., 'proposal', 'evidence', 'photos'
+  uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Enable RLS for files
+ALTER TABLE project_files ENABLE ROW LEVEL SECURITY;
+
+-- Public read access for files
+CREATE POLICY "Allow public read access files" ON project_files
+  FOR SELECT USING (true);
+
+-- Admin full access for files
+CREATE POLICY "Allow full access files for authenticated users" ON project_files
+  FOR ALL USING (auth.role() = 'authenticated');
+
+-- Storage Bucket Setup (Run this in Supabase SQL Editor if bucket doesn't exist)
+-- insert into storage.buckets (id, name, public) values ('project_files', 'project_files', true);
+-- CREATE POLICY "Public Access" ON storage.objects FOR SELECT USING ( bucket_id = 'project_files' );
+-- CREATE POLICY "Auth Upload" ON storage.objects FOR INSERT WITH CHECK ( bucket_id = 'project_files' AND auth.role() = 'authenticated' );
+-- CREATE POLICY "Auth Delete" ON storage.objects FOR DELETE USING ( bucket_id = 'project_files' AND auth.role() = 'authenticated' );

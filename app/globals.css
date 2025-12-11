@@ -4,7 +4,11 @@
   --font-sans: var(--font-prompt), ui-sans-serif, system-ui, sans-serif;
 }
 
+
 body {
-  font-family: var(--font-sans);
+  font-family: var(--font-prompt);
 }
 
+* {
+  font-family: var(--font-prompt);
+}

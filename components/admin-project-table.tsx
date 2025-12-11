@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from 'next/link';
 import { Project } from "@/lib/types";
 import { formatTHB } from "@/lib/utils";
 import { deleteProject } from "@/lib/actions";
@@ -39,7 +40,7 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Manage Projects</CardTitle>
+                <CardTitle>จัดการโครงการ</CardTitle>
                 <button
                     onClick={handleAdd}
                     className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700"
@@ -57,7 +58,7 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
                                 <th className="px-4 py-3">ชื่อโครงการ</th>
                                 <th className="px-4 py-3 text-right">งบที่ขอ</th>
                                 <th className="px-4 py-3 text-right">งบที่ได้</th>
-                                <th className="px-4 py-3 text-center">Actions</th>
+                                <th className="px-4 py-3 text-center">การดำเนินการ</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y">
@@ -84,17 +85,17 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
                                         <td className="px-4 py-3 text-right">{formatTHB(project.budget_approved)}</td>
                                         <td className="px-4 py-3">
                                             <div className="flex items-center justify-center gap-2">
-                                                <button
-                                                    onClick={() => handleEdit(project)}
-                                                    className="p-2 text-blue-600 hover:bg-blue-50 rounded"
-                                                    title="Edit"
+                                                <Link
+                                                    href={`/admin/project/${project.id}`}
+                                                    className="p-2 text-blue-600 hover:bg-blue-50 rounded inline-flex"
+                                                    title="แก้ไขรายละเอียด"
                                                 >
                                                     <Edit2 className="w-4 h-4" />
-                                                </button>
+                                                </Link>
                                                 <button
                                                     onClick={() => handleDelete(project.id)}
                                                     className="p-2 text-red-600 hover:bg-red-50 rounded"
-                                                    title="Delete"
+                                                    title="ลบ"
                                                     disabled={deletingId === project.id}
                                                 >
                                                     <Trash2 className="w-4 h-4" />

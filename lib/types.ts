@@ -10,8 +10,36 @@ export interface Project {
     budget_average?: number;
     status: ProjectStatus;
     notes?: string;
+    // New Fields
+    responsible_person?: string;
+    advisor?: string;
+    activity_type?: string;
+    rationale?: string;
+    objectives?: string[];
+    targets?: string;
+    sdg_goals?: string[];
+    budget_breakdown?: BudgetBreakdownItem[];
     is_published: boolean;
     created_at: string;
+    has_files?: boolean;
+}
+
+export interface BudgetBreakdownItem {
+    item: string;
+    amount: number; // Quantity
+    unit: string;
+    cost_per_unit: number;
+    total: number;
+}
+
+export interface ProjectFile {
+    id: string;
+    project_id: number;
+    file_name: string;
+    file_url: string;
+    file_type: string;
+    category: string;
+    uploaded_at: string;
 }
 
 export interface DashboardStats {

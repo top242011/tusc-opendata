@@ -6,7 +6,7 @@ import { createProject, updateProject } from "@/lib/actions";
 
 interface ProjectFormProps {
     initialData?: Project;
-    onSuccess: () => void;
+    onSuccess: (project?: Project) => void;
     onCancel: () => void;
 }
 
@@ -34,14 +34,17 @@ export function ProjectForm({ initialData, onSuccess, onCancel }: ProjectFormPro
         setError(null);
 
         try {
+            let project: Project | undefined;
             if (initialData?.id) {
                 const result = await updateProject(initialData.id, formData);
                 if (result.error) throw new Error(result.error);
+                project = result.data as Project;
             } else {
                 const result = await createProject(formData);
                 if (result.error) throw new Error(result.error);
+                project = result.data as Project;
             }
-            onSuccess();
+            onSuccess(project);
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -114,18 +117,7 @@ export function ProjectForm({ initialData, onSuccess, onCancel }: ProjectFormPro
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label className="text-sm font-medium">งบประมาณเฉลี่ย (บาท)</label>
-                    <input
-                        type="number"
-                        step="0.01"
-                        className="w-full mt-1 p-2 border rounded"
-                        value={formData.budget_average || ''}
-                        onChange={(e) => setFormData({ ...formData, budget_average: parseFloat(e.target.value) || 0 })}
-                    />
-                </div>
-            </div>
+
 
             <div>
                 <label className="text-sm font-medium">หมายเหตุ</label>

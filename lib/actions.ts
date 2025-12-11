@@ -12,7 +12,7 @@ export async function createProject(data: Partial<Project>) {
         return { error: "Unauthorized" };
     }
 
-    const { error } = await supabase.from('projects').insert([data]);
+    const { data: newProject, error } = await supabase.from('projects').insert([data]).select().single();
 
     if (error) {
         return { error: error.message };
@@ -20,7 +20,7 @@ export async function createProject(data: Partial<Project>) {
 
     revalidatePath('/admin');
     revalidatePath('/');
-    return { success: true };
+    return { success: true, data: newProject };
 }
 
 export async function updateProject(id: number, data: Partial<Project>) {
@@ -30,7 +30,7 @@ export async function updateProject(id: number, data: Partial<Project>) {
         return { error: "Unauthorized" };
     }
 
-    const { error } = await supabase.from('projects').update(data).eq('id', id);
+    const { data: updatedProject, error } = await supabase.from('projects').update(data).eq('id', id).select().single();
 
     if (error) {
         return { error: error.message };
@@ -38,6 +38,23 @@ export async function updateProject(id: number, data: Partial<Project>) {
 
     revalidatePath('/admin');
     revalidatePath('/');
+    return { success: true, data: updatedProject };
+}
+
+// Update project details (JSON/Arrays)
+export async function updateProjectDetails(id: number, data: any) {
+    const supabase = await createClient(); // Use await for server client
+
+    const { error } = await supabase.from('projects').update(data).eq('id', id);
+
+    if (error) {
+        console.error('Error updating project details:', error);
+        throw new Error('Failed to update project details');
+    }
+
+    revalidatePath('/admin');
+    revalidatePath(`/admin/project/${id}`);
+    revalidatePath(`/project/${id}`);
     return { success: true };
 }
 
