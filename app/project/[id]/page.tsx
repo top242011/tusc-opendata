@@ -8,6 +8,8 @@ import { Project, ProjectFile } from '@/lib/types';
 import { format } from 'date-fns';
 import { th } from 'date-fns/locale';
 
+import { ReportButton } from "@/components/report-button";
+
 interface PageProps {
     params: Promise<{ id: string }>;
 }
@@ -213,7 +215,7 @@ export default async function ProjectDetailPage(props: PageProps) {
                 )}
 
                 {/* Attachments Section */}
-                <div className="bg-white shadow-sm border rounded-lg overflow-hidden">
+                <div className="bg-white shadow-sm border rounded-lg overflow-hidden mb-8">
                     <div className="bg-slate-50 px-6 py-3 border-b border-slate-200 font-medium text-slate-700 flex items-center gap-2">
                         <Paperclip className="w-4 h-4" />
                         เอกสารแนบ ({files.length})
@@ -250,7 +252,11 @@ export default async function ProjectDetailPage(props: PageProps) {
                     </div>
                 </div>
 
+                <ReportButton projectId={project.id} projectName={project.project_name} />
+
             </div>
         </div>
     );
 }
+
+

@@ -277,20 +277,22 @@ function NoDocumentAlert({ open, onOpenChange }: { open: boolean; onOpenChange: 
             isOpen={open}
             onClose={() => onOpenChange(false)}
             title="ไม่มีเอกสารของโครงการนี้"
-            className="sm:max-w-[425px]"
+            className="w-[90%] max-w-sm rounded-lg sm:max-w-[425px]"
         >
             <div className="flex flex-col gap-4">
-                <div className="flex items-start gap-3 text-slate-600">
-                    <FileX className="w-10 h-10 text-red-500 shrink-0" />
-                    <div className="space-y-2">
+                <div className="flex flex-col sm:flex-row items-start gap-3 text-slate-600">
+                    <div className="flex justify-center w-full sm:w-auto">
+                        <FileX className="w-10 h-10 text-red-500 shrink-0" />
+                    </div>
+                    <div className="space-y-2 text-center sm:text-left">
                         <div className="font-medium text-slate-900">ไม่พบไฟล์เอกสาร</div>
-                        <p>โครงการนี้ยังไม่มีการอัปโหลดเอกสารต้นฉบับ (PDF) หรือไฟล์แนบใดๆ ในขณะนี้</p>
+                        <p className="text-sm">โครงการนี้ยังไม่มีการอัปโหลดเอกสารต้นฉบับ (PDF) หรือไฟล์แนบใดๆ ในขณะนี้</p>
                     </div>
                 </div>
                 <div className="flex justify-end pt-2">
                     <button
                         onClick={() => onOpenChange(false)}
-                        className="bg-slate-900 text-white px-4 py-2 rounded-md hover:bg-slate-800 text-sm font-medium"
+                        className="w-full sm:w-auto bg-slate-900 text-white px-4 py-2 rounded-md hover:bg-slate-800 text-sm font-medium"
                     >
                         รับทราบ
                     </button>

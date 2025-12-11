@@ -5,6 +5,7 @@ import { AdminProjectTable } from "@/components/admin-project-table";
 import Link from 'next/link';
 import { Project } from "@/lib/types";
 import { QuickFixAction } from "@/components/admin/quick-fix-action";
+import { AdminNavbar } from "@/components/admin-navbar";
 
 export default async function AdminPage() {
     const supabase = await createClient();
@@ -31,20 +32,7 @@ export default async function AdminPage() {
 
     return (
         <div className="min-h-screen bg-slate-50 pb-20">
-            <nav className="bg-white border-b px-4 py-4 flex justify-between items-center mb-8">
-                <div className="font-bold text-lg text-blue-900">ระบบจัดการข้อมูล</div>
-                <div className="flex items-center gap-4">
-                    <span className="text-sm text-slate-500">{user.email}</span>
-                    <form action={async () => {
-                        "use server";
-                        const supabase = await createClient();
-                        await supabase.auth.signOut();
-                        redirect('/login');
-                    }}>
-                        <button className="text-sm text-red-600 hover:text-red-700 font-medium">ออกจากระบบ</button>
-                    </form>
-                </div>
-            </nav>
+            <AdminNavbar userEmail={user?.email} />
 
             <div className="container mx-auto max-w-6xl px-4">
                 <div className="mb-8">
