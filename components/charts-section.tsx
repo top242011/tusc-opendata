@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Project } from "@/lib/types";
-import { formatTHB } from "@/lib/utils";
+import { formatTHB, getStatusLabel } from "@/lib/utils";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
 
 interface ChartsSectionProps {
@@ -12,7 +12,8 @@ interface ChartsSectionProps {
 export function ChartsSection({ projects }: ChartsSectionProps) {
     // Process data for Pie Chart (Status)
     const statusCounts = projects.reduce((acc, project) => {
-        acc[project.status] = (acc[project.status] || 0) + 1;
+        const label = getStatusLabel(project.status);
+        acc[label] = (acc[label] || 0) + 1;
         return acc;
     }, {} as Record<string, number>);
 
@@ -22,8 +23,8 @@ export function ChartsSection({ projects }: ChartsSectionProps) {
     }));
 
     const COLORS = {
-        'อนุมัติ': '#16a34a', // green-600
-        'ตัดงบ': '#dc2626', // red-600
+        'อนุมัติเต็มจำนวน': '#16a34a', // green-600
+        'ตัดงบบางส่วน': '#dc2626', // red-600
         'ไม่อนุมัติ': '#52525b', // zinc-600
         'รอพิจารณา': '#f97316', // orange-500
     };

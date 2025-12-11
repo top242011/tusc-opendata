@@ -2,7 +2,7 @@ import { createClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Calendar, User, FileText, Download, CheckCircle, XCircle, AlertCircle, Paperclip, FileArchive } from 'lucide-react';
-import { formatTHB } from '@/lib/utils';
+import { formatTHB, getStatusLabel } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Project, ProjectFile } from '@/lib/types';
 import { format } from 'date-fns';
@@ -60,7 +60,7 @@ export default async function ProjectDetailPage(props: PageProps) {
                                 project.status === 'อนุมัติ' ? 'success' :
                                     project.status === 'ตัดงบ' ? 'warning' : 'destructive'
                             }>
-                                {project.status}
+                                {getStatusLabel(project.status)}
                             </Badge>
                         </div>
 

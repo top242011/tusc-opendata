@@ -11,3 +11,11 @@ export function calculateStats(projects: any[]): any {
     // logic placeholder, doing it in component or here
     return {};
 }
+
+export function getStatusLabel(status: string): string {
+    switch (status) {
+        case 'ตัดงบ': return 'ตัดงบบางส่วน';
+        case 'อนุมัติ': return 'อนุมัติเต็มจำนวน';
+        default: return status;
+    }
+}

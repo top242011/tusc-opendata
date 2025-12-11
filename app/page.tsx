@@ -59,7 +59,7 @@ export default async function Home() {
         <DataTable projects={projects} />
 
         <footer className="mt-20 py-8 border-t text-center text-slate-500 text-sm">
-          <p>© 2567 สภานักศึกษา | พัฒนาโดย พรรครีไลฟ์</p>
+          <p>© 2567 ระบบเผยแพร่งบประมาณ สภานักศึกษามหาวิทยาลัยธรรมศาสตร์ | พัฒนาโดย พรรครีไลฟ์</p>
         </footer>
       </div>
     </main>
