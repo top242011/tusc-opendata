@@ -4,8 +4,9 @@ import { CsvUploader } from "@/components/csv-uploader";
 import { AdminProjectTable } from "@/components/admin-project-table";
 import Link from 'next/link';
 import { Project } from "@/lib/types";
-import { QuickFixAction } from "@/components/admin/quick-fix-action";
 import { AdminNavbar } from "@/components/admin-navbar";
+import { Upload } from "lucide-react";
+import { AdminQuickStart } from "@/components/admin/admin-quick-start";
 
 export default async function AdminPage() {
     const supabase = await createClient();
@@ -35,24 +36,26 @@ export default async function AdminPage() {
             <AdminNavbar userEmail={user?.email} />
 
             <div className="container mx-auto max-w-6xl px-4">
-                <div className="mb-8">
-                    <h1 className="text-2xl font-bold mb-4">การดำเนินการ</h1>
-                    <div className="grid md:grid-cols-2 gap-4">
-                        <Link href="/admin/import" className="block p-6 bg-blue-600 rounded-lg shadow-lg hover:bg-blue-700 transition group">
-                            <div className="flex items-start justify-between">
-                                <div>
-                                    <h3 className="text-xl font-bold text-white mb-2 group-hover:underline">ศูนย์นำเข้าข้อมูลรวม &rarr;</h3>
-                                    <p className="text-blue-100">อัปโหลดไฟล์สรุป Excel หรือข้อเสนอโครงการ PDF ระบบ AI จะเชื่อมโยงและตรวจสอบข้อมูลให้อัตโนมัติ</p>
-                                </div>
-                            </div>
-                        </Link>
+                {/* Usage Guide */}
+                <AdminQuickStart />
 
-                        <QuickFixAction projects={projects} />
+                <div className="mb-8">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                        <h1 className="text-2xl font-bold text-slate-900">การดำเนินการ</h1>
+
+                        <Link href="/admin/import" className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition shadow-blue-200 hover:shadow-lg hover:-translate-y-0.5 transform duration-200">
+                            <Upload className="w-5 h-5" />
+                            <span className="font-semibold">เริ่มกระบวนการนำเข้าข้อมูล &rarr;</span>
+                        </Link>
                     </div>
+
+                    <p className="text-slate-500 mb-6 bg-blue-50/50 p-4 rounded-lg border border-blue-100 text-sm">
+                        💡 <strong>Tip:</strong> ท่านสามารถเริ่มกระบวนการนำเข้าได้ทันที ระบบจะพาเข้าสู่ขั้นตอนการระบุข้อมูล อัปโหลดไฟล์ และตรวจสอบความถูกต้องทีละขั้นตอนอย่างละเอียด
+                    </p>
                 </div>
 
                 <div>
-                    <h1 className="text-2xl font-bold mb-2">จัดการข้อมูล</h1>
+                    <h1 className="text-2xl font-bold mb-4">จัดการข้อมูลโครงการ</h1>
                     <AdminProjectTable projects={projects} />
                 </div>
             </div>

@@ -29,7 +29,9 @@ export async function analyzeFileForImport(formData: FormData): Promise<{ succes
         const file = formData.get('file') as File;
         if (!file) return { success: false, error: 'No file' };
 
-        const isExcel = file.name.endsWith('.xlsx') || file.name.endsWith('.xls');
+        const fiscalYear = parseInt(formData.get('fiscal_year') as string) || (new Date().getFullYear() + 543);
+
+        const isExcel = file.name.endsWith('.xlsx') || file.name.endsWith('.xls') || file.name.endsWith('.csv');
         const results: ImportPreviewItem[] = [];
 
         // 1. Parse based on file type
@@ -56,7 +58,7 @@ export async function analyzeFileForImport(formData: FormData): Promise<{ succes
                         budget_approved: row.budget_approved,
                         budget_average: row.budget_average,
                         notes: row.notes,
-                        fiscal_year: 2568, // Default
+                        fiscal_year: fiscalYear, // Use selected fiscal year
                     },
                     originalData: {
                         project_name: row.project_name,
@@ -65,7 +67,7 @@ export async function analyzeFileForImport(formData: FormData): Promise<{ succes
                         budget_approved: row.budget_approved,
                         budget_average: row.budget_average,
                         notes: row.notes,
-                        fiscal_year: 2568,
+                        fiscal_year: fiscalYear,
                     }
                 });
             }
@@ -153,10 +155,12 @@ export async function saveImportedProject(item: ImportPreviewItem, fileFormData:
         // 1. Insert or Update Project
         if (item.status === 'NEW' || !projectId) {
             // Create New
+            const currentFiscalYear = new Date().getFullYear() + 543;
             const { data, error } = await supabase.from('projects').insert({
                 project_name: item.data.project_name || 'Untitled Project',
                 organization: item.data.organization || 'Unassigned',
-                fiscal_year: new Date().getFullYear() + 543,
+                fiscal_year: item.data.fiscal_year || currentFiscalYear,
+                campus: item.data.campus || 'central',
                 budget_requested: item.data.budget_requested || 0,
                 budget_approved: item.data.budget_approved || 0,
                 budget_average: item.data.budget_average || 0,
@@ -236,8 +240,8 @@ export async function saveImportedProject(item: ImportPreviewItem, fileFormData:
 
         return { success: true, projectId };
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('Save Import Error:', error);
-        return { success: false, error: 'Failed to save project' };
+        return { success: false, error: error.message || JSON.stringify(error) || 'Failed to save project' };
     }
 }

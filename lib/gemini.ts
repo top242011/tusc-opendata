@@ -35,6 +35,7 @@ export async function parseBudgetExcel(formData: FormData) {
             Analyze the columns to identify:
             - Organization / Department Name
             - Project Name
+            - Fiscal Year (ปีงบประมาณ) - Look for Buddhist Era year (e.g., 2567, 2568)
             - Requested Budget
             - Approved Budget
             - Average Budget (if available)
@@ -48,6 +49,7 @@ export async function parseBudgetExcel(formData: FormData) {
                 {
                     "organization": string,
                     "project_name": string,
+                    "fiscal_year": number | null,
                     "budget_requested": number,
                     "budget_approved": number,
                     "budget_average": number | null,
@@ -76,13 +78,13 @@ export async function parseBudgetExcel(formData: FormData) {
             const data = JSON.parse(jsonStr);
             return { success: true, data };
         } catch (e) {
-            console.error("JSON Parse Error (Excel):", text);
-            return { success: false, error: "Failed to parse AI response for Excel" };
+            console.error("JSON Parse Error (Excel/CSV):", text);
+            return { success: false, error: "Failed to parse AI response for Excel/CSV" };
         }
 
     } catch (error) {
-        console.error("Excel Parse Error:", error);
-        return { success: false, error: "Failed to process Excel file" };
+        console.error("Excel/CSV Parse Error:", error);
+        return { success: false, error: "Failed to process Excel/CSV file" };
     }
 }
 
@@ -114,8 +116,9 @@ export async function parseProjectPDF(formData: FormData) {
       
       Fields to extract:
       1. project_name: The full name of the project. (String)
-      2. organization: The name of the organization/club/unit responsible. (String)
-      3. budget_requested: The total budget amount requested. (Number)
+      2. fiscal_year: The Buddhist Era year mentioned (e.g., 2567, 2568). (Number)
+      3. organization: The name of the organization/club/unit responsible. (String)
+      4. budget_requested: The total budget amount requested. (Number)
       4. responsible_person: Name, faculty, phone of the student responsible. (String)
       5. advisor: Name and phone of the advisor. (String)
       6. activity_type: The type of activity checked/selected in the form. (String)

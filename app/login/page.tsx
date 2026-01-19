@@ -45,42 +45,44 @@ export default function LoginPage() {
                     <div className="mx-auto bg-slate-100 p-3 rounded-full w-fit mb-4">
                         <Shield className="w-8 h-8 text-blue-600" />
                     </div>
-                    <CardTitle>เข้าสู่ระบบผู้ดูแล</CardTitle>
-                    <CardDescription>Enter your credentials to access the dashboard</CardDescription>
+                    <CardTitle className="text-xl">เข้าสู่ระบบผู้ดูแล</CardTitle>
+                    <CardDescription>กรุณากรอกข้อมูลเพื่อเข้าใช้งานระบบจัดการ</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleLogin} className="space-y-4">
                         {error && (
-                            <div className="bg-red-50 text-red-600 text-sm p-3 rounded-md">
-                                {error}
+                            <div className="bg-red-50 text-red-600 text-sm p-3 rounded-md flex items-center gap-2">
+                                <span className="font-medium">ผิดพลาด:</span> {error}
                             </div>
                         )}
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Email</label>
+                            <label className="text-sm font-medium">อีเมล</label>
                             <input
                                 type="email"
                                 required
-                                className="w-full h-10 rounded-md border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+                                className="w-full h-10 rounded-md border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
+                                placeholder="name@example.com"
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Password</label>
+                            <label className="text-sm font-medium">รหัสผ่าน</label>
                             <input
                                 type="password"
                                 required
-                                className="w-full h-10 rounded-md border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+                                className="w-full h-10 rounded-md border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                placeholder="••••••••"
                             />
                         </div>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full h-10 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+                            className="w-full h-10 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors shadow-sm hover:shadow"
                         >
-                            {loading ? 'Logging in...' : 'Login'}
+                            {loading ? 'กำลังเข้าสู่ระบบ...' : 'เข้าสู่ระบบ'}
                         </button>
                     </form>
                 </CardContent>

@@ -4,6 +4,7 @@ CREATE TABLE projects (
   organization TEXT NOT NULL,
   project_name TEXT NOT NULL,
   fiscal_year INTEGER NOT NULL,
+  campus TEXT NOT NULL DEFAULT 'central' CHECK (campus IN ('central', 'rangsit', 'thaprachan', 'lampang')),
   budget_requested NUMERIC NOT NULL,
   budget_approved NUMERIC NOT NULL,
   budget_average NUMERIC,

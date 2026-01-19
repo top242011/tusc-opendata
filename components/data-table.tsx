@@ -114,10 +114,11 @@ export function DataTable({ projects }: DataTableProps) {
 
                         <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto flex-wrap">
                             <div className="relative w-full sm:w-auto">
-                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" aria-hidden="true" />
                                 <input
                                     type="text"
                                     placeholder="ค้นหาชื่อโครงการ..."
+                                    aria-label="ค้นหาชื่อโครงการ"
                                     className="pl-9 h-10 w-full sm:w-[200px] rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -128,6 +129,7 @@ export function DataTable({ projects }: DataTableProps) {
                                 className="h-10 w-full sm:w-auto rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950"
                                 value={selectedStatus}
                                 onChange={(e) => setSelectedStatus(e.target.value)}
+                                aria-label="กรองตามสถานะ"
                             >
                                 <option value="All">ทุกสถานะ</option>
                                 {statuses.map(status => (
@@ -139,6 +141,7 @@ export function DataTable({ projects }: DataTableProps) {
                                 className="h-10 w-full sm:w-auto rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950"
                                 value={selectedOrg}
                                 onChange={(e) => setSelectedOrg(e.target.value)}
+                                aria-label="กรองตามองค์กร"
                             >
                                 <option value="All">ทุกองค์กร</option>
                                 {organizations.map(org => (
@@ -150,6 +153,7 @@ export function DataTable({ projects }: DataTableProps) {
                                 className="h-10 w-full sm:w-auto rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950"
                                 value={selectedYear}
                                 onChange={(e) => setSelectedYear(e.target.value)}
+                                aria-label="กรองตามปีงบประมาณ"
                             >
                                 <option value="All">ทุกปีงบประมาณ</option>
                                 {years.map(year => (
@@ -161,7 +165,12 @@ export function DataTable({ projects }: DataTableProps) {
                 </CardHeader>
                 <CardContent>
                     <div className="rounded-md border">
+                        {/* Live Region for Screen Readers */}
+                        <div role="status" aria-live="polite" className="sr-only">
+                            {filteredProjects.length} โครงการที่พบ
+                        </div>
                         <table className="w-full text-sm text-left">
+                            <caption className="sr-only">รายการโครงการและงบประมาณ</caption>
                             <thead className="bg-slate-50 text-slate-500 font-medium border-b">
                                 <tr>
                                     <th className="px-4 py-3 w-[100px] hidden md:table-cell">สถานะ</th>
@@ -179,7 +188,7 @@ export function DataTable({ projects }: DataTableProps) {
                                         className="px-4 py-3 text-right cursor-pointer group hover:bg-slate-100 transition-colors hidden lg:table-cell"
                                         onClick={() => handleSort('budget_requested')}
                                     >
-                                        <div className="flex items-center justify-end gap-1">
+                                        <div className="flex items-center justify-end gap-1 whitespace-nowrap">
                                             งบที่เสนอขอ
                                             <SortIcon columnKey="budget_requested" />
                                         </div>
@@ -188,7 +197,7 @@ export function DataTable({ projects }: DataTableProps) {
                                         className="px-4 py-3 text-right cursor-pointer group hover:bg-slate-100 transition-colors"
                                         onClick={() => handleSort('budget_approved')}
                                     >
-                                        <div className="flex items-center justify-end gap-1">
+                                        <div className="flex items-center justify-end gap-1 whitespace-nowrap">
                                             งบที่ได้รับ
                                             <SortIcon columnKey="budget_approved" />
                                         </div>
@@ -198,11 +207,32 @@ export function DataTable({ projects }: DataTableProps) {
                             <tbody className="divide-y">
                                 {paginatedProjects.length === 0 ? (
                                     <tr>
-                                        <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">ไม่พบข้อมูล</td>
+                                        <td colSpan={5} className="px-4 py-16 text-center text-slate-500">
+                                            <div className="flex flex-col items-center justify-center gap-3">
+                                                <div className="bg-slate-100 p-3 rounded-full">
+                                                    <Search className="w-6 h-6 text-slate-400" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-medium text-slate-900">ไม่พบข้อมูลโครงการ</p>
+                                                    <p className="text-sm text-slate-500">ลองเปลี่ยนคำค้นหาหรือตัวกรองใหม่อีกครั้ง</p>
+                                                </div>
+                                                <button
+                                                    onClick={() => {
+                                                        setSearchTerm('');
+                                                        setSelectedOrg('All');
+                                                        setSelectedYear('All');
+                                                        setSelectedStatus('All');
+                                                    }}
+                                                    className="text-sm text-blue-600 hover:underline mt-2"
+                                                >
+                                                    ล้างตัวกรองทั้งหมด
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 ) : (
                                     paginatedProjects.map((project) => (
-                                        <tr key={project.id} className="hover:bg-slate-50/50">
+                                        <tr key={project.id} className="hover:bg-slate-50/50 h-[72px]">
                                             <td className="px-4 py-3 align-top md:align-middle hidden md:table-cell">
                                                 <Badge variant={statusVariant(project.status) as any} className="whitespace-nowrap">
                                                     {getStatusLabel(project.status)}
@@ -250,8 +280,9 @@ export function DataTable({ projects }: DataTableProps) {
                                 className="h-8 w-8 p-0 flex items-center justify-center rounded-md border border-slate-200 disabled:opacity-50 hover:bg-slate-100"
                                 onClick={() => handlePageChange(currentPage - 1)}
                                 disabled={currentPage === 1}
+                                aria-label="หน้าก่อนหน้า"
                             >
-                                <ChevronLeft className="h-4 w-4" />
+                                <ChevronLeft className="h-4 w-4" aria-hidden="true" />
                             </button>
                             <div className="text-sm font-medium">
                                 หน้าที่ {currentPage} / {totalPages || 1}
@@ -260,8 +291,9 @@ export function DataTable({ projects }: DataTableProps) {
                                 className="h-8 w-8 p-0 flex items-center justify-center rounded-md border border-slate-200 disabled:opacity-50 hover:bg-slate-100"
                                 onClick={() => handlePageChange(currentPage + 1)}
                                 disabled={currentPage === totalPages || totalPages === 0}
+                                aria-label="หน้าถัดไป"
                             >
-                                <ChevronRight className="h-4 w-4" />
+                                <ChevronRight className="h-4 w-4" aria-hidden="true" />
                             </button>
                         </div>
                     </div>

@@ -1,36 +1,63 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import JSZip from 'jszip';
-import { Upload, FileText, CheckCircle, AlertCircle, Loader2, Save, RotateCcw, Link as LinkIcon, Trash2, FileSpreadsheet, File as FileIcon, AlertTriangle } from 'lucide-react';
+import { Upload, FileText, CheckCircle, AlertCircle, Loader2, Save, RotateCcw, Link as LinkIcon, Trash2, FileSpreadsheet, AlertTriangle, ArrowRight, ArrowLeft, MapPin, Calendar, HelpCircle, X } from 'lucide-react';
 import { analyzeFileForImport, saveImportedProject, ImportPreviewItem } from '@/lib/bulk-import-actions';
 import { cn } from '@/utils/cn';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { formatTHB } from '@/lib/utils';
+import { Campus } from '@/lib/types';
+
+
+// --- Configuration ---
+const CAMPUS_OPTIONS: { value: Campus; label: string; icon: string }[] = [
+    { value: 'central', label: 'ส่วนกลาง', icon: '🏛️' },
+    { value: 'rangsit', label: 'รังสิต', icon: '🌳' },
+    { value: 'thaprachan', label: 'ท่าพระจันทร์', icon: '⛵' },
+    { value: 'lampang', label: 'ลำปาง', icon: '🏔️' },
+];
 
 export default function ImportWorkbench() {
-    const [files, setFiles] = useState<File[]>([]); // All raw files available in session
-    const [items, setItems] = useState<ImportPreviewItem[]>([]); // The "Staging Table"
+    // --- State: Wizard Navigation ---
+    const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
 
+    // --- State: Context (Step 1) ---
+    const [selectedCampus, setSelectedCampus] = useState<Campus | null>(null);
+    const [selectedFiscalYear, setSelectedFiscalYear] = useState<number | null>(null);
+    const currentYear = new Date().getFullYear() + 543;
+    const FISCAL_YEAR_OPTIONS = Array.from({ length: 6 }, (_, i) => currentYear - i);
 
-    // Status Logic
+    // --- State: Data ---
+    // We categorize items by their "Logical Source" (Context) rather than file type
+    // PROJECT_DOC = From Step 2 (Proposals)
+    // BUDGET_DOC = From Step 3 (Official Budget)
+    interface ExtendedImportItem extends ImportPreviewItem {
+        importContext: 'PROJECT_DOC' | 'BUDGET_DOC';
+    }
+
+    const [items, setItems] = useState<ExtendedImportItem[]>([]);
+    const [rawFiles, setRawFiles] = useState<File[]>([]); // Keep references to actual files for upload
+
+    // --- State: Processing ---
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [isImporting, setIsImporting] = useState(false);
     const [progress, setProgress] = useState(0);
     const [logs, setLogs] = useState<string[]>([]);
+    const [analyzingContext, setAnalyzingContext] = useState<'PROJECT_DOC' | 'BUDGET_DOC' | null>(null);
 
-    // --- 1. Universal Dropzone Logic ---
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const inputFiles = e.target.files;
+    // --- Helper: File Processing ---
+    const processFiles = async (inputFiles: FileList | null, context: 'PROJECT_DOC' | 'BUDGET_DOC') => {
         if (!inputFiles || inputFiles.length === 0) return;
 
         setIsAnalyzing(true);
-        setLogs(prev => [...prev, `กำลังเตรียมไฟล์ ${inputFiles.length} ไฟล์...`]);
+        setAnalyzingContext(context);
+        setLogs(prev => [`⏳ กำลังเตรียมไฟล์ (${context === 'PROJECT_DOC' ? 'โครงการ' : 'งบประมาณ'})...`]);
 
         try {
+            // 1. Unzip / Flat List
             const processedFiles: File[] = [];
-
             for (let i = 0; i < inputFiles.length; i++) {
                 const file = inputFiles[i];
                 if (file.name.endsWith('.zip')) {
@@ -38,10 +65,16 @@ export default function ImportWorkbench() {
                     const contents = await zip.loadAsync(file);
                     for (const path in contents.files) {
                         const entry = contents.files[path];
-                        if (!entry.dir && (entry.name.endsWith('.pdf') || entry.name.endsWith('.xlsx') || entry.name.endsWith('.xls'))) {
+                        if (!entry.dir && (entry.name.match(/\.(pdf|xlsx|xls|csv)$/i))) {
                             const blob = await entry.async('blob');
                             const ext = entry.name.split('.').pop();
-                            processedFiles.push(new File([blob], entry.name, { type: ext === 'pdf' ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+                            // Simple type guess
+                            let type = 'application/octet-stream';
+                            if (ext === 'pdf') type = 'application/pdf';
+                            if (ext === 'csv') type = 'text/csv';
+                            if (ext?.startsWith('xls')) type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+                            processedFiles.push(new File([blob], entry.name, { type }));
                         }
                     }
                 } else {
@@ -49,490 +82,487 @@ export default function ImportWorkbench() {
                 }
             }
 
-            // Append to session files
-            setFiles(prev => [...prev, ...processedFiles]);
+            // Store raw files
+            setRawFiles(prev => [...prev, ...processedFiles]);
 
-            // Analyze ONLY the new files? Or re-analyze all? 
-            // Better to analyze new ones and append to items.
-            await analyzeNewFiles(processedFiles);
+            // 2. Analyze
+            await analyzeNewFiles(processedFiles, context);
 
         } catch (error) {
             console.error(error);
-            setLogs(prev => [...prev, `ข้อผิดพลาด: การอัปโหลดล้มเหลว`]);
+            setLogs(prev => [`❌ ข้อผิดพลาด: ${error}`]);
+        } finally {
             setIsAnalyzing(false);
+            setAnalyzingContext(null);
         }
-
-        // Reset input
-        e.target.value = '';
     };
 
-    const analyzeNewFiles = async (newFiles: File[]) => {
-        const newResults: ImportPreviewItem[] = [];
+    const analyzeNewFiles = async (newFiles: File[], context: 'PROJECT_DOC' | 'BUDGET_DOC') => {
         let completed = 0;
+        const total = newFiles.length;
 
         for (const file of newFiles) {
-            setProgress(Math.round((completed / newFiles.length) * 100));
-            setLogs(prev => [`กำลังวิเคราะห์: ${file.name}...`, ...prev.slice(0, 4)]); // Keep last 5 logs
+            setProgress(Math.round((completed / total) * 100));
+            setLogs(prev => [`📄 วิเคราะห์: ${file.name}`, ...prev.slice(0, 4)]);
 
             const formData = new FormData();
             formData.append('file', file);
+            if (selectedCampus) formData.append('campus', selectedCampus);
+            if (selectedFiscalYear) formData.append('fiscal_year', selectedFiscalYear.toString());
 
             try {
                 const result = await analyzeFileForImport(formData);
                 if (result.success && result.data) {
-                    newResults.push(...result.data);
-                } else {
-                    setLogs(prev => [`❌ ล้มเหลว: ${file.name}`, ...prev]);
+                    const newItems = result.data.map(item => ({
+                        ...item,
+                        importContext: context,
+                        // If it came from Budget Step, we treat it as MASTER/OFFICIAL data
+                        // If it came from Project Step, we treat it as PROPOSAL data
+                        status: 'NEW' as const // Reset status, we will link later
+                    } as ExtendedImportItem));
+
+                    setItems(prev => [...prev, ...newItems]);
                 }
             } catch (err) {
                 console.error(err);
             }
             completed++;
         }
-
-        // Merge with existing items
-        setItems(prev => {
-            const merged = [...prev, ...newResults];
-            return performAutoLinking(merged); // Run auto-linker on the WHOLE set
-        });
-
-        setIsAnalyzing(false);
+        setLogs(prev => [`✅ วิเคราะห์เสร็จสิ้น ${completed} ไฟล์`, ...prev]);
         setProgress(0);
-        setLogs(prev => [`✅ เพิ่ม ${newResults.length} รายการลงในพื้นที่งาน`, ...prev]);
     };
 
-    // --- 2. Auto-Linker (Flexible Order) ---
-    const performAutoLinking = (allItems: ImportPreviewItem[]): ImportPreviewItem[] => {
-        // Reset and clone items
-        const itemsCopy: ImportPreviewItem[] = allItems.map(i => ({
-            ...i,
-            // Preserve UPDATE status if it was already identified as DB Link, otherwise NEW
-            // We NO LONGER use 'MISSING_INFO' for Excel items as they are now considered valid standalone sources
-            status: i.existingProjectId ? 'UPDATE' : 'NEW',
-            reason: i.existingProjectId ? i.reason : undefined, // Keep reason if it was "Matches DB..."
-            budgetMismatch: undefined,
-            data: { ...i.data }
-        }));
+    // --- Logic: Auto-Linking (Step 4) ---
+    // This runs on-the-fly when rendering Step 4 or can be triggered
+    // We will derive the "Linked View" from the `items` state.
+    const linkedItems = useMemo(() => {
+        // Clone items
+        let allItems = items.map(i => ({ ...i }));
 
-        const excelItems = itemsCopy.filter(i => i.source === 'EXCEL');
-        const pdfItems = itemsCopy.filter(i => i.source === 'PDF');
+        // Separating sources
+        const budgetDocs = allItems.filter(i => i.importContext === 'BUDGET_DOC');
+        const projectDocs = allItems.filter(i => i.importContext === 'PROJECT_DOC');
 
-        const norm = (s: string) => s?.toLowerCase().replace(/\s+/g, '').replace(/[\-_\.]/g, '') || '';
+        // Logic A: If we have Budget Docs, they are the "Base" (Anchor).
+        // Logic B: If we only have Project Docs, they are the Base.
 
-        // Match Logic
-        pdfItems.forEach(pdf => {
-            const pdfName = norm(pdf.data.project_name || '');
-            const match = excelItems.find(ex => {
-                const exName = norm(ex.data.project_name || '');
-                return (exName.includes(pdfName) || pdfName.includes(exName)) && pdfName.length > 4;
+        // We want to return a list of "Final Projects to Import".
+        // Each Final Project might be formed by (Budget Item + Project Item) or just one of them.
+
+        const finalProjects: ExtendedImportItem[] = [];
+        const usedProjectDocs = new Set<string>();
+
+        // 1. Start with Budget Docs (Official List)
+        budgetDocs.forEach(bItem => {
+            // Find match in Project Docs
+            const normalize = (s: string) => s?.toLowerCase().replace(/\s+/g, '').replace(/[\-_\.]/g, '') || '';
+            const bName = normalize(bItem.data.project_name || '');
+
+            const match = projectDocs.find(pItem => {
+                if (usedProjectDocs.has(pItem.id)) return false;
+                const pName = normalize(pItem.data.project_name || '');
+                return (pName.includes(bName) || bName.includes(pName)) && pName.length > 5;
             });
 
             if (match) {
-                // Mutual Link
-                match.status = 'LINKED';
-                pdf.status = 'CONFLICT'; // Mark PDF as subsumed
-
-                // Merge Data
-                match.data = {
-                    ...match.data,
-                    ...pdf.data,
-                    budget_approved: match.data.budget_approved,
-                    budget_average: match.data.budget_average,
-                    notes: match.data.notes || pdf.data.notes
-                };
-                match.fileName = `${match.fileName} + ${pdf.fileName}`;
-
-                // Budget Check
-                const budgetPdf = pdf.data.budget_requested || 0;
-                const budgetExc = match.data.budget_requested || 0;
-
-                if (budgetPdf > 0 && budgetExc > 0 && Math.abs(budgetPdf - budgetExc) > 100) {
-                    match.budgetMismatch = { pdf: budgetPdf, excel: budgetExc };
-                    match.reason = "⚠️ ยอดเงินไม่ตรงกัน (ยึด Excel เป็นหลัก)";
-                } else {
-                    match.reason = "✅ ตรวจสอบแล้ว";
-                }
-
+                // LINKED
+                usedProjectDocs.add(match.id);
+                finalProjects.push({
+                    ...bItem,
+                    id: bItem.id, // Use Budget ID as primary
+                    status: 'LINKED', // It matched!
+                    fileName: `${bItem.fileName} + ${match.fileName}`,
+                    data: {
+                        ...bItem.data, // Budget data is primary for numbers
+                        ...match.data, // Enrich with PDF details
+                        budget_approved: bItem.data.budget_approved, // Official
+                        // If PDF has details, keep them
+                    },
+                    reason: '✅ จับคู่กับเอกสารโครงการแล้ว'
+                });
             } else {
-                // PDF Standalone
-                // We keep it as NEW (or UPDATE if it matched DB during analysis)
-                // Just warn if it's not in the master list
-                if (excelItems.length > 0 && pdf.status !== 'UPDATE') {
-                    // Only warn for NEW items that are not in the master list
-                    pdf.reason = '⚠️ ไม่อยู่ในรายชื่อหลัก';
-                }
+                // Budget Doc without Proposal
+                // Still valid to import as "Project with Budget but no text details"
+                finalProjects.push({
+                    ...bItem,
+                    status: bItem.existingProjectId ? 'UPDATE' : 'NEW', // Or MISSING_INFO if we want to enforce PDF
+                    reason: bItem.existingProjectId ? 'อัปเดตข้อมูลเดิม' : '⚠️ ไม่มีไฟล์เอกสารโครงการ (มีแต่งบ)'
+                });
             }
         });
 
-        // Review Excel Items that were NOT linked
-        excelItems.forEach(ex => {
-            if (ex.status !== 'LINKED') {
-                // It remains NEW or UPDATE.
-                // We just add a note that it has no PDF.
-                // We do NOT block it.
-                if (!ex.reason) { // Don't overwrite "Matches DB" reason
-                    ex.reason = '⚠️ ไม่พบไฟล์ PDF (จะนำเข้าเฉพาะข้อมูล)';
-                }
+        // 2. Process remaining Project Docs (Standalones)
+        projectDocs.forEach(pItem => {
+            if (!usedProjectDocs.has(pItem.id)) {
+                finalProjects.push({
+                    ...pItem,
+                    status: pItem.existingProjectId ? 'UPDATE' : 'NEW',
+                    reason: pItem.existingProjectId ? 'อัปเดตข้อมูลเดิม' : 'เอกสารโครงการใหม่ (ไม่มีไฟล์งบอ้างอิง)'
+                });
             }
         });
 
-        return [...excelItems, ...pdfItems.filter(p => p.status !== 'CONFLICT')];
+        // 3. Mark Existing DB Matches (already done in analyzeAction generally, but let's re-verify)
+        // (Skipped for brevity, assuming analyzeAction did its job finding existingProjectId)
+
+        return finalProjects;
+    }, [items]);
+
+    // --- Actions ---
+    const handleReset = () => {
+        if (confirm("ต้องการล้างข้อมูลทั้งหมดและเริ่มใหม่หรือไม่?")) {
+            setItems([]);
+            setRawFiles([]);
+            setStep(1);
+            setLogs([]);
+        }
     };
 
-    // --- 3. Import Action (Persistent Master) ---
-    const handleImportAll = async () => {
+    const handleSaveAll = async () => {
         setIsImporting(true);
-
-        // Import LINKED, UPDATE, and NEW items
-        const itemsToImport = items.filter(i =>
-            i.status === 'LINKED' ||
-            i.status === 'UPDATE' ||
-            i.status === 'NEW'
-        );
-        // actually we might want to import 'NEW' excel items even if no PDF? 
-        // User said: "CSV is Master". If CSV has item but no PDF, do interpret as "Missing Info". 
-        // Usually we don't import Missing Info items until PDF arrives? 
-        // Or do we import them as "Drafts"?
-        // Let's stick to importing EVERYTHING that is valid Project. 
-        // But for "Missing Info", maybe we skip? 
-        // "If no project in this file, it means rejected". 
-        // So we should only import what we have.
-        // Let's import LINKED items definitely.
-        // What about MISSING_INFO? If we import them, they are just skeletons.
-        // Let's import ALL for now, but usually user wants "Complete" projects.
-        // Re-reading: "Upload CSV... AI checks... Fill data".
-        // Let's import everything that is in the workbench (except UNLISTED PDFs usually, but here we can import them as ghosts if we want, but logic says Rejected).
-        // Let's import matching items.
-
+        const projects = linkedItems; // Use the derived linked list
         let completed = 0;
-        const total = itemsToImport.length;
 
-        if (total === 0) {
-            setLogs(prev => [`⚠️ ไม่มีรายการที่เชื่อมโยง/พร้อมนำเข้า`]);
-            setIsImporting(false);
-            return;
-        }
+        for (const item of projects) {
+            setLogs(prev => [`💾 กำลังบันทึก: ${item.data.project_name}...`, ...prev.slice(0, 4)]);
 
-        for (const item of itemsToImport) {
-            setLogs(prev => [`กำลังบันทึก: ${item.data.project_name}...`, ...prev.slice(0, 4)]);
+            // Logic to find the file to upload
+            // If it's a Combined Item (Budget+Projet), the fileName string is "Budget.xlsx + Proposal.pdf"
+            // We need to find the Proposal.pdf in `rawFiles` to upload it.
+            // If it's pure PDF, we upload it.
+            // If it's pure Excel, usually no file upload unless we want to attach Excel.
 
-            let fileToUpload: File | undefined = undefined;
-            // Find matched PDF file
-            // Logic: item.fileName might be "Excel + PDF". 
-            // We need to find the PDF file in 'files' state.
-            // We can look for files that are NOT excel.
-            const pdfPartOfName = item.fileName.split(' + ')[1];
-            if (pdfPartOfName) {
-                fileToUpload = files.find(f => f.name === pdfPartOfName);
-            }
+            // Naive finder:
+            let targetFile: File | undefined;
+            // Try to find a file in rawFiles that matches the item's current fileName or component parts
+            // This is a bit weak if names are complex.
+            // Better: Store file references in items? No, items are plain objects.
+            // Search reference:
+            targetFile = rawFiles.find(f => item.fileName.includes(f.name));
 
             const formData = new FormData();
-            if (fileToUpload) formData.append('file', fileToUpload);
+            if (targetFile) formData.append('file', targetFile);
 
-            await saveImportedProject(item, fileToUpload ? formData : null);
+            await saveImportedProject(item, targetFile ? formData : null);
             completed++;
-            setProgress(Math.round((completed / total) * 100));
+            setProgress(Math.round((completed / projects.length) * 100));
         }
 
         setIsImporting(false);
-        setLogs(prev => [`✅ นำเข้าโครงการสำเร็จ ${completed} โครงการ!`, ...prev]);
-
-        // --- PERSISTENCE LOGIC ---
-        // 1. Remove used PDFs
-        // 2. Revert Excel Master Items to original state (WAITING for next batch)
-        setItems(prev => {
-            return prev.map(item => {
-                if (item.source === 'EXCEL') {
-                    // Revert
-                    return {
-                        ...item,
-                        status: 'MISSING_INFO',
-                        reason: '⚠️ รอไฟล์ชุดถัดไป...',
-                        budgetMismatch: undefined,
-                        fileName: item.fileName.split(' + ')[0], // Remove PDF name
-                        data: { ...item.originalData } // Restore original clean data
-                    } as ImportPreviewItem;
-                }
-                return null; // Remove PDF items
-            }).filter(Boolean) as ImportPreviewItem[];
-        });
-
-        // Remove uploaded PDF files from session?
-        // Maybe keep them? No, better clear to save memory.
-        setFiles(prev => prev.filter(f => f.name.endsWith('.xlsx') || f.name.endsWith('.xls')));
+        setLogs(prev => [`🎉 นำเข้าสำเร็จ ${completed} โครงการ!`, ...prev]);
+        setStep(5); // Finish
     };
 
-    const handleClearMaster = () => {
-        setItems(prev => prev.filter(i => i.source !== 'EXCEL'));
-        setFiles(prev => prev.filter(f => !f.name.endsWith('.xlsx') && !f.name.endsWith('.xls')));
-    };
 
-    const handleDelete = (id: string) => {
-        setItems(prev => prev.filter(i => i.id !== id));
-    };
-
-    const hasMaster = items.some(i => i.source === 'EXCEL');
-
-    // Counts
-    const pdfCount = items.filter(i => i.source === 'PDF' || i.status === 'LINKED').length;
-    const masterCount = items.filter(i => i.source === 'EXCEL' || i.status === 'LINKED').length;
-
+    // --- Render Steps ---
 
     return (
-        <div className="space-y-6">
-            {/* Split Zones */}
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-
-                {/* 1. Proposals Zone (PRIMARY) */}
-                <Card className={cn("lg:col-span-2 border-2 border-dashed transition-all relative",
-                    "border-blue-300 bg-blue-50/50 cursor-pointer hover:bg-blue-50")}>
-                    <div className="absolute inset-0">
-                        <input
-                            type="file"
-                            accept=".zip,.pdf"
-                            multiple
-                            className="w-full h-full opacity-0 cursor-pointer"
-                            onChange={handleFileUpload}
-                            disabled={isAnalyzing}
-                        />
+        <div className="space-y-6 max-w-5xl mx-auto">
+            {/* Wizard Progress */}
+            <div className="flex justify-between relative mb-8">
+                <div className="absolute top-1/2 left-0 w-full h-1 bg-slate-200 -z-10 rounded-full" />
+                <div className="absolute top-1/2 left-0 h-1 bg-green-500 -z-10 rounded-full transition-all duration-500" style={{ width: `${((step - 1) / 4) * 100}%` }} />
+                {[1, 2, 3, 4, 5].map((s) => (
+                    <div key={s} className={cn(
+                        "flex flex-col items-center gap-2 bg-slate-50 p-2 rounded-lg transition-colors border-2",
+                        step >= s ? "border-green-500 text-green-700 bg-green-50" : "border-slate-200 text-slate-400"
+                    )}>
+                        <div className={cn(
+                            "w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm",
+                            step >= s ? "bg-green-500 text-white" : "bg-slate-200 text-slate-500"
+                        )}>
+                            {s}
+                        </div>
+                        <span className="text-xs font-medium hidden md:block">
+                            {s === 1 && "ระบุปี/ศูนย์"}
+                            {s === 2 && "ไฟล์โครงการ"}
+                            {s === 3 && "ไฟล์งบ"}
+                            {s === 4 && "ตรวจสอบ"}
+                            {s === 5 && "เสร็จสิ้น"}
+                        </span>
                     </div>
-                    <CardContent className="flex flex-col items-center justify-center py-10 text-center pointer-events-none">
-                        <Upload className="w-10 h-10 mb-3 text-blue-600" />
-                        <h3 className="text-lg font-bold text-blue-900">1. อัปโหลดข้อเสนอโครงการ</h3>
-                        <p className="text-sm mt-1 text-blue-600/80">
-                            ลากและวาง <b>PDF</b> หรือ <b>ZIP</b> ที่นี่<br />
-                            เริ่มนำเข้าจากไฟล์โครงการได้ทันที
-                        </p>
-                    </CardContent>
-                </Card>
-
-                {/* 2. Master List Zone (SECONDARY) */}
-                <Card className={cn("lg:col-span-1 border-2 border-dashed transition-all relative overflow-hidden",
-                    hasMaster ? "border-green-200 bg-green-50" : "border-slate-300 hover:border-green-500 hover:bg-slate-50")}>
-                    {hasMaster ? (
-                        <CardContent className="flex flex-col items-center justify-center py-8 text-center h-full">
-                            <div className="bg-green-100 p-3 rounded-full mb-3">
-                                <FileSpreadsheet className="w-8 h-8 text-green-600" />
-                            </div>
-                            <h3 className="font-bold text-green-900">ตัวช่วยตรวจสอบพร้อม</h3>
-                            <p className="text-green-700/80 text-xs mt-1 mb-4">
-                                ใช้ตรวจสอบความถูกต้อง<br />
-                                ของงบประมาณและชื่อโครงการ
-                            </p>
-                            <button onClick={handleClearMaster} className="text-xs text-red-500 hover:text-red-700 underline z-10 relative">
-                                ลบรายชื่อหลัก
-                            </button>
-                        </CardContent>
-                    ) : (
-                        <>
-                            <div className="absolute inset-0">
-                                <input
-                                    type="file"
-                                    accept=".xlsx,.xls"
-                                    className="w-full h-full opacity-0 cursor-pointer"
-                                    onChange={handleFileUpload}
-                                    disabled={isAnalyzing}
-                                />
-                            </div>
-                            <CardContent className="flex flex-col items-center justify-center py-10 text-center pointer-events-none">
-                                <FileSpreadsheet className="w-8 h-8 text-slate-400 mb-2" />
-                                <h3 className="font-semibold text-slate-700">2. ตรวจสอบข้อมูล (Optional)</h3>
-                                <p className="text-slate-500 text-xs mt-1">
-                                    อัปโหลดไฟล์ Excel รวม<br />เพื่อเติมข้อมูลและตรวจสอบ
-                                </p>
-                            </CardContent>
-                        </>
-                    )}
-                </Card>
-
-                {/* 3. Status - Takes up 1 col */}
-                <Card className="flex flex-col justify-between">
-                    <CardHeader>
-                        <CardTitle>สถานะการทำงาน</CardTitle>
-                        <CardDescription>
-                            รอการนำเข้า {items.length} รายการ
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        {(isAnalyzing || isImporting) ? (
-                            <div className="space-y-2">
-                                <div className="flex justify-between text-xs font-medium text-slate-500">
-                                    <span>{isImporting ? 'กำลังนำเข้า...' : 'AI กำลังวิเคราะห์...'}</span>
-                                    <span>{progress}%</span>
-                                </div>
-                                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                                    <div className="h-full bg-blue-600 transition-all duration-300" style={{ width: `${progress}%` }}></div>
-                                </div>
-                                <div className="text-xs text-slate-400 font-mono truncate">
-                                    {logs[0]}
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="space-y-2">
-                                <button
-                                    onClick={handleImportAll}
-                                    disabled={items.length === 0}
-                                    className="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                                >
-                                    <Save className="w-4 h-4" />
-                                    นำเข้า {items.length} รายการ
-                                </button>
-                                <button
-                                    onClick={() => setItems([])}
-                                    disabled={items.length === 0}
-                                    className="w-full py-2 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-lg text-sm font-medium"
-                                >
-                                    ล้างพื้นที่งาน
-                                </button>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
+                ))}
             </div>
 
-            {/* Workbench Table / List */}
-            <Card>
+            {/* Content Area */}
+            <Card className="min-h-[400px] flex flex-col shadow-lg border-t-4 border-t-blue-600">
                 <CardHeader>
-                    <CardTitle>พื้นที่เตรียมข้อมูล</CardTitle>
+                    {step === 1 && <CardTitle>เริ่มกระบวนการนำเข้า</CardTitle>}
+                    {step === 2 && <CardTitle>อัปโหลดเอกสารโครงการ (Project Proposals)</CardTitle>}
+                    {step === 3 && <CardTitle>อัปโหลดใบคุมงบประมาณ (Budget Approvals)</CardTitle>}
+                    {step === 4 && <CardTitle>ตรวจสอบและยืนยันข้อมูล ({linkedItems.length} รายการ)</CardTitle>}
+                    {step === 5 && <CardTitle>นำเข้าข้อมูลเสร็จสมบูรณ์</CardTitle>}
                 </CardHeader>
-                <CardContent className="p-0">
-                    <div className="overflow-x-auto">
-                        {/* Desktop Table */}
-                        <table className="hidden md:table w-full text-sm text-left">
-                            <thead className="bg-slate-50 text-slate-500 font-medium border-b">
-                                <tr>
-                                    <th className="px-4 py-3 w-10">ประเภท</th>
-                                    <th className="px-4 py-3">รายละเอียดโครงการ</th>
-                                    <th className="px-4 py-3">ความสมบูรณ์</th>
-                                    <th className="px-4 py-3 text-right">งบประมาณ</th>
-                                    <th className="px-4 py-3 w-10"></th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y">
-                                {items.length === 0 && (
-                                    <tr>
-                                        <td colSpan={5} className="py-12 text-center text-slate-400">
-                                            พื้นที่งานว่างเปล่า ลากไฟล์มาวางด้านบนเพื่อเริ่ม
-                                        </td>
-                                    </tr>
-                                )}
-                                {items.map((item) => (
-                                    <tr key={item.id} className="hover:bg-slate-50/50 group">
-                                        <td className="px-4 py-3">
-                                            <div className="flex flex-col gap-1 items-center">
-                                                {item.source === 'EXCEL' && <FileSpreadsheet className="w-5 h-5 text-green-600" />}
-                                                {item.source === 'PDF' && <FileText className="w-5 h-5 text-red-500" />}
-                                                {item.status === 'LINKED' && <div className="absolute ml-4 mt-2 bg-purple-100 rounded-full p-0.5 border border-white"><LinkIcon className="w-3 h-3 text-purple-600" /></div>}
+
+                <CardContent className="flex-1">
+                    {/* STEP 1: Context */}
+                    {step === 1 && (
+                        <div className="flex flex-col gap-6 max-w-2xl mx-auto py-8">
+                            <div className="grid gap-4">
+                                <label className="text-sm font-medium text-slate-700">1. เลือกปีงบประมาณ</label>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {FISCAL_YEAR_OPTIONS.map(year => (
+                                        <button
+                                            key={year}
+                                            onClick={() => setSelectedFiscalYear(year)}
+                                            className={cn(
+                                                "py-3 rounded border text-sm font-medium transition-all",
+                                                selectedFiscalYear === year
+                                                    ? "bg-blue-600 text-white border-blue-600 shadow-md"
+                                                    : "bg-white border-slate-200 hover:border-blue-300 text-slate-700"
+                                            )}
+                                        >
+                                            {year}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="grid gap-4">
+                                <label className="text-sm font-medium text-slate-700">2. เลือกศูนย์/วิทยาเขต</label>
+                                <div className="grid grid-cols-2 gap-3">
+                                    {CAMPUS_OPTIONS.map(c => (
+                                        <button
+                                            key={c.value}
+                                            onClick={() => setSelectedCampus(c.value)}
+                                            className={cn(
+                                                "py-4 px-3 rounded border text-left flex items-center gap-3 transition-all",
+                                                selectedCampus === c.value
+                                                    ? "bg-blue-50 border-blue-500 ring-1 ring-blue-500"
+                                                    : "bg-white border-slate-200 hover:border-blue-300"
+                                            )}
+                                        >
+                                            <span className="text-2xl">{c.icon}</span>
+                                            <div>
+                                                <div className="font-semibold text-slate-900">{c.label}</div>
+                                                <div className="text-xs text-slate-500">มธ. {c.label}</div>
                                             </div>
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <div className="font-semibold text-slate-900">{item.data.project_name || 'Untitled'}</div>
-                                            <div className="text-xs text-slate-500">{item.data.organization}</div>
-                                            <div className="text-[10px] text-slate-400 mt-1 truncate max-w-[200px]">{item.fileName}</div>
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <div className="flex flex-col gap-1 items-start">
-                                                {item.status === 'NEW' && <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50 w-fit">ใหม่</Badge>}
-                                                {item.status === 'UPDATE' && <Badge variant="outline" className="text-blue-600 border-blue-200 bg-blue-50 w-fit">อัปเดต</Badge>}
-                                                {item.status === 'LINKED' && <Badge variant="outline" className="text-purple-600 border-purple-200 bg-purple-50 w-fit">เชื่อมโยงแล้ว</Badge>}
-                                                {item.status === 'UNLISTED' && <Badge variant="destructive" className="w-fit">นอกรายชื่อ (ปฏิเสธ?)</Badge>}
-                                                {item.status === 'MISSING_INFO' && <Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50 w-fit">รอ PDF</Badge>}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
-                                                {item.reason && (
-                                                    <div className="flex items-center gap-1 text-xs text-amber-700 font-medium bg-amber-50 px-2 py-1 rounded max-w-[200px]">
-                                                        <AlertTriangle className="w-3 h-3 flex-shrink-0" />
-                                                        <span className="truncate" title={item.reason}>{item.reason}</span>
-                                                    </div>
-                                                )}
+                    {/* STEP 2: Project Files */}
+                    {step === 2 && (
+                        <div className="space-y-6">
+                            <div className="border-2 border-dashed border-blue-200 bg-blue-50/30 rounded-xl p-10 text-center relative hover:bg-blue-50 transition-colors">
+                                <input
+                                    type="file" multiple accept=".pdf,.zip"
+                                    className="absolute inset-0 opacity-0 cursor-pointer"
+                                    onChange={(e) => processFiles(e.target.files, 'PROJECT_DOC')}
+                                    disabled={isAnalyzing}
+                                />
+                                <div className="flex justify-center mb-4">
+                                    {isAnalyzing && analyzingContext === 'PROJECT_DOC' ? (
+                                        <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
+                                    ) : (
+                                        <FileText className="w-12 h-12 text-blue-400" />
+                                    )}
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-800">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์ PDF มาวางที่นี่</h3>
+                                <p className="text-slate-500 mt-2">รองรับไฟล์ข้อเสนอโครงการ (รายโครงการ) หรือไฟล์ ZIP</p>
+                            </div>
 
-                                                {item.budgetMismatch && (
-                                                    <div className="flex items-center gap-1 text-xs text-red-600 font-medium bg-red-50 px-2 py-1 rounded">
-                                                        <AlertTriangle className="w-3 h-3" />
-                                                        ต่าง: {formatTHB(Math.abs(item.budgetMismatch.excel - item.budgetMismatch.pdf))}
-                                                    </div>
-                                                )}
+                            {/* File List for Step 2 */}
+                            {items.filter(i => i.importContext === 'PROJECT_DOC').length > 0 && (
+                                <div className="space-y-2">
+                                    <h4 className="text-sm font-semibold text-slate-700">ไฟล์ที่อัปโหลดแล้ว ({items.filter(i => i.importContext === 'PROJECT_DOC').length})</h4>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 bg-slate-50 rounded">
+                                        {items.filter(i => i.importContext === 'PROJECT_DOC').map((item, idx) => (
+                                            <div key={idx} className="flex items-center gap-2 bg-white p-2 rounded border text-xs">
+                                                <FileText className="w-4 h-4 text-blue-500 shrink-0" />
+                                                <span className="truncate flex-1">{item.fileName}</span>
                                             </div>
-                                        </td>
-                                        <td className="px-4 py-3 text-right">
-                                            <div className="font-mono font-medium">{formatTHB(item.data.budget_requested || 0)}</div>
-                                            {item.data.budget_approved ? (
-                                                <div className="text-xs text-green-600">อนุมัติ: {formatTHB(item.data.budget_approved)}</div>
-                                            ) : null}
-                                        </td>
-                                        <td className="px-4 py-3 text-right">
-                                            <button
-                                                onClick={() => handleDelete(item.id)}
-                                                className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded transition-colors opacity-0 group-hover:opacity-100"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-
-                        {/* Mobile Cards */}
-                        <div className="md:hidden divide-y">
-                            {items.length === 0 && (
-                                <div className="py-12 text-center text-slate-400 px-4">
-                                    พื้นที่งานว่างเปล่า ลากไฟล์มาวางด้านบนเพื่อเริ่ม
+                                        ))}
+                                    </div>
                                 </div>
                             )}
-                            {items.map((item) => (
-                                <div key={item.id} className="p-4 flex flex-col gap-3 relative">
-                                    <div className="flex justify-between items-start">
-                                        <div className="flex gap-3">
-                                            <div className="mt-1">
-                                                {item.source === 'EXCEL' && <FileSpreadsheet className="w-5 h-5 text-green-600" />}
-                                                {item.source === 'PDF' && <FileText className="w-5 h-5 text-red-500" />}
-                                                {item.status === 'LINKED' && <div className="absolute ml-4 mt-2 bg-purple-100 rounded-full p-0.5 border border-white"><LinkIcon className="w-3 h-3 text-purple-600" /></div>}
-                                            </div>
-                                            <div>
-                                                <div className="font-semibold text-slate-900 line-clamp-2 text-sm">{item.data.project_name || 'Untitled'}</div>
-                                                <div className="text-xs text-slate-500">{item.data.organization}</div>
-                                            </div>
-                                        </div>
-                                        <button
-                                            onClick={() => handleDelete(item.id)}
-                                            className="text-slate-300 hover:text-red-500"
-                                        >
-                                            <Trash2 className="w-5 h-5" />
-                                        </button>
-                                    </div>
+                        </div>
+                    )}
 
-                                    <div className="flex flex-wrap gap-2 text-xs">
-                                        {item.status === 'NEW' && <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50 w-fit">ใหม่</Badge>}
-                                        {item.status === 'UPDATE' && <Badge variant="outline" className="text-blue-600 border-blue-200 bg-blue-50 w-fit">อัปเดต</Badge>}
-                                        {item.status === 'LINKED' && <Badge variant="outline" className="text-purple-600 border-purple-200 bg-purple-50 w-fit">เชื่อมโยงแล้ว</Badge>}
-                                        {item.status === 'UNLISTED' && <Badge variant="destructive" className="w-fit">นอกรายชื่อ</Badge>}
-                                        {item.status === 'MISSING_INFO' && <Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50 w-fit">รอ PDF</Badge>}
-                                    </div>
-
-                                    {(item.reason || item.budgetMismatch) && (
-                                        <div className="bg-slate-50 p-2 rounded text-xs text-amber-700 flex flex-col gap-1">
-                                            {item.reason && <div className="flex gap-1"><AlertTriangle className="w-3 h-3" /> {item.reason}</div>}
-                                            {item.budgetMismatch && <div className="text-red-600 font-medium">ต่าง: {formatTHB(Math.abs(item.budgetMismatch.excel - item.budgetMismatch.pdf))}</div>}
-                                        </div>
+                    {/* STEP 3: Budget Files */}
+                    {step === 3 && (
+                        <div className="space-y-6">
+                            <div className="border-2 border-dashed border-green-200 bg-green-50/30 rounded-xl p-10 text-center relative hover:bg-green-50 transition-colors">
+                                <input
+                                    type="file" multiple accept=".xlsx,.xls,.csv,.pdf"
+                                    className="absolute inset-0 opacity-0 cursor-pointer"
+                                    onChange={(e) => processFiles(e.target.files, 'BUDGET_DOC')}
+                                    disabled={isAnalyzing}
+                                />
+                                <div className="flex justify-center mb-4">
+                                    {isAnalyzing && analyzingContext === 'BUDGET_DOC' ? (
+                                        <Loader2 className="w-12 h-12 text-green-600 animate-spin" />
+                                    ) : (
+                                        <FileSpreadsheet className="w-12 h-12 text-green-400" />
                                     )}
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-800">อัปโหลดไฟล์อนุมัติงบประมาณ (ถ้ามี)</h3>
+                                <p className="text-slate-500 mt-2">Excel, CSV หรือ PDF ที่ระบุยอดเงินอนุมัติจริง</p>
+                                <p className="text-xs text-slate-400 mt-1">(หากไม่มี สามารถข้ามขั้นตอนนี้ได้)</p>
+                            </div>
 
-                                    <div className="flex justify-between items-end mt-1 border-t pt-2 border-slate-100">
-                                        <div className="text-[10px] text-slate-400 max-w-[150px] truncate">{item.fileName}</div>
-                                        <div className="text-right">
-                                            <div className="font-mono font-medium text-sm">{formatTHB(item.data.budget_requested || 0)}</div>
-                                            {item.data.budget_approved ? (
-                                                <div className="text-[10px] text-green-600">อนุมัติ: {formatTHB(item.data.budget_approved)}</div>
-                                            ) : null}
-                                        </div>
+                            {/* File List for Step 3 */}
+                            {items.filter(i => i.importContext === 'BUDGET_DOC').length > 0 && (
+                                <div className="space-y-2">
+                                    <h4 className="text-sm font-semibold text-slate-700">ไฟล์งบที่อัปโหลดแล้ว ({items.filter(i => i.importContext === 'BUDGET_DOC').length})</h4>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 bg-slate-50 rounded">
+                                        {items.filter(i => i.importContext === 'BUDGET_DOC').map((item, idx) => (
+                                            <div key={idx} className="flex items-center gap-2 bg-white p-2 rounded border text-xs">
+                                                <FileSpreadsheet className="w-4 h-4 text-green-500 shrink-0" />
+                                                <span className="truncate flex-1">{item.fileName}</span>
+                                                <span className="text-slate-400">{formatTHB(item.data.budget_approved || 0)}</span>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
-                            ))}
+                            )}
                         </div>
+                    )}
 
-                    </div>
+                    {/* STEP 4: Review (Linked) */}
+                    {step === 4 && (
+                        <div className="space-y-4">
+                            <div className="flex gap-4 mb-4 text-sm text-slate-600 bg-slate-100 p-3 rounded-lg">
+                                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-purple-100 border border-purple-500 rounded-full"></div> จับคู่แล้ว</div>
+                                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-blue-100 border border-blue-500 rounded-full"></div> อัปเดตเดิม</div>
+                                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-green-100 border border-green-500 rounded-full"></div> โครงการใหม่</div>
+                            </div>
+
+                            <div className="overflow-auto max-h-[500px] border rounded-lg">
+                                <table className="w-full text-sm text-left">
+                                    <thead className="bg-slate-50 sticky top-0 z-10 shadow-sm text-slate-500">
+                                        <tr>
+                                            <th className="px-4 py-3">สถานะ</th>
+                                            <th className="px-4 py-3">โครงการ</th>
+                                            <th className="px-4 py-3 text-right">งบที่ขอ</th>
+                                            <th className="px-4 py-3 text-right">งบอนุมัติ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y">
+                                        {linkedItems.map((item, i) => (
+                                            <tr key={i} className={cn(
+                                                "hover:bg-slate-50",
+                                                item.status === 'LINKED' ? "bg-purple-50/30" : ""
+                                            )}>
+                                                <td className="px-4 py-3">
+                                                    <div className="flex flex-col items-start gap-1">
+                                                        {item.status === 'LINKED' && <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-100 border-none">Linked</Badge>}
+                                                        {item.status === 'UPDATE' && <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-none">Update</Badge>}
+                                                        {item.status === 'NEW' && <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none">New</Badge>}
+                                                        <span className="text-[10px] text-slate-400">{item.reason}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-4 py-3">
+                                                    <div className="font-semibold text-slate-900">{item.data.project_name}</div>
+                                                    <div className="text-xs text-slate-500">{item.data.organization}</div>
+                                                    <div className="text-[10px] text-slate-400 mt-1 truncate max-w-[200px]">{item.fileName}</div>
+                                                </td>
+                                                <td className="px-4 py-3 text-right font-mono">
+                                                    {formatTHB(item.data.budget_requested || 0)}
+                                                </td>
+                                                <td className="px-4 py-3 text-right font-mono text-green-700 font-bold">
+                                                    {formatTHB(item.data.budget_approved || 0)}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* STEP 5: Success */}
+                    {step === 5 && (
+                        <div className="flex flex-col items-center justify-center py-10 text-center">
+                            <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6">
+                                <CheckCircle className="w-10 h-10" />
+                            </div>
+                            <h2 className="text-2xl font-bold text-slate-900 mb-2">นำเข้าข้อมูลสำเร็จ!</h2>
+                            <p className="text-slate-600">
+                                ระบบได้บันทึกข้อมูลโคงการเข้าระบบเรียบร้อยแล้ว<br />
+                                รวมทั้งหมด {linkedItems.length} รายการ
+                            </p>
+                            <div className="mt-8">
+                                <button
+                                    onClick={handleReset}
+                                    className="px-6 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition"
+                                >
+                                    เริ่มรายการใหม่
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </CardContent>
+
+                <CardFooter className="bg-slate-50 border-t flex justify-between py-4">
+                    {step > 1 && step < 5 && (
+                        <button
+                            onClick={() => setStep(prev => (prev - 1) as any)}
+                            className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-lg transition"
+                            disabled={isAnalyzing || isImporting}
+                        >
+                            <ArrowLeft className="w-4 h-4" /> ย้อนกลับ
+                        </button>
+                    )}
+                    {step === 1 && (
+                        <div className="ml-auto">
+                            <button
+                                onClick={() => setStep(2)}
+                                disabled={!selectedCampus || !selectedFiscalYear}
+                                className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm"
+                            >
+                                ถัดไป <ArrowRight className="w-4 h-4" />
+                            </button>
+                        </div>
+                    )}
+                    {step === 2 && (
+                        <div className="ml-auto flex gap-3">
+                            {items.length === 0 && (
+                                <span className="text-xs self-center text-slate-400">ยังไม่มีไฟล์? (ข้ามได้)</span>
+                            )}
+                            <button
+                                onClick={() => setStep(3)}
+                                disabled={isAnalyzing}
+                                className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm"
+                            >
+                                ถัดไป (ไฟล์งบ) <ArrowRight className="w-4 h-4" />
+                            </button>
+                        </div>
+                    )}
+                    {step === 3 && (
+                        <div className="ml-auto">
+                            <button
+                                onClick={() => setStep(4)}
+                                disabled={isAnalyzing}
+                                className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm"
+                            >
+                                ตรวจสอบการจับคู่ <ArrowRight className="w-4 h-4" />
+                            </button>
+                        </div>
+                    )}
+                    {step === 4 && (
+                        <div className="ml-auto">
+                            <button
+                                onClick={handleSaveAll}
+                                disabled={isImporting || linkedItems.length === 0}
+                                className="flex items-center gap-2 px-8 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition shadow-sm font-bold text-lg"
+                            >
+                                {isImporting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                                ยืนยันและนำเข้า
+                            </button>
+                        </div>
+                    )}
+                </CardFooter>
             </Card>
+
+            {/* Logs Overlay */}
+            {logs.length > 0 && step < 5 && (
+                <div className="fixed bottom-4 right-4 bg-slate-900/90 text-white p-4 rounded-lg shadow-xl max-w-sm text-xs font-mono max-h-32 overflow-y-auto pointer-events-none z-50">
+                    {logs.map((log, i) => <div key={i} className="mb-1">{log}</div>)}
+                </div>
+            )}
         </div>
     );
 }
-

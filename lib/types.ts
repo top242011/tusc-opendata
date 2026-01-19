@@ -1,5 +1,14 @@
 export type ProjectStatus = 'อนุมัติ' | 'ตัดงบ' | 'ไม่อนุมัติ' | 'รอพิจารณา';
 
+export type Campus = 'central' | 'rangsit' | 'thaprachan' | 'lampang';
+
+export const CAMPUS_LABELS: Record<Campus, string> = {
+    central: 'ส่วนกลาง',
+    rangsit: 'รังสิต',
+    thaprachan: 'ท่าพระจันทร์',
+    lampang: 'ลำปาง',
+};
+
 export interface Project {
     id: number;
     organization: string;
@@ -10,6 +19,7 @@ export interface Project {
     budget_average?: number;
     status: ProjectStatus;
     notes?: string;
+    campus: Campus;
     // New Fields
     responsible_person?: string;
     advisor?: string;
