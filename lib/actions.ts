@@ -30,7 +30,9 @@ export async function updateProject(id: number, data: Partial<Project>) {
         return { error: "Unauthorized" };
     }
 
-    const { data: updatedProject, error } = await supabase.from('projects').update(data).eq('id', id).select().single();
+    // Exclude 'status' and 'id' from update
+    const { status, id: _id, ...updateData } = data;
+    const { data: updatedProject, error } = await supabase.from('projects').update(updateData).eq('id', id).select().single();
 
     if (error) {
         return { error: error.message };

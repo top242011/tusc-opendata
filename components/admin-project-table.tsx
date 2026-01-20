@@ -191,7 +191,8 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
                                     onChange={(e) => setFilterCampus(e.target.value)}
                                 >
                                     <option value="all">ทุกวิทยาเขต</option>
-                                    <option value="central">ส่วนกลาง/ท่าพระจันทร์</option>
+                                    <option value="central">ส่วนกลาง</option>
+                                    <option value="thaprachan">ท่าพระจันทร์</option>
                                     <option value="rangsit">รังสิต</option>
                                     <option value="lampang">ลำปาง</option>
                                 </select>

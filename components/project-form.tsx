@@ -18,6 +18,7 @@ export function ProjectForm({ initialData, onSuccess, onCancel }: ProjectFormPro
         budget_requested: 0,
         budget_approved: 0,
         is_published: true,
+        campus: 'central', // Default campus
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -70,6 +71,22 @@ export function ProjectForm({ initialData, onSuccess, onCancel }: ProjectFormPro
                     />
                 </div>
                 <div>
+                    <label className="text-sm font-medium">วิทยาเขต</label>
+                    <select
+                        className="w-full mt-1 p-2 border rounded bg-white"
+                        value={formData.campus || 'central'}
+                        onChange={(e) => setFormData({ ...formData, campus: e.target.value as any })}
+                    >
+                        <option value="central">ส่วนกลาง</option>
+                        <option value="thaprachan">ท่าพระจันทร์</option>
+                        <option value="rangsit">รังสิต</option>
+                        <option value="lampang">ลำปาง</option>
+                    </select>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
                     <label className="text-sm font-medium">ปีงบประมาณ</label>
                     <input
                         type="number"
@@ -79,17 +96,16 @@ export function ProjectForm({ initialData, onSuccess, onCancel }: ProjectFormPro
                         onChange={(e) => setFormData({ ...formData, fiscal_year: parseInt(e.target.value) || 0 })}
                     />
                 </div>
-            </div>
-
-            <div>
-                <label className="text-sm font-medium">ชื่อโครงการ</label>
-                <input
-                    type="text"
-                    required
-                    className="w-full mt-1 p-2 border rounded"
-                    value={formData.project_name}
-                    onChange={(e) => setFormData({ ...formData, project_name: e.target.value })}
-                />
+                <div>
+                    <label className="text-sm font-medium">ชื่อโครงการ</label>
+                    <input
+                        type="text"
+                        required
+                        className="w-full mt-1 p-2 border rounded"
+                        value={formData.project_name}
+                        onChange={(e) => setFormData({ ...formData, project_name: e.target.value })}
+                    />
+                </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

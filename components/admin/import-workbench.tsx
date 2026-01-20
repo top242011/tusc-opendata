@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import JSZip from 'jszip';
 import { Upload, FileText, CheckCircle, AlertCircle, Loader2, Save, RotateCcw, Link as LinkIcon, Trash2, FileSpreadsheet, AlertTriangle, ArrowRight, ArrowLeft, MapPin, Calendar, HelpCircle, X } from 'lucide-react';
 import { analyzeFileForImport, saveImportedProject, ImportPreviewItem } from '@/lib/bulk-import-actions';
@@ -225,6 +225,16 @@ export default function ImportWorkbench() {
 
         return finalProjects;
     }, [items]);
+
+    // --- Auto-Hide Logs ---
+    useEffect(() => {
+        if (logs.length > 0) {
+            const timer = setTimeout(() => {
+                setLogs([]);
+            }, 10000); // 10 seconds autoclose
+            return () => clearTimeout(timer);
+        }
+    }, [logs]);
 
     // --- Actions ---
     const handleReset = () => {
@@ -755,8 +765,16 @@ export default function ImportWorkbench() {
 
             {/* Logs Overlay */}
             {logs.length > 0 && step < 5 && (
-                <div className="fixed bottom-4 right-4 bg-slate-900/90 text-white p-4 rounded-lg shadow-xl max-w-sm text-xs font-mono max-h-32 overflow-y-auto pointer-events-none z-50">
-                    {logs.map((log, i) => <div key={i} className="mb-1">{log}</div>)}
+                <div className="fixed bottom-4 right-4 bg-slate-900/95 text-white p-4 rounded-lg shadow-xl max-w-sm z-50 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <button
+                        onClick={() => setLogs([])}
+                        className="absolute top-2 right-2 text-slate-400 hover:text-white transition-colors"
+                    >
+                        <XIcon className="w-4 h-4" />
+                    </button>
+                    <div className="text-xs font-mono max-h-32 overflow-y-auto pr-2 mt-2">
+                        {logs.map((log, i) => <div key={i} className="mb-1">{log}</div>)}
+                    </div>
                 </div>
             )}
         </div>

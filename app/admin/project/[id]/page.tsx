@@ -12,6 +12,7 @@ import { cn } from '@/utils/cn';
 import { ProjectForm } from '@/components/project-form'; // Reusing for Tab 1 (will need slight adaptation or wrapper)
 import ProjectDetailForm from '@/components/admin/project-detail-form';
 import FileManager from '@/components/admin/file-manager';
+import { Toast } from '@/components/ui/toast';
 
 export default function AdminProjectEditPage() {
     const params = useParams();
@@ -20,6 +21,8 @@ export default function AdminProjectEditPage() {
     const [project, setProject] = useState<Project | null>(null);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'basic' | 'details' | 'files'>('basic');
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
     const supabase = createClient();
 
     useEffect(() => {
@@ -116,10 +119,15 @@ export default function AdminProjectEditPage() {
                     <ProjectForm
                         initialData={project}
                         onSuccess={() => {
-                            // Refresh logic
-                            router.refresh();
+                            setToastMessage("บันทึกแก้ไขโครงการสำเร็จ");
+                            setShowToast(true);
+                            // Delay redirect to let user see the toast
+                            setTimeout(() => {
+                                router.refresh();
+                                router.push('/admin');
+                            }, 1500);
                         }}
-                        onCancel={() => { }} // No-op
+                        onCancel={() => router.push('/admin')} // Redirect to admin list
                     />
                 )}
 
@@ -131,6 +139,12 @@ export default function AdminProjectEditPage() {
                     <FileManager projectId={project.id} />
                 )}
             </div>
+
+            <Toast
+                message={toastMessage}
+                isVisible={showToast}
+                onClose={() => setShowToast(false)}
+            />
         </div>
     );
 }
