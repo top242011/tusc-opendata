@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import { checkProjectDocument } from '@/lib/gemini';
-import budgetRules from '@/lib/data/budget-rules.json';
+import budgetRulesCentral from '@/lib/data/budget-rules.json';
+import budgetRulesLampang from '@/lib/data/budget-rules-lampang.json';
 import DocumentUploader from '@/components/tools/DocumentUploader';
 import CheckResult from '@/components/tools/CheckResult';
+import CampusSelector, { CampusType } from '@/components/tools/CampusSelector';
 import { ArrowLeft, FileCheck, Info } from 'lucide-react';
 import Link from 'next/link';
 
@@ -12,6 +14,7 @@ export default function DocumentCheckerPage() {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [result, setResult] = useState<any | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [selectedCampus, setSelectedCampus] = useState<CampusType>('central');
 
     const handleFileSelected = async (file: File) => {
         setIsAnalyzing(true);
@@ -20,6 +23,9 @@ export default function DocumentCheckerPage() {
 
         const formData = new FormData();
         formData.append('file', file);
+
+        // Select the appropriate budget rules based on campus
+        const budgetRules = selectedCampus === 'lampang' ? budgetRulesLampang : budgetRulesCentral;
 
         try {
             const response = await checkProjectDocument(formData, budgetRules);
@@ -79,6 +85,19 @@ export default function DocumentCheckerPage() {
                         </div>
                     </div>
                 )}
+
+                {/* Campus Selector */}
+                <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                    <h2 className="text-lg font-semibold text-slate-800 mb-2">เลือกหลักเกณฑ์งบประมาณ</h2>
+                    <p className="text-sm text-slate-500 mb-4">
+                        เลือก Campus ที่ใช้หลักเกณฑ์งบประมาณสำหรับตรวจสอบเอกสาร
+                    </p>
+                    <CampusSelector
+                        selectedCampus={selectedCampus}
+                        onCampusChange={setSelectedCampus}
+                        disabled={isAnalyzing}
+                    />
+                </div>
 
                 {/* Uploader */}
                 <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
