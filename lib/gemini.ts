@@ -11,51 +11,60 @@ export async function parseBudgetExcel(formData: FormData) {
         const arrayBuffer = await file.arrayBuffer();
         const workbook = XLSX.read(arrayBuffer, { type: 'buffer' });
 
-        // Assume the first sheet is the relevant one or try to guess?
-        // For simplicity V1, take first sheet.
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
 
-        // Convert to CSV to verify structure with Gemini
-        // We limit rows to avoid massive token usage? 
-        // Or just pass the whole thing if it's "Summary"? 
-        // Let's pass the CSV string.
+        // Convert to CSV for AI analysis
         const csvContent = XLSX.utils.sheet_to_csv(sheet);
 
         const ai = new GoogleGenAI({
             apiKey: process.env.GEMINI_API_KEY,
         });
 
-        // Use requested model
+        // Use a smarter model for complex structure analysis
         const model = 'gemini-2.5-flash-lite';
 
-        const prompt = `
-            You are a Data Analyst. Your task is to extract project budget information from the provided CSV data (converted from an Excel file).
-            
-            Analyze the columns to identify:
-            - Organization / Department Name
-            - Project Name
-            - Fiscal Year (ปีงบประมาณ) - Look for Buddhist Era year (e.g., 2567, 2568)
-            - Requested Budget
-            - Approved Budget
-            - Average Budget (if available)
-            - Notes (if available)
+        console.log(`[Gemini] Processing Excel with model: ${model}`);
 
-            Ignore summary rows (Total/Grand Total) or empty rows.
+        const prompt = `
+            You are an expert Data Analyst processing a Thai Government Budget Excel file.
             
-            Return ONLY a valid JSON array of objects.
-            Format:
-            [
-                {
-                    "organization": string,
-                    "project_name": string,
-                    "fiscal_year": number | null,
-                    "budget_requested": number,
-                    "budget_approved": number,
-                    "budget_average": number | null,
-                    "notes": string | null
-                }
-            ]
+            Your task is to extracting all project items from the CSV data provided below.
+            
+            Key Instructions:
+            1. **Identify the exact column headers** from the original file (e.g. "ลำดับ", "ชื่อโครงการ", "งบที่ขอ", "หน่วยงาน").
+            2. **Extract every single project row**:
+               - Ignore summary rows (rows with "รวม", "Total", "Grand Total").
+               - Ignore header rows or informational rows at the top.
+               - Handle merged cells contextually if possible (though CSV flattens them, look for pattern).
+            3. **Map data to standard fields** where possible, but keep specific raw values.
+            
+            Standard Fields to Map:
+            - project_name: The name of the project/activity (NOT the organization).
+            - organization: The student organization/club responsible.
+            - budget_requested: The requested amount (number).
+            - budget_approved: The approved amount (number).
+            - notes: Any remarks.
+            
+            Return a JSON object with this structure:
+            {
+                "detected_columns": ["Column A Name", "Column B Name", ...],
+                "items": [
+                    {
+                        "project_name": "Project Name",
+                        "organization": "Org Name",
+                        "budget_requested": 10000,
+                        "budget_approved": 10000,
+                        "notes": "...",
+                        "raw_data": { 
+                            "Column A Name": "Value",
+                            "Column B Name": "Value" 
+                        }
+                    }
+                ]
+            }
+            
+            Return ONLY valid JSON.
         `;
 
         const result = await ai.models.generateContent({
@@ -65,7 +74,7 @@ export async function parseBudgetExcel(formData: FormData) {
                     role: 'user',
                     parts: [
                         { text: prompt },
-                        { text: `CSV Data:\n${csvContent}` }
+                        { text: `CSV Content (truncated first 100 lines):\n${csvContent.split('\n').slice(0, 100).join('\n')}` }
                     ]
                 }
             ]
@@ -76,15 +85,26 @@ export async function parseBudgetExcel(formData: FormData) {
 
         try {
             const data = JSON.parse(jsonStr);
-            return { success: true, data };
+
+            if (!data.items || !Array.isArray(data.items)) {
+                throw new Error("Invalid AI response structure");
+            }
+
+            console.log(`[Gemini] Extracted ${data.items.length} items with columns:`, data.detected_columns);
+
+            return {
+                success: true,
+                data: data.items,
+                columns: data.detected_columns // Return the dynamic columns found
+            };
         } catch (e) {
-            console.error("JSON Parse Error (Excel/CSV):", text);
-            return { success: false, error: "Failed to parse AI response for Excel/CSV" };
+            console.error("JSON Parse Error (AI Excel):", text);
+            return { success: false, error: "AI failed to extract structured data from Excel" };
         }
 
     } catch (error) {
-        console.error("Excel/CSV Parse Error:", error);
-        return { success: false, error: "Failed to process Excel/CSV file" };
+        console.error("Excel Parse Error:", error);
+        return { success: false, error: "Failed to process Excel file: " + (error as Error).message };
     }
 }
 

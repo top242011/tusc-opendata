@@ -19,12 +19,15 @@ export interface ImportPreviewItem {
         excel: number;
     };
     reason?: string;
+    // New field for dynamic columns
+    rawColumns?: string[];
+    rawData?: any;
 }
 
 // Helper to normalize strings for comparison
 const normalize = (str: string) => str?.toLowerCase().replace(/\s+/g, '').replace(/[\-_\.]/g, '') || '';
 
-export async function analyzeFileForImport(formData: FormData): Promise<{ success: boolean; data?: ImportPreviewItem[]; error?: string }> {
+export async function analyzeFileForImport(formData: FormData): Promise<{ success: boolean; data?: ImportPreviewItem[]; columns?: string[]; error?: string }> {
     try {
         const file = formData.get('file') as File;
         if (!file) return { success: false, error: 'No file' };
@@ -33,6 +36,7 @@ export async function analyzeFileForImport(formData: FormData): Promise<{ succes
 
         const isExcel = file.name.endsWith('.xlsx') || file.name.endsWith('.xls') || file.name.endsWith('.csv');
         const results: ImportPreviewItem[] = [];
+        let detectedColumns: string[] | undefined;
 
         // 1. Parse based on file type
         if (isExcel) {
@@ -43,6 +47,7 @@ export async function analyzeFileForImport(formData: FormData): Promise<{ succes
 
             // Map Excel rows to Preview Items
             const rows = excelResult.data as any[]; // Array of project objects
+            detectedColumns = excelResult.columns;
 
             for (const row of rows) {
                 results.push({
@@ -68,7 +73,9 @@ export async function analyzeFileForImport(formData: FormData): Promise<{ succes
                         budget_average: row.budget_average,
                         notes: row.notes,
                         fiscal_year: fiscalYear,
-                    }
+                    },
+                    rawColumns: detectedColumns,
+                    rawData: row.raw_data // Keep raw data for dynamic display
                 });
             }
 
@@ -104,16 +111,11 @@ export async function analyzeFileForImport(formData: FormData): Promise<{ succes
         }
 
         // 2. Initial DB Check (Can be done client side aggregation for best results, but here we do individual check)
-        // Actually, for "Auto-Linking", we need the full list in the client state. 
-        // So here we validly just return the extracted data. 
-        // BUT we can still check DB to flagging "UPDATE" status if it exists in DB.
-
+        // actually, mostly for "UPDATE" status flagging
         const supabase = await createClient();
         const { data: existingProjects } = await supabase
             .from('projects')
             .select('id, project_name, organization, budget_requested')
-            // Just optimize, maybe fetch all if small, or search individual?
-            // For bulk, fetching all IDs is better than 100 queries.
             .order('id', { ascending: false });
 
         if (existingProjects) {
@@ -133,7 +135,7 @@ export async function analyzeFileForImport(formData: FormData): Promise<{ succes
             }
         }
 
-        return { success: true, data: results };
+        return { success: true, data: results, columns: detectedColumns };
 
     } catch (err) {
         console.error('Analyze Error:', err);
