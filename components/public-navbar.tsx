@@ -45,12 +45,12 @@ export function PublicNavbar() {
                             </div>
                         </div>
 
-                        <a href="#" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
+                        <Link href="/about" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
                             เกี่ยวกับโครงการ
-                        </a>
-                        <a href="#" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
+                        </Link>
+                        <Link href="/api-docs" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
                             Open API
-                        </a>
+                        </Link>
                     </div>
 
                     <div className="flex items-center gap-3">
