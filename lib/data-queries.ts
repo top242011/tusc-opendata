@@ -1,7 +1,7 @@
-import { createClient } from '@/utils/supabase/server';
+import { createPublicClient } from '@/utils/supabase/server';
 
 export async function getLatestFiscalYear(): Promise<number> {
-    const supabase = await createClient();
+    const supabase = await createPublicClient();
 
     // Get the max fiscal year from projects that are published
     const { data } = await supabase
@@ -16,7 +16,7 @@ export async function getLatestFiscalYear(): Promise<number> {
 }
 
 export async function getFiscalYearStats() {
-    const supabase = await createClient();
+    const supabase = await createPublicClient();
 
     const { data } = await supabase
         .from('projects')

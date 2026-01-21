@@ -241,7 +241,7 @@ export function DataTable({ projects }: DataTableProps) {
                                             <td className="px-4 py-3 font-medium align-top md:align-middle">
                                                 <div className="flex flex-col gap-1">
                                                     {project.has_files ? (
-                                                        <Link href={`/project/${project.id}`} className="hover:text-blue-600 hover:underline transition-colors line-clamp-2">
+                                                        <Link href={`/project/${project.id}`} prefetch={false} className="hover:text-blue-600 hover:underline transition-colors line-clamp-2">
                                                             {project.project_name}
                                                         </Link>
                                                     ) : (

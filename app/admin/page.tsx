@@ -7,6 +7,8 @@ import { Project } from "@/lib/types";
 import { AdminNavbar } from "@/components/admin-navbar";
 import { Upload } from "lucide-react";
 import { AdminQuickStart } from "@/components/admin/admin-quick-start";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Info } from "lucide-react";
 
 export default async function AdminPage() {
     const supabase = await createClient();
@@ -38,6 +40,14 @@ export default async function AdminPage() {
             <div className="container mx-auto max-w-6xl px-4">
                 {/* Usage Guide */}
                 <AdminQuickStart />
+
+                <Alert className="mb-6 bg-blue-50/50 border-blue-200 text-blue-900">
+                    <Info className="h-4 w-4 text-blue-600" />
+                    <AlertTitle className="text-blue-800 font-semibold">บันทึกช่วยจำเรื่องการอัปเดตข้อมูล</AlertTitle>
+                    <AlertDescription className="text-blue-700">
+                        เพื่อประสิทธิภาพสูงสุด ระบบจะใช้เวลาประมาณ 5-10 นาทีในการอัปเดตข้อมูลบนหน้าสาธารณะหลังจากที่คุณทำการเปลี่ยนแปลงเสร็จสิ้น
+                    </AlertDescription>
+                </Alert>
 
                 <div className="mb-8">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">

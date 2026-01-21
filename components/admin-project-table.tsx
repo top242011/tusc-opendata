@@ -11,6 +11,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Edit2, Trash2, Plus, Search, Filter, X, ChevronDown, ChevronUp, FileText, CheckCircle, AlertCircle } from "lucide-react";
 import { cn } from "@/utils/cn";
+import { Toast } from "@/components/ui/toast";
 
 interface AdminProjectTableProps {
     projects: Project[];
@@ -20,6 +21,8 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProject, setEditingProject] = useState<Project | undefined>(undefined);
     const [deletingId, setDeletingId] = useState<number | null>(null);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
 
     // --- Search & Filter State ---
     const [searchTerm, setSearchTerm] = useState('');
@@ -330,6 +333,16 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
                                                     >
                                                         <Edit2 className="w-4 h-4" />
                                                     </Link>
+                                                    <Link
+                                                        href={`/project/${project.id}`}
+                                                        prefetch={false}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"
+                                                        title="ดูรายละเอียดโครงการ"
+                                                    >
+                                                        <FileText className="w-4 h-4" />
+                                                    </Link>
                                                     <button
                                                         onClick={() => handleDelete(project.id)}
                                                         className="p-1.5 text-red-600 hover:bg-red-50 rounded"
@@ -355,10 +368,23 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
                 >
                     <ProjectForm
                         initialData={editingProject}
-                        onSuccess={() => setIsModalOpen(false)}
+                        onSuccess={() => {
+                            setIsModalOpen(false);
+                            setToastMessage(editingProject
+                                ? "แก้ไขข้อมูลสําเร็จ (ข้อมูลจะแสดงผลบนหน้าเว็บในอีก 5-10 นาที)"
+                                : "เพิ่มโครงการเรียบร้อย (ข้อมูลจะแสดงผลบนหน้าเว็บในอีก 5-10 นาที)"
+                            );
+                            setShowToast(true);
+                        }}
                         onCancel={() => setIsModalOpen(false)}
                     />
                 </Modal>
+
+                <Toast
+                    message={toastMessage}
+                    isVisible={showToast}
+                    onClose={() => setShowToast(false)}
+                />
             </Card>
         </div>
     );

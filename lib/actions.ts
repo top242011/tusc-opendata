@@ -20,6 +20,12 @@ export async function createProject(data: Partial<Project>) {
 
     revalidatePath('/admin');
     revalidatePath('/');
+
+    // Log Activity
+    if (newProject) {
+        await logActivity('create', 'project', newProject.id.toString(), newProject.project_name, { new_data: data });
+    }
+
     return { success: true, data: newProject };
 }
 
@@ -40,6 +46,12 @@ export async function updateProject(id: number, data: Partial<Project>) {
 
     revalidatePath('/admin');
     revalidatePath('/');
+
+    // Log Activity
+    if (updatedProject) {
+        await logActivity('update', 'project', id.toString(), updatedProject.project_name, { update_data: updateData });
+    }
+
     return { success: true, data: updatedProject };
 }
 
@@ -75,5 +87,38 @@ export async function deleteProject(id: number) {
 
     revalidatePath('/admin');
     revalidatePath('/');
+
+    // Log Activity
+    await logActivity('delete', 'project', id.toString(), `Project ID ${id}`);
+
     return { success: true };
+}
+
+// --- Activity Logging Helper ---
+
+async function logActivity(
+    action: string,
+    entityType: string,
+    entityId: string,
+    entityName: string,
+    details?: object
+) {
+    try {
+        const supabase = await createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (user) {
+            await supabase.from('activity_logs').insert({
+                user_email: user.email || 'unknown',
+                action,
+                entity_type: entityType,
+                entity_id: entityId,
+                entity_name: entityName || 'Unknown',
+                details,
+            });
+        }
+    } catch (e) {
+        // Fail silently to not block main action
+        console.error("Failed to log activity:", e);
+    }
 }

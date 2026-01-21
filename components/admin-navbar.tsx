@@ -30,6 +30,9 @@ export function AdminNavbar({ userEmail }: AdminNavbarProps) {
                     <Link href="/admin/complaints" className="text-slate-500 hover:text-blue-600 transition-colors">
                         จัดการข้อร้องเรียน
                     </Link>
+                    <Link href="/admin/activity-logs" className="text-slate-500 hover:text-blue-600 transition-colors">
+                        ประวัติการใช้งาน
+                    </Link>
                 </div>
             </div>
 
@@ -38,6 +41,7 @@ export function AdminNavbar({ userEmail }: AdminNavbarProps) {
                 <div className="md:hidden flex gap-3 text-xs font-medium">
                     <Link href="/" className="text-slate-500">หน้าหลัก</Link>
                     <Link href="/admin/complaints" className="text-slate-500">ข้อร้องเรียน</Link>
+                    <Link href="/admin/activity-logs" className="text-slate-500">ประวัติ</Link>
                 </div>
 
                 <div className="flex items-center gap-4">

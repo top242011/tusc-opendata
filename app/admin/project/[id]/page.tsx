@@ -119,7 +119,7 @@ export default function AdminProjectEditPage() {
                     <ProjectForm
                         initialData={project}
                         onSuccess={() => {
-                            setToastMessage("บันทึกแก้ไขโครงการสำเร็จ");
+                            setToastMessage("บันทึกแก้ไขโครงการสำเร็จ (ข้อมูลจะแสดงผลบนหน้าเว็บในอีก 5-10 นาที)");
                             setShowToast(true);
                             // Delay redirect to let user see the toast
                             setTimeout(() => {

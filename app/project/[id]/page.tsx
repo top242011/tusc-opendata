@@ -1,4 +1,4 @@
-import { createClient } from '@/utils/supabase/server';
+import { createClient, createPublicClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Calendar, User, FileText, Download, CheckCircle, XCircle, AlertCircle, Paperclip, FileArchive } from 'lucide-react';
@@ -19,9 +19,11 @@ interface PageProps {
     params: Promise<{ id: string }>;
 }
 
+export const revalidate = 600; // 10 minutes
+
 export default async function ProjectDetailPage(props: PageProps) {
     const params = await props.params;
-    const supabase = await createClient();
+    const supabase = await createPublicClient();
     const { id } = params;
 
     const { data: projectData, error: projectError } = await supabase

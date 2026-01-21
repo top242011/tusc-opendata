@@ -45,8 +45,11 @@ export const config = {
          * - _next/static (static files)
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
-         * Feel free to modify this pattern to include more paths.
+         * - public pages (homepage, project details)
          */
-        '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+        '/admin/:path*',
+        '/login',
+        '/api/:path*',
+        // Add other private routes here if any
     ],
 }

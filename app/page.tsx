@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createClient, createPublicClient } from "@/utils/supabase/server";
 import { HeroSection } from "@/components/hero-section";
 import { PublicNavbar } from "@/components/public-navbar";
 import { StatsSection } from "@/components/stats-section";
@@ -8,15 +8,27 @@ import { DashboardStats, Project } from "@/lib/types";
 
 import { getLatestFiscalYear } from '@/lib/data-queries';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300; // 5 minutes
 
 export default async function Home() {
-  const supabase = await createClient();
+  const supabase = await createPublicClient();
   const latestFiscalYear = await getLatestFiscalYear();
 
   const { data: projectsData, error } = await supabase
     .from('projects')
-    .select('*, project_files(count)')
+    .select(`
+      id,
+      organization,
+      project_name,
+      fiscal_year,
+      budget_requested,
+      budget_approved,
+      status,
+      campus,
+      is_published,
+      created_at,
+      project_files(count)
+    `)
     .order('created_at', { ascending: false });
 
   if (error) {
