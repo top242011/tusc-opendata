@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { checkProjectDocument } from '@/lib/gemini';
 import budgetRulesCentral from '@/lib/data/budget-rules.json';
 import budgetRulesLampang from '@/lib/data/budget-rules-lampang.json';
 import DocumentUploader from '@/components/tools/DocumentUploader';
@@ -16,24 +15,30 @@ export default function DocumentCheckerPage() {
     const [error, setError] = useState<string | null>(null);
     const [selectedCampus, setSelectedCampus] = useState<CampusType>('central');
 
-    const handleFileSelected = async (file: File) => {
+    const handleFileUploaded = async (storagePath: string, fileName: string) => {
         setIsAnalyzing(true);
         setError(null);
         setResult(null);
 
-        const formData = new FormData();
-        formData.append('file', file);
-
-        // Select the appropriate budget rules based on campus
-        const budgetRules = selectedCampus === 'lampang' ? budgetRulesLampang : budgetRulesCentral;
-
         try {
-            const response = await checkProjectDocument(formData, budgetRules);
+            const response = await fetch('/api/check-document', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    storagePath,
+                    fileName,
+                    campus: selectedCampus,
+                }),
+            });
 
-            if (response.success) {
-                setResult(response.data);
+            const data = await response.json();
+
+            if (data.success) {
+                setResult(data.data);
             } else {
-                setError(response.error || 'เกิดข้อผิดพลาดในการตรวจสอบเอกสาร');
+                setError(data.error || 'เกิดข้อผิดพลาดในการตรวจสอบเอกสาร');
             }
         } catch (err) {
             setError('ไม่สามารถเชื่อมต่อกับระบบตรวจสอบได้');
@@ -103,7 +108,7 @@ export default function DocumentCheckerPage() {
                 <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
                     <h2 className="text-lg font-semibold text-slate-800 mb-4">อัปโหลดเอกสาร</h2>
                     <DocumentUploader
-                        onFileSelected={handleFileSelected}
+                        onFileUploaded={handleFileUploaded}
                         isAnalyzing={isAnalyzing}
                     />
 
