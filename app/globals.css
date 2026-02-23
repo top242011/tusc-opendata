@@ -1,17 +1,134 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-prompt), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-ibm-plex), ui-sans-serif, system-ui, sans-serif;
 }
 
+/* ========================================
+   SwiftUI/iOS Design System
+   ======================================== */
+
+:root {
+  /* iOS System Colors - Light Mode */
+  --ios-bg-primary: 248 248 250;
+  --ios-bg-secondary: 255 255 255;
+  --ios-bg-tertiary: 242 242 247;
+  --ios-bg-grouped: 242 242 247;
+
+  /* iOS Text Colors */
+  --ios-text-primary: 0 0 0;
+  --ios-text-secondary: 60 60 67;
+  --ios-text-tertiary: 99 99 102;
+  --ios-text-quaternary: 142 142 147;
+
+  /* iOS Accent Colors (keeping blue theme) */
+  --ios-accent: 0 122 255;
+  --ios-accent-hover: 0 98 204;
+  --ios-blue: 0 122 255;
+  --ios-green: 52 199 89;
+  --ios-red: 255 59 48;
+  --ios-orange: 255 149 0;
+  --ios-yellow: 255 204 0;
+  --ios-teal: 48 176 199;
+  --ios-indigo: 88 86 214;
+
+  /* iOS Separators */
+  --ios-separator: 198 198 200;
+  --ios-separator-opaque: 216 216 220;
+
+  /* iOS Fill Colors */
+  --ios-fill-primary: 120 120 128 / 0.2;
+  --ios-fill-secondary: 120 120 128 / 0.16;
+  --ios-fill-tertiary: 118 118 128 / 0.12;
+
+  /* iOS Material Effects */
+  --ios-material-thick: rgba(255, 255, 255, 0.85);
+  --ios-material-regular: rgba(255, 255, 255, 0.72);
+  --ios-material-thin: rgba(255, 255, 255, 0.55);
+  --ios-material-ultrathin: rgba(255, 255, 255, 0.35);
+
+  /* iOS Shadows */
+  --ios-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --ios-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --ios-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --ios-shadow-xl: 0 8px 32px rgba(0, 0, 0, 0.16);
+
+  /* iOS Border Radius */
+  --ios-radius-sm: 8px;
+  --ios-radius-md: 12px;
+  --ios-radius-lg: 16px;
+  --ios-radius-xl: 20px;
+  --ios-radius-full: 9999px;
+
+  /* iOS Timing Functions */
+  --ios-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ios-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.dark {
+  /* iOS System Colors - Dark Mode */
+  --ios-bg-primary: 0 0 0;
+  --ios-bg-secondary: 28 28 30;
+  --ios-bg-tertiary: 44 44 46;
+  --ios-bg-grouped: 0 0 0;
+
+  /* iOS Text Colors Dark */
+  --ios-text-primary: 255 255 255;
+  --ios-text-secondary: 152 152 157;
+  --ios-text-tertiary: 99 99 102;
+  --ios-text-quaternary: 72 72 74;
+
+  /* iOS Accent Colors Dark (slightly brighter for dark mode) */
+  --ios-accent: 10 132 255;
+  --ios-accent-hover: 64 156 255;
+  --ios-blue: 10 132 255;
+  --ios-green: 48 209 88;
+  --ios-red: 255 69 58;
+  --ios-orange: 255 159 10;
+  --ios-yellow: 255 214 10;
+  --ios-teal: 64 200 224;
+  --ios-indigo: 94 92 230;
+
+  /* iOS Separator Dark */
+  --ios-separator: 56 56 58;
+  --ios-separator-opaque: 68 68 70;
+
+  /* iOS Fill Colors Dark */
+  --ios-fill-primary: 120 120 128 / 0.36;
+  --ios-fill-secondary: 120 120 128 / 0.32;
+  --ios-fill-tertiary: 118 118 128 / 0.24;
+
+  /* iOS Material Effects Dark */
+  --ios-material-thick: rgba(30, 30, 30, 0.85);
+  --ios-material-regular: rgba(30, 30, 30, 0.72);
+  --ios-material-thin: rgba(30, 30, 30, 0.55);
+  --ios-material-ultrathin: rgba(30, 30, 30, 0.35);
+
+  /* iOS Shadows Dark */
+  --ios-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --ios-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --ios-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --ios-shadow-xl: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* ========================================
+   Base Styles
+   ======================================== */
 
 body {
-  font-family: var(--font-prompt);
+  font-family: var(--font-ibm-plex);
+  background-color: rgb(var(--ios-bg-grouped));
+  color: rgb(var(--ios-text-primary));
+  transition: background-color 0.3s var(--ios-ease), color 0.3s var(--ios-ease);
 }
 
 * {
-  font-family: var(--font-prompt);
+  font-family: var(--font-ibm-plex);
 }
+
+/* ========================================
+   iOS Animations
+   ======================================== */
 
 @keyframes fadeUp {
   from {
@@ -25,13 +142,68 @@ body {
   }
 }
 
-.animate-fade-up {
-  animation: fadeUp 0.6s ease-out forwards;
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Custom Focus Ring for Accessibility */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.5s var(--ios-ease) forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s var(--ios-spring) forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s var(--ios-spring) forwards;
+}
+
+/* iOS-style Press Effect */
+.ios-press {
+  transition: transform 0.15s var(--ios-ease), opacity 0.15s var(--ios-ease);
+}
+
+.ios-press:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+}
+
+/* ========================================
+   Accessibility
+   ======================================== */
+
 :focus-visible {
-  outline: 2px solid #2563eb;
+  outline: 2px solid rgb(var(--ios-accent));
   outline-offset: 2px;
 }
 
@@ -39,7 +211,7 @@ body {
   outline: none;
 }
 
-/* Faster skeleton pulse animation (1s instead of 2s) */
+/* Faster skeleton pulse animation */
 @keyframes pulse-fast {
   50% {
     opacity: 0.5;
@@ -48,4 +220,91 @@ body {
 
 .animate-pulse {
   animation: pulse-fast 0.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ========================================
+   iOS Utilities
+   ======================================== */
+
+/* iOS Material Blur Background */
+.ios-material {
+  background: var(--ios-material-regular);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+.ios-material-thick {
+  background: var(--ios-material-thick);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+}
+
+/* iOS Card Style */
+.ios-card {
+  background-color: rgb(var(--ios-bg-secondary));
+  border-radius: var(--ios-radius-lg);
+  box-shadow: var(--ios-shadow-md);
+}
+
+/* iOS Grouped Inset Style */
+.ios-grouped-inset {
+  background-color: rgb(var(--ios-bg-secondary));
+  border-radius: var(--ios-radius-md);
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+/* iOS Separator */
+.ios-separator {
+  height: 0.5px;
+  background-color: rgb(var(--ios-separator));
+  margin-left: 16px;
+}
+
+/* iOS Large Title */
+.ios-large-title {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+/* iOS Title */
+.ios-title {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* iOS Body Text */
+.ios-body {
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.5;
+}
+
+/* iOS Caption */
+.ios-caption {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: rgb(var(--ios-text-secondary));
+}
+
+/* iOS Footnote */
+.ios-footnote {
+  font-size: 13px;
+  font-weight: 400;
+  color: rgb(var(--ios-text-secondary));
+}
+
+/* Scrollbar Styling */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }

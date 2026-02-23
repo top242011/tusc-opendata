@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>โครงการทั้งหมด - TU Open Data</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#c4122e", // TU Red Red/Crimson
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["IBM Plex Sans Thai", "sans-serif"],
+                        "sans": ["IBM Plex Sans Thai", "sans-serif"],
+                        "mono": ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for sidebar if needed */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 4px;
+        }
+
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #4b5563;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 flex flex-col min-h-screen font-display antialiased">
+    <!-- Top Navigation (Consistent with Landing Page) -->
+    <header
+        class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 px-6 py-4 bg-white dark:bg-slate-900 sticky top-0 z-50">
+        <div class="flex items-center gap-8">
+            <div class="flex items-center gap-4 text-slate-900 dark:text-white">
+                <div class="size-8 flex items-center justify-center rounded bg-primary text-white">
+                    <span class="material-symbols-outlined text-[20px]">school</span>
+                </div>
+                <h1 class="text-xl font-bold leading-tight tracking-[-0.015em]">TU Open Data</h1>
+            </div>
+            <nav class="hidden md:flex items-center gap-6">
+                <a class="text-slate-600 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors pointer-events-none"
+                    href="#">หน้าหลัก</a>
+                <a class="text-slate-600 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors pointer-events-none"
+                    href="#">หน่วยงาน / คณะ</a>
+                <a class="text-primary text-sm font-bold leading-normal border-b-2 border-primary pb-0.5"
+                    href="#">โครงการทั้งหมด</a>
+                <a class="text-slate-600 dark:text-slate-400 text-sm font-medium leading-normal hover:text-primary transition-colors pointer-events-none"
+                    href="#">ข้อมูลชุดเปิด (Open Data)</a>
+            </nav>
+        </div>
+        <div class="flex flex-1 justify-end gap-4 items-center opacity-50 pointer-events-none">
+            <div class="flex gap-2">
+                <button aria-label="Language"
+                    class="flex items-center justify-center rounded-lg size-10 bg-gray-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed">
+                    <span class="material-symbols-outlined text-[20px]">language</span>
+                </button>
+                <button aria-label="Settings"
+                    class="flex items-center justify-center rounded-lg size-10 bg-gray-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed">
+                    <span class="material-symbols-outlined text-[20px]">settings</span>
+                </button>
+                <div
+                    class="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold border border-slate-200 cursor-not-allowed">
+                    TU
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Search Section -->
+    <section class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-12 md:px-10">
+        <div class="max-w-5xl mx-auto flex flex-col items-center text-center space-y-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">ค้นหาข้อมูลโครงการ
+            </h1>
+            <p class="text-slate-500 dark:text-slate-400 max-w-2xl text-sm md:text-base">
+                เข้าถึง ค้นหา และวิเคราะห์ข้อมูลโครงการต่างๆ ของมหาวิทยาลัยธรรมศาสตร์
+                เพื่อความโปร่งใสและนำไปพัฒนาย่อยยอด
+            </p>
+            <div class="w-full max-w-2xl relative">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <span class="material-symbols-outlined text-slate-400">search</span>
+                </div>
+                <input
+                    class="block w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow shadow-sm font-sans"
+                    placeholder="ค้นหาชื่อโครงการ (เช่น อุปกรณ์การแพทย์, วิจัย 2567)..." type="text" />
+                <button
+                    class="absolute inset-y-2 right-2 px-6 bg-primary hover:bg-red-800 text-white rounded-lg font-medium transition-colors shadow-sm shadow-red-500/20">
+                    ค้นหา
+                </button>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-2 items-center mt-4">
+                <span class="text-sm text-slate-500 dark:text-slate-400 font-medium mr-2">ค้นหายอดนิยม:</span>
+                <button
+                    class="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-medium transition-colors flex items-center gap-1 cursor-not-allowed opacity-70">
+                    <span class="material-symbols-outlined !text-[16px]">computer</span> จัดซื้ออุปกรณ์
+                </button>
+                <button
+                    class="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-medium transition-colors flex items-center gap-1 cursor-not-allowed opacity-70">
+                    <span class="material-symbols-outlined !text-[16px]">science</span> ทุนวิจัย
+                </button>
+                <button
+                    class="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-medium transition-colors flex items-center gap-1 cursor-not-allowed opacity-70">
+                    <span class="material-symbols-outlined !text-[16px]">architecture</span> ก่อสร้างอาคาร
+                </button>
+                <button
+                    class="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-medium transition-colors flex items-center gap-1 cursor-not-allowed opacity-70">
+                    <span class="material-symbols-outlined !text-[16px]">eco</span> ความยั่งยืน (SDG)
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Layout -->
+    <div class="flex-1 w-full max-w-[1400px] mx-auto px-4 md:px-10 py-8 flex flex-col lg:flex-row gap-8">
+
+        <!-- Sidebar Filters -->
+        <aside
+            class="w-full lg:w-64 flex-shrink-0 space-y-8 bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm h-fit sticky top-[100px]">
+            <div class="flex items-center justify-between mb-2 lg:mb-4">
+                <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <span class="material-symbols-outlined">tune</span> ตัวกรอง
+                </h2>
+                <button class="text-primary text-xs font-medium hover:underline">ล้างทั้งหมด</button>
+            </div>
+
+            <!-- Separator -->
+            <hr class="border-slate-200 dark:border-slate-700 hidden lg:block" />
+
+            <!-- Status Filter -->
+            <div class="space-y-3 hidden lg:block">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">สถานะโครงการ
+                </h3>
+                <div class="space-y-2">
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input checked
+                            class="size-4 rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-600"
+                            type="checkbox" />
+                        <span
+                            class="text-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">อนุมัติเต็มจำนวน</span>
+                        <span
+                            class="ml-auto text-xs text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 rounded">120</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input checked
+                            class="size-4 rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-600"
+                            type="checkbox" />
+                        <span
+                            class="text-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">ตัดงบบางส่วน</span>
+                        <span
+                            class="ml-auto text-xs text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 rounded">85</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input
+                            class="size-4 rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-600"
+                            type="checkbox" />
+                        <span
+                            class="text-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">ไม่อนุมัติ</span>
+                        <span
+                            class="ml-auto text-xs text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 rounded">15</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Separator -->
+            <hr class="border-slate-200 dark:border-slate-700 hidden lg:block" />
+
+            <!-- Year Filter -->
+            <div class="space-y-3 hidden lg:block">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">ปีงบประมาณ
+                </h3>
+                <div class="space-y-2">
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input checked
+                            class="size-4 rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-600"
+                            type="radio" name="year" />
+                        <span
+                            class="text-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">ปี
+                            2567</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input
+                            class="size-4 rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-600"
+                            type="radio" name="year" />
+                        <span
+                            class="text-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">ปี
+                            2566</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input
+                            class="size-4 rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-600"
+                            type="radio" name="year" />
+                        <span
+                            class="text-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">ปี
+                            2565</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Separator -->
+            <hr class="border-slate-200 dark:border-slate-700 hidden lg:block" />
+
+            <!-- Organization / Campus Filter -->
+            <div class="space-y-3 hidden lg:block">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">หน่วยงาน /
+                    ศูนย์</h3>
+                <div class="relative">
+                    <span
+                        class="material-symbols-outlined absolute left-2.5 top-2 text-slate-400 !text-lg">search</span>
+                    <input
+                        class="w-full pl-9 pr-3 py-1.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary"
+                        placeholder="ค้นหาหน่วยงาน..." type="text" />
+                </div>
+                <div class="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar mt-2">
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input
+                            class="size-4 rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-600"
+                            type="checkbox" />
+                        <span
+                            class="text-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors truncate w-full">คณะแพทยศาสตร์</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input
+                            class="size-4 rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-600"
+                            type="checkbox" />
+                        <span
+                            class="text-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors truncate w-full">คณะวิศวกรรมศาสตร์</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input
+                            class="size-4 rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-600"
+                            type="checkbox" />
+                        <span
+                            class="text-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors truncate w-full">สถาบันเทคโนโลยีนานาชาติสิรินธร</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input
+                            class="size-4 rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-600"
+                            type="checkbox" />
+                        <span
+                            class="text-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors truncate w-full">วิทยาเขตลำปาง</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input
+                            class="size-4 rounded border-slate-300 text-primary focus:ring-primary dark:bg-slate-800 dark:border-slate-600"
+                            type="checkbox" />
+                        <span
+                            class="text-sm text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors truncate w-full">วิทยาเขตพัทยา</span>
+                    </label>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Project List Content -->
+        <main class="flex-1 space-y-6">
+            <div class="flex items-center justify-between">
+                <p class="text-slate-500 dark:text-slate-400 text-sm">พบข้อมูล <span
+                        class="font-bold text-slate-900 dark:text-white">205</span> รายการ</p>
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-slate-500 dark:text-slate-400 hidden sm:block">เรียงตาม:</span>
+                    <select
+                        class="form-select py-1.5 pl-3 pr-8 text-sm border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 focus:ring-primary focus:border-primary cursor-pointer w-[140px] outline-none">
+                        <option>ความเกี่ยวข้อง</option>
+                        <option>งบประมาณ (มาก-น้อย)</option>
+                        <option>งบประมาณ (น้อย-มาก)</option>
+                        <option>ล่าสุด</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Card 1 -->
+            <div
+                class="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 hover:border-primary/50 hover:shadow-md transition-all shadow-sm">
+                <div class="flex flex-col md:flex-row justify-between items-start gap-4">
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <span
+                                class="bg-gray-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] whitespace-nowrap px-2.5 py-1 rounded font-medium border border-slate-200 dark:border-slate-600 flex items-center gap-1">
+                                <span class="material-symbols-outlined !text-[14px]">domain</span> คณะแพทยศาสตร์
+                            </span>
+                            <span
+                                class="bg-gray-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] whitespace-nowrap px-2.5 py-1 rounded font-medium border border-slate-200 dark:border-slate-600">
+                                ปีงบประมาณ 2567
+                            </span>
+                            <span
+                                class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] whitespace-nowrap px-2.5 py-1 rounded font-bold border border-emerald-200 dark:border-emerald-800 uppercase tracking-wider flex items-center gap-1">
+                                <span class="size-1.5 rounded-full bg-emerald-500"></span> อนุมัติเต็มจำนวน
+                            </span>
+                        </div>
+                        <h3
+                            class="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary transition-colors cursor-pointer">
+                            โครงการจัดซื้อเครื่องมือแพทย์ประจำศูนย์รังสิต</h3>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm mb-4 leading-relaxed line-clamp-2">
+                            การจัดซื้อครุภัณฑ์ทางการแพทย์ขั้นสูงเพื่อรองรับการตรวจรักษาและการเรียนการสอนของนักศึกษาแพทย์
+                            ณ อาคารปฏิบัติการใหม่ ศูนย์รังสิต
+                        </p>
+                        <div
+                            class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-700 dark:text-slate-300">
+                            <div class="flex items-center gap-1">
+                                <span class="text-slate-500 text-xs">งบที่ขอ:</span>
+                                <span class="font-mono font-medium">฿150,000,000</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span class="text-slate-500 text-xs">งบที่อนุมัติ:</span>
+                                <span class="font-mono font-bold text-slate-900 dark:text-white">฿150,000,000</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2 shrink-0 w-full md:w-auto mt-2 md:mt-0">
+                        <button
+                            class="flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-red-800 text-white rounded-lg text-sm font-bold transition-all w-full shadow-sm shadow-red-500/20">
+                            <span class="material-symbols-outlined !text-[18px]">visibility</span> ดูรายละเอียด
+                        </button>
+                        <button
+                            class="flex items-center justify-center gap-2 px-4 py-2 border border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-sm font-bold transition-all w-full cursor-not-allowed opacity-50">
+                            <span class="material-symbols-outlined !text-[18px]">download</span> ดาวน์โหลด CSV
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div
+                class="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 hover:border-primary/50 hover:shadow-md transition-all shadow-sm">
+                <div class="flex flex-col md:flex-row justify-between items-start gap-4">
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <span
+                                class="bg-gray-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] whitespace-nowrap px-2.5 py-1 rounded font-medium border border-slate-200 dark:border-slate-600 flex items-center gap-1">
+                                <span class="material-symbols-outlined !text-[14px]">domain</span>
+                                สำนักงานบริหารทรัพย์สิน
+                            </span>
+                            <span
+                                class="bg-gray-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] whitespace-nowrap px-2.5 py-1 rounded font-medium border border-slate-200 dark:border-slate-600">
+                                ปีงบประมาณ 2567
+                            </span>
+                            <span
+                                class="bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[10px] whitespace-nowrap px-2.5 py-1 rounded font-bold border border-amber-200 dark:border-amber-800 uppercase tracking-wider flex items-center gap-1">
+                                <span class="size-1.5 rounded-full bg-amber-500"></span> ตัดงบบางส่วน
+                            </span>
+                        </div>
+                        <h3
+                            class="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary transition-colors cursor-pointer">
+                            ปรับปรุงอาคารเรียนรวม (SC) และระบบปรับอากาศ</h3>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm mb-4 leading-relaxed line-clamp-2">
+                            โครงการปรับปรุงห้องปฏิบัติการและห้องเรียนในอาคารบรรยายรวม ศูนย์รังสิต เพื่อลดการใช้พลังงาน
+                            พร้อมติดตั้งระบบปรับอากาศประหยัดพลังงาน
+                        </p>
+                        <div
+                            class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-700 dark:text-slate-300">
+                            <div class="flex items-center gap-1">
+                                <span class="text-slate-500 text-xs">งบที่ขอ:</span>
+                                <span class="font-mono font-medium">฿45,000,000</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span class="text-slate-500 text-xs">งบที่อนุมัติ:</span>
+                                <span class="font-mono font-bold text-slate-900 dark:text-white">฿38,500,000</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2 shrink-0 w-full md:w-auto mt-2 md:mt-0">
+                        <button
+                            class="flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-red-800 text-white rounded-lg text-sm font-bold transition-all w-full shadow-sm shadow-red-500/20">
+                            <span class="material-symbols-outlined !text-[18px]">visibility</span> ดูรายละเอียด
+                        </button>
+                        <button
+                            class="flex items-center justify-center gap-2 px-4 py-2 border border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-sm font-bold transition-all w-full cursor-not-allowed opacity-50">
+                            <span class="material-symbols-outlined !text-[18px]">download</span> ดาวน์โหลด CSV
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div
+                class="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 hover:border-primary/50 hover:shadow-md transition-all shadow-sm opacity-75">
+                <div class="flex flex-col md:flex-row justify-between items-start gap-4">
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <span
+                                class="bg-gray-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] whitespace-nowrap px-2.5 py-1 rounded font-medium border border-slate-200 dark:border-slate-600 flex items-center gap-1">
+                                <span class="material-symbols-outlined !text-[14px]">domain</span> กองบริหารศูนย์ลำปาง
+                            </span>
+                            <span
+                                class="bg-gray-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] whitespace-nowrap px-2.5 py-1 rounded font-medium border border-slate-200 dark:border-slate-600">
+                                ปีงบประมาณ 2567
+                            </span>
+                            <span
+                                class="bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 text-[10px] whitespace-nowrap px-2.5 py-1 rounded font-bold border border-rose-200 dark:border-rose-800 uppercase tracking-wider flex items-center gap-1">
+                                <span class="size-1.5 rounded-full bg-rose-500"></span> ไม่อนุมัติ
+                            </span>
+                        </div>
+                        <h3
+                            class="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary transition-colors cursor-pointer text-slate-500">
+                            โครงการสร้างสระว่ายน้ำวิทยาเขตลำปาง</h3>
+                        <p class="text-slate-500 dark:text-slate-500 text-sm mb-4 leading-relaxed line-clamp-2">
+                            จัดสร้างสระว่ายน้ำมาตรฐานและอาคารประกอบ
+                            เพื่อส่งเสริมกีฬาและสุขภาพแก่นักศึกษาและบุคลากรในวิทยาเขต
+                        </p>
+                        <div
+                            class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-700 dark:text-slate-500">
+                            <div class="flex items-center gap-1">
+                                <span class="text-slate-500 text-xs">งบที่ขอ:</span>
+                                <span class="font-mono font-medium">฿25,000,000</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span class="text-slate-500 text-xs">งบที่อนุมัติ:</span>
+                                <span class="font-mono font-bold text-rose-600">฿0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2 shrink-0 w-full md:w-auto mt-2 md:mt-0">
+                        <button
+                            class="flex items-center justify-center gap-2 px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-sm font-bold transition-all w-full shadow-sm">
+                            <span class="material-symbols-outlined !text-[18px]">visibility</span> ดูรายละเอียด
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Developer API Section (Adapted for TU Open Data) -->
+            <div
+                class="mt-12 p-6 md:p-8 rounded-2xl bg-slate-900 dark:bg-[#0b0f19] text-white overflow-hidden relative border border-slate-800 shadow-xl">
+                <!-- Abstract Pattern Background -->
+                <div class="absolute top-0 right-0 p-12 opacity-10 pointer-events-none"
+                    style="background-image: radial-gradient(#c4122e 1.5px, transparent 1.5px); background-size: 24px 24px; width: 300px; height: 300px; mask-image: linear-gradient(to bottom left, black, transparent);">
+                </div>
+
+                <div class="relative z-10 flex flex-col xl:flex-row gap-8 items-center lg:items-start">
+                    <div class="flex-1 text-center lg:text-left">
+                        <div class="flex items-center justify-center lg:justify-start gap-2 text-red-400 mb-3">
+                            <span class="material-symbols-outlined !text-[18px]">api</span>
+                            <span class="text-xs font-bold uppercase tracking-widest">TU Open Data API</span>
+                        </div>
+                        <h3 class="text-2xl md:text-3xl font-bold mb-4">เชื่อมต่อข้อมูลได้โดยตรง</h3>
+                        <p class="text-slate-400 text-sm mb-6 leading-relaxed max-w-lg mx-auto lg:mx-0">
+                            นักวิจัยและนักพัฒนาสามารถดึงข้อมูลโครงการ และชุดข้อมูลแบบเปิด (Open Data) ผ่าน RESTful API
+                            ของเราไปใช้งานในแอปพลิเคชันของคุณได้อย่างอิสระ
+                        </p>
+                        <div
+                            class="flex gap-4 justify-center lg:justify-start pointer-events-none opacity-50 cursor-not-allowed">
+                            <button
+                                class="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary rounded-lg text-sm font-bold transition-colors shadow-lg shadow-red-900/20">
+                                ขอ API Key <span class="material-symbols-outlined !text-lg">arrow_forward</span>
+                            </button>
+                            <a class="flex items-center justify-center px-5 py-2.5 bg-slate-800 rounded-lg text-sm font-semibold hover:bg-slate-700 transition-colors border border-slate-700"
+                                href="#">อ่านคู่มือการใช้งาน</a>
+                        </div>
+                    </div>
+
+                    <div
+                        class="w-full xl:w-5/12 bg-[#0d1117] rounded-xl border border-slate-700/50 shadow-2xl p-5 font-mono text-[13px] overflow-hidden">
+                        <div class="flex items-center gap-1.5 mb-4 border-b border-slate-800 pb-3">
+                            <div class="size-3 rounded-full bg-red-500/80"></div>
+                            <div class="size-3 rounded-full bg-yellow-500/80"></div>
+                            <div class="size-3 rounded-full bg-green-500/80"></div>
+                            <span class="ml-2 text-slate-500 text-xs font-sans tracking-widest">BASH</span>
+                        </div>
+                        <pre class="text-slate-300 overflow-x-auto custom-scrollbar pb-2"><code><span class="text-fuchsia-400">curl</span> -X GET "https://api.opendata.tu.ac.th/v1/projects" \
+  -H <span class="text-yellow-300">"Authorization: Bearer YOUR_API_KEY"</span> \
+  -d <span class="text-yellow-300">"year=2567"</span> \
+  -d <span class="text-yellow-300">"campus=rangsit"</span></code></pre>
+                        <div class="my-3 text-slate-500 italic pb-2 border-b border-slate-800/50">// ข้อมูลพ่นกลับมาเป็น
+                            JSON</div>
+                        <pre class="text-green-400 mt-2 overflow-x-auto custom-scrollbar"><code>{
+  "total_items": 45,
+  "data": [
+    {
+      "id": "PRJ-67-001",
+      "name": "โครงการจัดซื้อ...",
+      "status": "approved"
+    }
+  ]
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer
+        class="mt-auto border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 px-6 text-center text-slate-500 text-sm">
+        <div class="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <p>© 2024 Thammasat University Open Data Initiative. All rights reserved.</p>
+            <div class="flex gap-6 pointer-events-none opacity-50">
+                <a class="hover:text-primary transition-colors" href="#">นโยบายความเป็นส่วนตัว</a>
+                <a class="hover:text-primary transition-colors" href="#">ข้อกำหนดการใช้งาน</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

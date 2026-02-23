@@ -5,6 +5,7 @@ import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { createClient } from "@/utils/supabase/client";
 import { Loader2, CheckCircle, MessageCircle } from "lucide-react";
 
@@ -56,9 +57,11 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
         <Modal isOpen={isOpen} onClose={onClose} title="แจ้งปัญหา / ข้อเสนอแนะ">
             {isSuccess ? (
                 <div className="py-8 text-center">
-                    <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-slate-800">ขอบคุณสำหรับข้อเสนอแนะ!</h3>
-                    <p className="text-slate-500 mt-2">เราจะนำไปปรับปรุงระบบต่อไป</p>
+                    <div className="mx-auto mb-4 p-4 rounded-full bg-[rgb(var(--ios-green))]/10 w-fit">
+                        <CheckCircle className="w-12 h-12 text-[rgb(var(--ios-green))]" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-[rgb(var(--ios-text-primary))]">ขอบคุณสำหรับข้อเสนอแนะ!</h3>
+                    <p className="text-[rgb(var(--ios-text-secondary))] mt-2">เราจะนำไปปรับปรุงระบบต่อไป</p>
                 </div>
             ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -76,11 +79,10 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
 
                     <div className="space-y-2">
                         <Label htmlFor="email">อีเมล (ไม่บังคับ)</Label>
-                        <input
+                        <Input
                             id="email"
                             type="email"
                             placeholder="หากต้องการให้เราติดต่อกลับ"
-                            className="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-100 focus:outline-none"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />

@@ -1,9 +1,6 @@
 import { createClient, createPublicClient } from "@/utils/supabase/server";
-import { HeroSection } from "@/components/hero-section";
 import { PublicNavbar } from "@/components/public-navbar";
-import { StatsSection } from "@/components/stats-section";
-import { ChartsSection } from "@/components/charts-section";
-import { DataTable } from "@/components/data-table";
+import { LandingDashboard } from "@/components/landing-dashboard";
 import { DashboardStats, Project } from "@/lib/types";
 
 import { getLatestFiscalYear } from '@/lib/data-queries';
@@ -55,19 +52,19 @@ export default async function Home() {
   stats.approvalRate = moneyApprovalRate;
 
   return (
-    <main id="main-content" className="min-h-screen bg-slate-50 pb-20">
+    <main id="main-content" className="min-h-screen bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] pb-20 transition-colors duration-200 antialiased">
       <PublicNavbar />
-      <HeroSection latestFiscalYear={latestFiscalYear} />
+      <LandingDashboard projects={projects} stats={stats} />
 
-      <div id="project-table" className="container mx-auto max-w-7xl px-4 -mt-10 relative z-10">
-        <StatsSection stats={stats} />
-        <ChartsSection projects={projects} />
-        <DataTable projects={projects} />
-
-        <footer className="mt-20 py-8 border-t text-center text-slate-500 text-sm">
-          <p>© 2568 ระบบเผยแพร่งบประมาณ สภานักศึกษามหาวิทยาลัยธรรมศาสตร์ | พัฒนาโดย พรรครีไลฟ์</p>
-        </footer>
-      </div>
+      <footer className="mt-8 border-t border-[rgb(var(--ios-separator))]/40 py-6 text-center text-sm text-[rgb(var(--ios-text-secondary))]">
+        <div className="max-w-[960px] mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p>© 2024 Thammasat University Open Data Initiative. All rights reserved.</p>
+          <div className="flex gap-6 pointer-events-none opacity-50">
+            <span className="hover:text-[rgb(var(--ios-accent))] transition-colors">นโยบายความเป็นส่วนตัว</span>
+            <span className="hover:text-[rgb(var(--ios-accent))] transition-colors">ข้อกำหนดการใช้งาน</span>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
