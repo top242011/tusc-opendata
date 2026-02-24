@@ -57,13 +57,7 @@ export default async function Home() {
       <LandingDashboard projects={projects} stats={stats} />
 
       <footer className="mt-8 border-t border-[rgb(var(--ios-separator))]/40 py-6 text-center text-sm text-[rgb(var(--ios-text-secondary))]">
-        <div className="max-w-[960px] mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p>© 2024 Thammasat University Open Data Initiative. All rights reserved.</p>
-          <div className="flex gap-6 pointer-events-none opacity-50">
-            <span className="hover:text-[rgb(var(--ios-accent))] transition-colors">นโยบายความเป็นส่วนตัว</span>
-            <span className="hover:text-[rgb(var(--ios-accent))] transition-colors">ข้อกำหนดการใช้งาน</span>
-          </div>
-        </div>
+        <p>© {new Date().getFullYear()} Thammasat University Open Data Initiative. All rights reserved.</p>
       </footer>
     </main>
   );

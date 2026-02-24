@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { PublicNavbar } from "@/components/public-navbar";
 import { formatTHB } from "@/lib/utils";
 import { Project } from "@/lib/types";
-import { Search, SlidersHorizontal, Eye, Download, Code2 } from "lucide-react";
+import { Search, SlidersHorizontal, Eye } from "lucide-react";
 
 export default function ProjectsPage() {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -14,6 +15,7 @@ export default function ProjectsPage() {
     const [selectedStatuses, setSelectedStatuses] = useState<string[]>(['อนุมัติเต็มจำนวน', 'ตัดงบบางส่วน']);
     const [selectedOrgs, setSelectedOrgs] = useState<string[]>([]);
     const [orgSearchTerm, setOrgSearchTerm] = useState("");
+    const [sortBy, setSortBy] = useState("งบประมาณ (มาก-น้อย)");
     const supabase = createClient();
 
     useEffect(() => {
@@ -50,6 +52,11 @@ export default function ProjectsPage() {
         const matchesOrg = selectedOrgs.length === 0 || selectedOrgs.includes(p.organization);
 
         return matchesSearch && matchesStatus && matchesOrg;
+    }).sort((a, b) => {
+        if (sortBy === "งบประมาณ (มาก-น้อย)") return Number(b.budget_requested) - Number(a.budget_requested);
+        if (sortBy === "งบประมาณ (น้อย-มาก)") return Number(a.budget_requested) - Number(b.budget_requested);
+        if (sortBy === "ล่าสุด") return (b.fiscal_year || 0) - (a.fiscal_year || 0);
+        return 0;
     });
 
     return (
@@ -74,7 +81,11 @@ export default function ProjectsPage() {
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
-                        <button className="absolute inset-y-2 right-2 px-6 bg-[rgb(var(--ios-accent))] hover:opacity-90 text-white rounded-[var(--ios-radius-md)] font-medium transition-colors shadow-[var(--ios-shadow-sm)] ios-press">
+                        <button
+                            type="button"
+                            onClick={() => setSearchTerm(searchTerm.trim())}
+                            className="absolute inset-y-2 right-2 px-6 bg-[rgb(var(--ios-accent))] hover:opacity-90 text-white rounded-[var(--ios-radius-md)] font-medium transition-colors shadow-[var(--ios-shadow-sm)] ios-press"
+                        >
                             ค้นหา
                         </button>
                     </div>
@@ -82,7 +93,7 @@ export default function ProjectsPage() {
                     <div className="flex flex-wrap justify-center gap-2 items-center mt-4">
                         <span className="text-sm text-[rgb(var(--ios-text-secondary))] font-medium mr-2">ค้นหายอดนิยม:</span>
                         {["จัดซื้ออุปกรณ์", "ทุนวิจัย", "ก่อสร้างอาคาร", "ความยั่งยืน (SDG)"].map((tag) => (
-                            <button key={tag} className="px-3 py-1.5 rounded-full bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))] text-xs font-medium hover:bg-[rgb(var(--ios-accent))]/10 hover:text-[rgb(var(--ios-accent))] transition-colors cursor-not-allowed opacity-70">
+                            <button key={tag} onClick={() => setSearchTerm(tag)} className="px-3 py-1.5 rounded-full bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))] text-xs font-medium hover:bg-[rgb(var(--ios-accent))]/10 hover:text-[rgb(var(--ios-accent))] transition-colors cursor-pointer">
                                 {tag}
                             </button>
                         ))}
@@ -164,10 +175,12 @@ export default function ProjectsPage() {
                         <p className="text-[rgb(var(--ios-text-secondary))] text-sm">พบข้อมูล <span className="font-bold text-[rgb(var(--ios-text-primary))]">{filteredProjects.length}</span> รายการ</p>
                         <div className="flex items-center gap-2">
                             <span className="text-sm text-[rgb(var(--ios-text-secondary))] hidden sm:block">เรียงตาม:</span>
-                            <select className="py-1.5 pl-3 pr-8 text-sm border border-[rgb(var(--ios-separator))]/50 rounded-[var(--ios-radius-sm)] bg-white dark:bg-slate-800 focus:ring-1 focus:ring-[rgb(var(--ios-accent))] cursor-pointer w-[160px] outline-none text-[rgb(var(--ios-text-primary))]">
+                            <select
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value)}
+                                className="py-1.5 pl-3 pr-8 text-sm border border-[rgb(var(--ios-separator))]/50 rounded-[var(--ios-radius-sm)] bg-white dark:bg-slate-800 focus:ring-1 focus:ring-[rgb(var(--ios-accent))] cursor-pointer w-[160px] outline-none text-[rgb(var(--ios-text-primary))]">
                                 <option>งบประมาณ (มาก-น้อย)</option>
                                 <option>งบประมาณ (น้อย-มาก)</option>
-                                <option>ความเกี่ยวข้อง</option>
                                 <option>ล่าสุด</option>
                             </select>
                         </div>
@@ -182,7 +195,7 @@ export default function ProjectsPage() {
                         </div>
                     ) : (
                         <div className="space-y-4">
-                            {filteredProjects.slice(0, 10).map(proj => { // Show max 10 for demo
+                            {filteredProjects.map(proj => {
                                 let statusBadge = "";
                                 let statusText = "ไม่อนุมัติ";
 
@@ -228,9 +241,9 @@ export default function ProjectsPage() {
                                                 </div>
                                             </div>
                                             <div className="flex flex-col gap-2 shrink-0 w-full md:w-auto mt-4 md:mt-0">
-                                                <button className="flex items-center justify-center gap-2 px-4 py-2 bg-[rgb(var(--ios-accent))]/10 text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-accent))] hover:text-white rounded-[var(--ios-radius-md)] text-sm font-bold transition-all w-full ios-press cursor-not-allowed">
+                                                <Link href={`/organizations?name=${encodeURIComponent(proj.organization)}`} className="flex items-center justify-center gap-2 px-4 py-2 bg-[rgb(var(--ios-accent))]/10 text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-accent))] hover:text-white rounded-[var(--ios-radius-md)] text-sm font-bold transition-all w-full ios-press">
                                                     <Eye className="w-[18px] h-[18px]" /> ดูรายละเอียด
-                                                </button>
+                                                </Link>
                                             </div>
                                         </div>
                                     </div>
@@ -239,64 +252,11 @@ export default function ProjectsPage() {
                         </div>
                     )}
 
-                    {/* Developer API Section (Adapted for TU Open Data) */}
-                    <div className="mt-12 p-6 md:p-8 rounded-[var(--ios-radius-xl)] bg-slate-900 border border-slate-800 shadow-xl overflow-hidden relative">
-                        {/* Abstract Blue Pattern Background */}
-                        <div className="absolute top-0 right-0 p-12 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(rgb(var(--ios-accent)) 1.5px, transparent 1.5px)', backgroundSize: '24px 24px', width: '300px', height: '300px', WebkitMaskImage: 'linear-gradient(to bottom left, black, transparent)' }}></div>
-
-                        <div className="relative z-10 flex flex-col xl:flex-row gap-8 items-center lg:items-start text-white">
-                            <div className="flex-1 text-center lg:text-left">
-                                <div className="flex items-center justify-center lg:justify-start gap-2 text-blue-400 mb-3">
-                                    <Code2 className="w-[18px] h-[18px]" />
-                                    <span className="text-xs font-bold uppercase tracking-widest text-[#0a84ff]">TU Open Data API</span>
-                                </div>
-                                <h3 className="text-2xl md:text-3xl font-bold mb-4">เชื่อมต่อข้อมูลได้โดยตรง</h3>
-                                <p className="text-slate-400 text-sm mb-6 leading-relaxed max-w-lg mx-auto lg:mx-0">
-                                    นักวิจัยและนักพัฒนาสามารถดึงข้อมูลโครงการ และชุดข้อมูลแบบเปิด (Open Data) ผ่าน RESTful API ของเราไปใช้งานในแอปพลิเคชันของคุณได้อย่างอิสระ
-                                </p>
-                                <div className="flex gap-4 justify-center lg:justify-start pointer-events-none opacity-50 cursor-not-allowed">
-                                    <button className="flex items-center justify-center gap-2 px-5 py-2.5 bg-[#0a84ff] rounded-[var(--ios-radius-md)] text-sm font-bold shadow-lg shadow-blue-900/40">
-                                        ขอ API Key &rarr;
-                                    </button>
-                                    <a className="flex items-center justify-center px-5 py-2.5 bg-slate-800 rounded-[var(--ios-radius-md)] text-sm font-semibold border border-slate-700" href="#">อ่านคู่มือการใช้งาน</a>
-                                </div>
-                            </div>
-
-                            <div className="w-full xl:w-5/12 bg-[#0d1117] rounded-xl border border-slate-700/50 shadow-2xl p-5 font-mono text-[13px] overflow-hidden text-left">
-                                <div className="flex items-center gap-1.5 mb-4 border-b border-slate-800 pb-3">
-                                    <div className="size-3 rounded-full bg-red-500"></div>
-                                    <div className="size-3 rounded-full bg-yellow-500"></div>
-                                    <div className="size-3 rounded-full bg-green-500"></div>
-                                    <span className="ml-2 text-slate-500 text-xs font-sans tracking-widest">BASH</span>
-                                </div>
-                                <pre className="text-slate-300 overflow-x-auto pb-2"><code><span className="text-fuchsia-400">curl</span> -X GET "https://api.opendata.tu.ac.th/v1/projects" \
-                                    -H <span className="text-yellow-300">"Authorization: Bearer YOUR_API_KEY"</span> \
-                                    -d <span className="text-yellow-300">"year=2567"</span></code></pre>
-                                <div className="my-3 text-slate-500 italic pb-2 border-b border-slate-800/50">// Response (JSON)</div>
-                                <pre className="text-emerald-400 mt-2 overflow-x-auto"><code>{`{
-  "total_items": 205,
-  "data": [
-    {
-      "id": "PRJ-67-001",
-      "name": "โครงการจัดซื้อ...",
-      "status": "approved"
-    }
-  ]
-}`}</code></pre>
-                            </div>
-                        </div>
-                    </div>
                 </main>
             </div>
 
             <footer className="mt-auto border-t border-[rgb(var(--ios-separator))]/40 py-6 text-center text-[rgb(var(--ios-text-secondary))] text-sm">
-                <div className="max-w-[1440px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p>© 2024 Thammasat University Open Data Initiative. All rights reserved.</p>
-                    <div className="flex gap-6 pointer-events-none opacity-50">
-                        <span className="hover:text-[rgb(var(--ios-accent))] transition-colors">นโยบายความเป็นส่วนตัว</span>
-                        <span className="hover:text-[rgb(var(--ios-accent))] transition-colors">ข้อกำหนดการใช้งาน</span>
-                    </div>
-                </div>
+                <p>© {new Date().getFullYear()} Thammasat University Open Data Initiative. All rights reserved.</p>
             </footer>
         </main>
     );

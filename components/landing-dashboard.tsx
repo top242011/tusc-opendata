@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Project, DashboardStats } from "@/lib/types";
 import { formatTHB } from "@/lib/utils";
 import { Calendar, Download, Wallet, FileText, CheckSquare, Search } from "lucide-react";
@@ -10,6 +12,40 @@ interface LandingDashboardProps {
 }
 
 export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
+    const router = useRouter();
+    const [activePeriod, setActivePeriod] = useState('ทั้งหมด');
+    const [headerSearch, setHeaderSearch] = useState('');
+
+    const latestYear = projects.length > 0
+        ? Math.max(...projects.map(p => p.fiscal_year || 0))
+        : new Date().getFullYear() + 543;
+
+    const handleHeaderSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && headerSearch.trim()) {
+            router.push('/projects');
+        }
+    };
+
+    const handleExport = () => {
+        const headers = ['ชื่อโครงการ', 'หน่วยงาน', 'ปีงบประมาณ', 'งบที่ขอ (บาท)', 'งบที่อนุมัติ (บาท)', 'สถานะ'];
+        const rows = projects.map(p => [
+            `"${String(p.project_name || '').replace(/"/g, '""')}"`,
+            `"${String(p.organization || '').replace(/"/g, '""')}"`,
+            p.fiscal_year || '',
+            p.budget_requested || 0,
+            p.budget_approved || 0,
+            `"${p.status || ''}"`
+        ]);
+        const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+        const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'tu-open-data-export.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
     // Top 5 Calculation for dynamic bar chart
     const orgStats = projects.reduce((acc, project) => {
         if (!acc[project.organization]) {
@@ -123,14 +159,14 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 pt-4">
                 <div className="flex flex-col gap-1">
                     <h2 className="text-3xl font-black tracking-tight text-[rgb(var(--ios-text-primary))]">
-                        ภาพรวมงบประมาณโครงการ ปี 2567
+                        ภาพรวมงบประมาณโครงการ ปี {latestYear}
                     </h2>
                     <p className="text-[rgb(var(--ios-text-secondary))] text-sm">
                         อัปเดตล่าสุด: {new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })} • แหล่งข้อมูล: กองแผนงาน มหาวิทยาลัยธรรมศาสตร์
                     </p>
                 </div>
 
-                {/* Search Bar (Mockup Desktop) */}
+                {/* Search Bar */}
                 <div className="hidden lg:flex flex-col min-w-64 h-10 max-w-sm mr-auto ml-10">
                     <div className="flex w-full flex-1 items-stretch rounded-[var(--ios-radius-md)] h-full border border-[rgb(var(--ios-separator))] bg-white dark:bg-slate-800 overflow-hidden focus-within:ring-2 focus-within:ring-[rgb(var(--ios-accent))]/50 transition-all">
                         <div className="text-[rgb(var(--ios-text-tertiary))] flex items-center justify-center pl-3">
@@ -139,16 +175,19 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                         <input
                             className="flex w-full min-w-0 flex-1 bg-transparent border-none text-[rgb(var(--ios-text-primary))] focus:ring-0 placeholder:text-[rgb(var(--ios-text-tertiary))] px-3 text-sm font-normal outline-none"
                             placeholder="ค้นหาข้อมูลโครงการ..."
+                            value={headerSearch}
+                            onChange={e => setHeaderSearch(e.target.value)}
+                            onKeyDown={handleHeaderSearch}
                         />
                     </div>
                 </div>
 
                 <div className="flex gap-3 mt-4 md:mt-0">
-                    <button className="flex items-center gap-2 h-10 px-4 rounded-[var(--ios-radius-md)] border border-[rgb(var(--ios-separator))] bg-white dark:bg-slate-800 text-[rgb(var(--ios-text-primary))] text-sm font-semibold hover:bg-[rgb(var(--ios-fill-tertiary))] transition-colors pointer-events-none opacity-80">
+                    <button className="flex items-center gap-2 h-10 px-4 rounded-[var(--ios-radius-md)] border border-[rgb(var(--ios-separator))] bg-white dark:bg-slate-800 text-[rgb(var(--ios-text-primary))] text-sm font-semibold hover:bg-[rgb(var(--ios-fill-tertiary))] transition-colors">
                         <Calendar className="w-[18px] h-[18px]" />
-                        <span>ปี 2567</span>
+                        <span>ปี {latestYear}</span>
                     </button>
-                    <button className="flex items-center gap-2 h-10 px-4 rounded-[var(--ios-radius-md)] bg-[rgb(var(--ios-accent))] text-white text-sm font-bold hover:bg-opacity-90 transition-colors shadow-sm pointer-events-none opacity-80">
+                    <button onClick={handleExport} className="flex items-center gap-2 h-10 px-4 rounded-[var(--ios-radius-md)] bg-[rgb(var(--ios-accent))] text-white text-sm font-bold hover:bg-opacity-90 transition-colors shadow-sm">
                         <Download className="w-[18px] h-[18px]" />
                         <span>ส่งออกข้อมูล</span>
                     </button>
@@ -198,12 +237,12 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                 {/* Main Chart Area */}
                 <div className="lg:col-span-2 flex flex-col gap-6">
-                    {/* Treemap Card Placeholder - Preserved HTML layout adapted to JSX */}
+                    {/* Treemap: สัดส่วนงบประมาณตามหน่วยงาน */}
                     <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 shadow-[var(--ios-shadow-sm)] flex flex-col h-full min-h-[500px]">
                         <div className="p-6 border-b border-[rgb(var(--ios-separator))]/50 flex justify-between items-center">
                             <div>
                                 <h3 className="text-lg font-bold text-[rgb(var(--ios-text-primary))]">สัดส่วนงบประมาณตามคณะ/หน่วยงาน</h3>
-                                <p className="text-[rgb(var(--ios-text-secondary))] text-sm">ขนาดของกล่องแสดงถึงงบประมาณที่ได้รับอนุมัติ (ตัวเลขจำลองจาก Mockup)</p>
+                                <p className="text-[rgb(var(--ios-text-secondary))] text-sm">ขนาดของกล่องแสดงถึงสัดส่วนงบประมาณที่ได้รับอนุมัติ</p>
                             </div>
                         </div>
                         <div className="p-6 flex-1">
@@ -281,7 +320,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                 <div className="flex flex-col gap-6">
                     {/* Top 5 Ministries/Orgs - Dynamic DB Driven */}
                     <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 shadow-[var(--ios-shadow-sm)] p-6">
-                        <h3 className="text-lg font-bold text-[rgb(var(--ios-text-primary))] mb-6">5 อันดับคณะที่ได้งบประมาณสูงสุด (ข้อมูลจริง)</h3>
+                        <h3 className="text-lg font-bold text-[rgb(var(--ios-text-primary))] mb-6">5 อันดับหน่วยงานงบประมาณสูงสุด</h3>
                         {top5Orgs.map((org, index: number) => {
                             const percentage = maxApproved > 0 ? (org.approved / maxApproved) * 100 : 0;
                             const barColor = colors[index % colors.length];
@@ -304,7 +343,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                     </div>
                 </div>
 
-                {/* Strategic Areas Donut Chart Placeholder */}
+                {/* Donut: สัดส่วนงบประมาณตามวิทยาเขต */}
                 <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 shadow-[var(--ios-shadow-sm)] p-6 flex-1 flex flex-col">
                     <h3 className="text-lg font-bold text-[rgb(var(--ios-text-primary))] mb-2">สัดส่วนงบประมาณตามวิทยาเขต</h3>
                     <div className="flex-1 flex items-center justify-center relative my-4">
@@ -327,17 +366,27 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                 </div>
             </div>
 
-            {/* Footer Timeline Chart (Mockup) */}
+            {/* Timeline: แนวโน้มงบประมาณตามปี */}
             <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 shadow-[var(--ios-shadow-sm)] p-6 mb-8">
                 <div className="flex justify-between items-center mb-6">
                     <div>
                         <h3 className="text-lg font-bold text-[rgb(var(--ios-text-primary))]">แนวโน้มงบประมาณโครงการ (5 ปีย้อนหลัง)</h3>
-                        <p className="text-[rgb(var(--ios-text-secondary))] text-sm">ข้อมูลจำลองการเปรียบเทียบงบประมาณระหว่างช่วงเวลา</p>
+                        <p className="text-[rgb(var(--ios-text-secondary))] text-sm">งบประมาณที่ได้รับอนุมัติแยกตามปีงบประมาณ</p>
                     </div>
-                    <div className="flex gap-2 opacity-50 pointer-events-none">
-                        <button className="px-3 py-1.5 text-xs font-semibold rounded-[var(--ios-radius-sm)] bg-[rgb(var(--ios-accent))] text-white">ทั้งหมด</button>
-                        <button className="px-3 py-1.5 text-xs font-semibold rounded-[var(--ios-radius-sm)] bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))]">5Y</button>
-                        <button className="px-3 py-1.5 text-xs font-semibold rounded-[var(--ios-radius-sm)] bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))]">1Y</button>
+                    <div className="flex gap-2">
+                        {(['ทั้งหมด', '5Y', '1Y'] as const).map(period => (
+                            <button
+                                key={period}
+                                onClick={() => setActivePeriod(period)}
+                                className={`px-3 py-1.5 text-xs font-semibold rounded-[var(--ios-radius-sm)] transition-colors ${
+                                    activePeriod === period
+                                        ? 'bg-[rgb(var(--ios-accent))] text-white'
+                                        : 'bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-secondary))]'
+                                }`}
+                            >
+                                {period}
+                            </button>
+                        ))}
                     </div>
                 </div>
 

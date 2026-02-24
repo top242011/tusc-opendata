@@ -100,7 +100,7 @@ export default function FileManager({ projectId }: FileManagerProps) {
             fetchFiles();
         } catch (error) {
             console.error('Delete error:', error);
-            alert('Lop file mai dai');
+            alert('ลบไฟล์ไม่ได้ กรุณาลองใหม่อีกครั้ง');
         }
     };
 

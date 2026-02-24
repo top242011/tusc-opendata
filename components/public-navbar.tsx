@@ -83,12 +83,6 @@ export function PublicNavbar() {
                         >
                             โครงการทั้งหมด
                         </Link>
-                        <Link
-                            href="/open-data"
-                            className="px-4 py-2 text-sm font-medium text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors ios-press"
-                        >
-                            ข้อมูลชุดเปิด (Open Data)
-                        </Link>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -178,13 +172,6 @@ export function PublicNavbar() {
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 โครงการทั้งหมด
-                            </Link>
-                            <Link
-                                href="/open-data"
-                                className="px-4 py-3 text-sm font-medium text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                ข้อมูลชุดเปิด (Open Data)
                             </Link>
 
                             <div className="my-2 h-px bg-[rgb(var(--ios-separator))]" />
