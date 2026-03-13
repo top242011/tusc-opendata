@@ -4,10 +4,8 @@ import { PublicNavbar } from "@/components/public-navbar";
 import { formatTHB } from "@/lib/utils";
 import { ProjectRowActions } from "@/components/project-row-actions";
 import { CAMPUS_LABELS, Campus } from "@/lib/types";
-import { Search, MapPin, Layers, Briefcase, FileText, Wallet, Percent, Table2, Info, AlertCircle } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-
-export const revalidate = 300;
+import { Search, MapPin, Layers, Briefcase, FileText, Wallet, Percent, Table2, Info } from "lucide-react";
+export const revalidate = 300; // 5 minutes
 
 export default async function OrganizationDetailsPage(props: { searchParams?: Promise<{ name?: string; q?: string }> }) {
     const searchParams = props.searchParams ? await props.searchParams : {};

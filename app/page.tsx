@@ -6,7 +6,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
 import { getLatestFiscalYear } from '@/lib/data-queries';
-
 export const revalidate = 300; // 5 minutes
 
 export default async function Home() {
