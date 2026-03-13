@@ -31,7 +31,7 @@ export default function HelpTooltip({ content, children, position = 'top' }: Hel
         <div className="relative inline-flex">
             <button
                 type="button"
-                className="p-1 text-slate-400 hover:text-blue-600 transition-colors rounded-full hover:bg-blue-50"
+                className="p-3 text-slate-400 hover:text-blue-600 transition-colors rounded-full hover:bg-blue-50"
                 onMouseEnter={() => setIsVisible(true)}
                 onMouseLeave={() => setIsVisible(false)}
                 onFocus={() => setIsVisible(true)}
@@ -43,7 +43,7 @@ export default function HelpTooltip({ content, children, position = 'top' }: Hel
             {isVisible && (
                 <div
                     className={cn(
-                        "absolute z-50 px-3 py-2 text-sm text-white bg-slate-800 rounded-lg shadow-lg max-w-xs whitespace-normal",
+                        "absolute z-[60] px-3 py-2 text-sm text-white bg-slate-800 rounded-lg shadow-lg max-w-xs whitespace-normal",
                         positionClasses[position],
                         "animate-in fade-in zoom-in-95 duration-150"
                     )}

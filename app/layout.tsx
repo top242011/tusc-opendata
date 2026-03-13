@@ -38,7 +38,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${ibmPlexSansThai.variable} font-sans antialiased bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] transition-colors duration-200`}>
+      <body className={`${ibmPlexSansThai.variable} font-sans antialiased overflow-x-hidden bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] transition-colors duration-200`}>
         <ThemeProvider>
           <a
             href="#main-content"

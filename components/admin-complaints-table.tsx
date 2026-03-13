@@ -120,7 +120,7 @@ export function AdminComplaintsTable({ complaints: initialComplaints }: AdminCom
                                             <select
                                                 value={complaint.status}
                                                 onChange={(e) => handleStatusChange(complaint.id, e.target.value)}
-                                                className="text-xs border rounded px-2 py-1 bg-white hover:border-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                className="text-sm border rounded px-3 py-2 bg-white hover:border-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                             >
                                                 <option value="pending">รอดำเนินการ</option>
                                                 <option value="acknowledged">รับเรื่องแล้ว</option>

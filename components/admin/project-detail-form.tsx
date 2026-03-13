@@ -92,7 +92,7 @@ export default function ProjectDetailForm({ project }: ProjectDetailFormProps) {
     return (
         <div className="space-y-6">
             {/* Auto-fill Section */}
-            <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 flex items-center justify-between">
+            <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 flex flex-wrap gap-4 items-center justify-between">
                 <div>
                     <h3 className="font-semibold text-blue-900 flex items-center gap-2">
                         <Sparkles className="w-4 h-4 text-blue-600" />

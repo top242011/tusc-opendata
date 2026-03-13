@@ -26,7 +26,7 @@ export function Toast({ message, type = 'success', isVisible, onClose, duration 
 
     return (
         <div className={cn(
-            "fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-4 min-w-[320px] max-w-[90vw]",
+            "fixed bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-50 flex items-center gap-3 px-5 py-4 sm:min-w-[320px] max-w-[90vw]",
             "rounded-[var(--ios-radius-lg)] shadow-[var(--ios-shadow-xl)]",
             "ios-material-thick",
             "animate-in slide-in-from-bottom-4 fade-in duration-300",
@@ -48,7 +48,7 @@ export function Toast({ message, type = 'success', isVisible, onClose, duration 
 
             <button
                 onClick={onClose}
-                className="p-1.5 rounded-full hover:bg-[rgb(var(--ios-fill-tertiary))] transition-colors ios-press"
+                className="p-3 rounded-full hover:bg-[rgb(var(--ios-fill-tertiary))] transition-colors ios-press"
                 aria-label="ปิด"
             >
                 <X className="w-4 h-4 text-[rgb(var(--ios-text-secondary))]" />
