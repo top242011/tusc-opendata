@@ -33,7 +33,6 @@ export default async function ActivityLogsPage() {
                     { label: 'หน้าแรก', href: '/admin' },
                     { label: 'บันทึกกิจกรรม' },
                 ]} />
-            <div className="container mx-auto max-w-6xl px-4">
                 {error && (
                     <Alert variant="destructive" className="mb-6">
                         <AlertCircle className="h-4 w-4" />

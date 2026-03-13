@@ -41,26 +41,11 @@ export function Toast({ message, type = 'success', isVisible, onClose, duration 
             role="alert"
             aria-live="assertive"
             className={cn(
-                "fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-4 min-w-[320px] max-w-[90vw]",
+                "fixed bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-50 flex items-center gap-3 px-5 py-4 sm:min-w-[320px] max-w-[90vw]",
                 "rounded-[var(--ios-radius-lg)] shadow-[var(--ios-shadow-xl)]",
                 "ios-material-thick",
                 "animate-in slide-in-from-bottom-4 fade-in duration-300",
                 "border border-[rgb(var(--ios-separator))]/30"
-        <div className={cn(
-            "fixed bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-50 flex items-center gap-3 px-5 py-4 sm:min-w-[320px] max-w-[90vw]",
-            "rounded-[var(--ios-radius-lg)] shadow-[var(--ios-shadow-xl)]",
-            "ios-material-thick",
-            "animate-in slide-in-from-bottom-4 fade-in duration-300",
-            "border border-[rgb(var(--ios-separator))]/30"
-        )}>
-            {type === 'success' ? (
-                <div className="p-1.5 rounded-full bg-[rgb(var(--ios-green))]/15">
-                    <CheckCircle className="w-5 h-5 text-[rgb(var(--ios-green))]" />
-                </div>
-            ) : (
-                <div className="p-1.5 rounded-full bg-[rgb(var(--ios-red))]/15">
-                    <AlertCircle className="w-5 h-5 text-[rgb(var(--ios-red))]" />
-                </div>
             )}
         >
             <div className={cn("p-1.5 rounded-full", config.bgClass)}>

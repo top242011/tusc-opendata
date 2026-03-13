@@ -150,43 +150,6 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
                         <Loader2 className="w-10 h-10 animate-spin text-[rgb(var(--ios-accent))]" />
                         <p className="font-medium">{uploadProgress || 'กำลังวิเคราะห์เอกสาร...'}</p>
                         <p className="text-xs">กรุณารอสักครู่ ระบบกำลังตรวจสอบตามกฎระเบียบ</p>
-        <>
-        <Toast
-            message={toastMessage}
-            type={toastType}
-            isVisible={showToast}
-            onClose={() => setShowToast(false)}
-        />
-        <form
-            className={cn(
-                "relative flex flex-col items-center justify-center w-full h-64 rounded-xl border-2 border-dashed transition-all cursor-pointer bg-slate-50",
-                dragActive ? "border-blue-500 bg-blue-50" : "border-slate-300 hover:border-slate-400",
-                isBusy ? "opacity-50 pointer-events-none" : ""
-            )}
-            onDragEnter={handleDrag}
-            onDragLeave={handleDrag}
-            onDragOver={handleDrag}
-            onDrop={handleDrop}
-            onClick={() => inputRef.current?.click()}
-        >
-            <input
-                ref={inputRef}
-                type="file"
-                className="hidden"
-                accept=".pdf,.xlsx,.xls"
-                onChange={handleChange}
-            />
-
-            {isBusy ? (
-                <div className="flex flex-col items-center gap-3 text-slate-500 animate-pulse">
-                    <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
-                    <p className="font-medium">{uploadProgress || 'กำลังวิเคราะห์เอกสาร...'}</p>
-                    <p className="text-xs">กรุณารอสักครู่ ระบบกำลังตรวจสอบตามกฎระเบียบ</p>
-                </div>
-            ) : (
-                <div className="flex flex-col items-center gap-3 text-slate-500">
-                    <div className="p-4 bg-white rounded-full shadow-sm">
-                        <Upload className="w-8 h-8 text-blue-600" />
                     </div>
                 ) : (
                     <div className="flex flex-col items-center gap-3 text-[rgb(var(--ios-text-secondary))]">
@@ -208,7 +171,5 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
                 </div>
             )}
         </div>
-        </form>
-        </>
     );
 }

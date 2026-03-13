@@ -149,7 +149,6 @@ export function ChartsSection({ projects }: ChartsSectionProps) {
                     <CardTitle>10 อันดับองค์กรที่เสนองบประมาณสูงสุด</CardTitle>
                 </CardHeader>
                 <CardContent className="min-h-[300px] md:min-h-[500px] h-[500px]" role="img" aria-label="แผนภูมิแท่ง 10 อันดับองค์กรที่เสนองบประมาณสูงสุด">
-                <CardContent className="h-[350px] lg:h-[500px]">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart
                             layout="vertical"
@@ -167,7 +166,6 @@ export function ChartsSection({ projects }: ChartsSectionProps) {
                                 type="category"
                                 width={120}
                                 tickFormatter={(name) => truncateLabel(name)}
-                                width={80}
                                 tick={{ fontSize: 11, fill: 'rgb(var(--ios-text-secondary))' }}
                             />
                             <Tooltip

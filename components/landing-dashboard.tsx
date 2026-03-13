@@ -169,7 +169,6 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
 
                 {/* Search Bar */}
                 <div className="flex flex-col w-full lg:w-auto lg:min-w-64 h-10 lg:max-w-sm mt-4 lg:mt-0 lg:mr-auto lg:ml-10">
-                <div className="hidden md:flex flex-col min-w-64 h-10 max-w-sm mr-auto ml-10">
                     <div className="flex w-full flex-1 items-stretch rounded-[var(--ios-radius-md)] h-full border border-[rgb(var(--ios-separator))] bg-white dark:bg-slate-800 overflow-hidden focus-within:ring-2 focus-within:ring-[rgb(var(--ios-accent))]/50 transition-all">
                         <div className="text-[rgb(var(--ios-text-tertiary))] flex items-center justify-center pl-3">
                             <Search className="w-5 h-5" />

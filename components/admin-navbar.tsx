@@ -85,24 +85,22 @@ export function AdminNavbar({ userEmail }: AdminNavbarProps) {
                         <Link
                             href="/admin/complaints"
                             className={cn(
-                                "flex items-center gap-1 px-2 py-1.5 rounded-[var(--ios-radius-sm)] transition-colors",
+                                "flex items-center justify-center min-w-[44px] min-h-[44px] rounded-[var(--ios-radius-sm)] transition-colors",
                                 pathname === '/admin/complaints'
                                     ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10"
                                     : "text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
                             )}
-                            className="flex items-center justify-center min-w-[44px] min-h-[44px] text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
                         >
                             <FileWarning className="w-4 h-4" />
                         </Link>
                         <Link
                             href="/admin/activity-logs"
                             className={cn(
-                                "flex items-center gap-1 px-2 py-1.5 rounded-[var(--ios-radius-sm)] transition-colors",
+                                "flex items-center justify-center min-w-[44px] min-h-[44px] rounded-[var(--ios-radius-sm)] transition-colors",
                                 pathname === '/admin/activity-logs'
                                     ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10"
                                     : "text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
                             )}
-                            className="flex items-center justify-center min-w-[44px] min-h-[44px] text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
                         >
                             <Clock className="w-4 h-4" />
                         </Link>

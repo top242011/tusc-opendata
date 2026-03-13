@@ -37,7 +37,6 @@ export default async function AdminComplaintsPage() {
                     { label: 'หน้าแรก', href: '/admin' },
                     { label: 'เรื่องร้องเรียน' },
                 ]} />
-            <div className="container mx-auto max-w-6xl px-4">
                 {error && (
                     <Alert variant="destructive" className="mb-6">
                         <AlertCircle className="h-4 w-4" />

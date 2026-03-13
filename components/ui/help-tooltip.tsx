@@ -33,7 +33,6 @@ export default function HelpTooltip({ content, children, position = 'top' }: Hel
             <button
                 type="button"
                 className="p-1 text-[rgb(var(--ios-text-quaternary))] hover:text-[rgb(var(--ios-accent))] transition-colors rounded-full hover:bg-[rgb(var(--ios-fill-tertiary))]"
-                className="p-3 text-slate-400 hover:text-blue-600 transition-colors rounded-full hover:bg-blue-50"
                 onMouseEnter={() => setIsVisible(true)}
                 onMouseLeave={() => setIsVisible(false)}
                 onFocus={() => setIsVisible(true)}

@@ -97,7 +97,6 @@ export default function LoginPage() {
                         <Button
                             type="submit"
                             disabled={loading}
-                            className="w-full"
                             className="w-full h-11 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors shadow-sm hover:shadow"
                         >
                             {loading ? 'กำลังเข้าสู่ระบบ...' : 'เข้าสู่ระบบ'}
