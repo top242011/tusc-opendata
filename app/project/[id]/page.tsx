@@ -14,13 +14,11 @@ import { ReportButton } from "@/components/report-button";
 import { Tabs } from "@/components/ui/tabs";
 import { GeneralInfoTab, BudgetTab, FilesTab } from "@/components/project-detail-tabs";
 import { Wallet } from "lucide-react";
-import { REVALIDATE_PROJECT_DETAIL } from "@/lib/constants";
-
 interface PageProps {
     params: Promise<{ id: string }>;
 }
 
-export const revalidate = REVALIDATE_PROJECT_DETAIL;
+export const revalidate = 600; // 10 minutes
 
 export default async function ProjectDetailPage(props: PageProps) {
     const params = await props.params;

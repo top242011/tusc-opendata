@@ -5,9 +5,7 @@ import { formatTHB } from "@/lib/utils";
 import { ProjectRowActions } from "@/components/project-row-actions";
 import { CAMPUS_LABELS, Campus } from "@/lib/types";
 import { Search, MapPin, Layers, Briefcase, FileText, Wallet, Percent, Table2, Info } from "lucide-react";
-import { REVALIDATE_ORGANIZATIONS } from "@/lib/constants";
-
-export const revalidate = REVALIDATE_ORGANIZATIONS;
+export const revalidate = 300; // 5 minutes
 
 export default async function OrganizationDetailsPage(props: { searchParams?: Promise<{ name?: string; q?: string }> }) {
     const searchParams = props.searchParams ? await props.searchParams : {};
