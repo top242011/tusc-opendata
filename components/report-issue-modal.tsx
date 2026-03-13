@@ -25,6 +25,7 @@ export function ReportIssueModal({ isOpen, onClose, projectId, projectName }: Re
     const [attachments, setAttachments] = useState<File[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -115,6 +116,7 @@ export function ReportIssueModal({ isOpen, onClose, projectId, projectName }: Re
 
         } catch (error) {
             console.error("Error submitting report:", error);
+            setError("เกิดข้อผิดพลาดในการส่งข้อมูล กรุณาลองใหม่อีกครั้ง");
             setToastMessage("เกิดข้อผิดพลาดในการส่งข้อมูล กรุณาลองใหม่อีกครั้ง");
             setShowToast(true);
         } finally {
@@ -152,6 +154,11 @@ export function ReportIssueModal({ isOpen, onClose, projectId, projectName }: Re
             className="w-[95%] max-w-lg sm:max-w-xl"
         >
             <form onSubmit={handleSubmit} className="space-y-6">
+                {error && (
+                    <div className="p-3 bg-[rgb(var(--ios-red))]/10 text-[rgb(var(--ios-red))] text-sm rounded-[var(--ios-radius-sm)]" role="alert">
+                        {error}
+                    </div>
+                )}
 
                 {/* Type Selection */}
                 <div className="space-y-3">

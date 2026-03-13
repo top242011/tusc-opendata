@@ -32,6 +32,7 @@ interface AdminComplaintsTableProps {
 export function AdminComplaintsTable({ complaints: initialComplaints }: AdminComplaintsTableProps) {
     const [complaints, setComplaints] = useState(initialComplaints);
     const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
+    const [statusError, setStatusError] = useState<string | null>(null);
     const [toastMessage, setToastMessage] = useState('');
     const [toastType, setToastType] = useState<'success' | 'error'>('success');
     const [showToast, setShowToast] = useState(false);
@@ -46,6 +47,8 @@ export function AdminComplaintsTable({ complaints: initialComplaints }: AdminCom
         if (!error) {
             setComplaints(prev => prev.map(c => c.id === id ? { ...c, status: newStatus as any } : c));
         } else {
+            setStatusError("ไม่สามารถอัปเดตสถานะได้ กรุณาลองใหม่");
+            setTimeout(() => setStatusError(null), 4000);
             setToastMessage('อัปเดตสถานะไม่สำเร็จ กรุณาลองใหม่อีกครั้ง');
             setToastType('error');
             setShowToast(true);

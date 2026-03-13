@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { AdminNavbar } from "@/components/admin-navbar";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { AdminComplaintsTable } from "@/components/admin-complaints-table";
 import { redirect } from "next/navigation";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -28,10 +29,14 @@ export default async function AdminComplaintsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 pb-20">
+        <main id="main-content" className="min-h-screen bg-slate-50 pb-20">
             <AdminNavbar userEmail={user.email} />
 
-            <div className="container mx-auto max-w-6xl px-4">
+            <div className="container mx-auto max-w-6xl px-4 pt-6">
+                <Breadcrumbs items={[
+                    { label: 'หน้าแรก', href: '/admin' },
+                    { label: 'เรื่องร้องเรียน' },
+                ]} />
                 {error && (
                     <Alert variant="destructive" className="mb-6">
                         <AlertCircle className="h-4 w-4" />
@@ -46,6 +51,6 @@ export default async function AdminComplaintsPage() {
 
                 <AdminComplaintsTable complaints={complaints || []} />
             </div>
-        </div>
+        </main>
     );
 }

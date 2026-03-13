@@ -49,22 +49,22 @@ export default function DocumentCheckerPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 pb-20">
+        <main id="main-content" className="min-h-screen bg-[rgb(var(--ios-bg-primary))] pb-20">
             {/* Header */}
-            <div className="bg-white border-b border-slate-200">
+            <div className="bg-[rgb(var(--ios-bg-secondary))] border-b border-[rgb(var(--ios-separator))]/30">
                 <div className="container mx-auto px-4 py-8 max-w-4xl">
-                    <Link href="/" className="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 transition-colors text-sm mb-6">
+                    <Link href="/" className="inline-flex items-center gap-2 text-[rgb(var(--ios-text-tertiary))] hover:text-[rgb(var(--ios-accent))] transition-colors text-sm mb-6">
                         <ArrowLeft className="w-4 h-4" />
                         กลับหน้าหลัก
                     </Link>
 
                     <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-100 rounded-xl">
-                            <FileCheck className="w-8 h-8 text-blue-600" />
+                        <div className="p-3 bg-[rgb(var(--ios-accent))]/10 rounded-[var(--ios-radius-lg)]">
+                            <FileCheck className="w-8 h-8 text-[rgb(var(--ios-accent))]" />
                         </div>
                         <div>
-                            <h1 className="text-2xl font-bold text-slate-900">ตรวจสอบเอกสารโครงการ</h1>
-                            <p className="text-slate-600 mt-1">
+                            <h1 className="text-2xl font-bold text-[rgb(var(--ios-text-primary))]">ตรวจสอบเอกสารโครงการ</h1>
+                            <p className="text-[rgb(var(--ios-text-secondary))] mt-1">
                                 ระบบ AI ผู้ช่วยตรวจสอบความถูกต้องของข้อเสนอโครงการตามระเบียบงบประมาณ
                             </p>
                         </div>
@@ -77,12 +77,12 @@ export default function DocumentCheckerPage() {
 
                 {/* Intro Card */}
                 {!result && !isAnalyzing && (
-                    <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm flex gap-4">
+                    <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] p-6 border border-[rgb(var(--ios-separator))]/30 shadow-[var(--ios-shadow-sm)] flex gap-4">
                         <div className="flex-shrink-0">
-                            <Info className="w-6 h-6 text-blue-500" />
+                            <Info className="w-6 h-6 text-[rgb(var(--ios-accent))]" />
                         </div>
-                        <div className="text-sm text-slate-600 space-y-2">
-                            <p className="font-medium text-slate-900">คำแนะนำการใช้งาน</p>
+                        <div className="text-sm text-[rgb(var(--ios-text-secondary))] space-y-2">
+                            <p className="font-medium text-[rgb(var(--ios-text-primary))]">คำแนะนำการใช้งาน</p>
                             <ul className="list-disc list-inside space-y-1 ml-1">
                                 <li>ระบบรองรับไฟล์ <strong>PDF</strong> (แบบฟอร์มโครงการ) หรือ <strong>Excel</strong> (ตารางงบประมาณ)</li>
                                 <li>AI จะตรวจสอบรายการค่าใช้จ่ายเทียบกับเกณฑ์ราคากลางและเงื่อนไขต่างๆ</li>
@@ -93,9 +93,9 @@ export default function DocumentCheckerPage() {
                 )}
 
                 {/* Campus Selector */}
-                <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
-                    <h2 className="text-lg font-semibold text-slate-800 mb-2">เลือกหลักเกณฑ์งบประมาณ</h2>
-                    <p className="text-sm text-slate-500 mb-4">
+                <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] shadow-[var(--ios-shadow-sm)] p-6 border border-[rgb(var(--ios-separator))]/30">
+                    <h2 className="text-lg font-semibold text-[rgb(var(--ios-text-primary))] mb-2">เลือกหลักเกณฑ์งบประมาณ</h2>
+                    <p className="text-sm text-[rgb(var(--ios-text-tertiary))] mb-4">
                         เลือก Campus ที่ใช้หลักเกณฑ์งบประมาณสำหรับตรวจสอบเอกสาร
                     </p>
                     <CampusSelector
@@ -106,15 +106,15 @@ export default function DocumentCheckerPage() {
                 </div>
 
                 {/* Uploader */}
-                <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
-                    <h2 className="text-lg font-semibold text-slate-800 mb-4">อัปโหลดเอกสาร</h2>
+                <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] shadow-[var(--ios-shadow-sm)] p-6 border border-[rgb(var(--ios-separator))]/30">
+                    <h2 className="text-lg font-semibold text-[rgb(var(--ios-text-primary))] mb-4">อัปโหลดเอกสาร</h2>
                     <DocumentUploader
                         onFileUploaded={handleFileUploaded}
                         isAnalyzing={isAnalyzing}
                     />
 
                     {error && (
-                        <div className="mt-4 p-4 bg-red-50 text-red-700 rounded-lg flex items-center gap-2 text-sm border border-red-200">
+                        <div className="mt-4 p-4 bg-[rgb(var(--ios-red))]/10 text-[rgb(var(--ios-red))] rounded-[var(--ios-radius-sm)] flex items-center gap-2 text-sm border border-[rgb(var(--ios-red))]/20" role="alert">
                             <Info className="w-5 h-5" />
                             {error}
                         </div>
@@ -140,6 +140,6 @@ export default function DocumentCheckerPage() {
                     <CheckResult data={result} />
                 )}
             </div>
-        </div>
+        </main>
     );
 }

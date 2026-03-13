@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { PublicNavbar } from '@/components/public-navbar';
+import { CopyButton } from '@/components/ui/copy-button';
 import { Code2, Database, Download, Table2, Key, FileText, ArrowRight, Terminal, Info } from 'lucide-react';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://<your-project>.supabase.co';
@@ -59,7 +60,7 @@ const { data, error } = await supabase
     ];
 
     return (
-        <main className="min-h-screen bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] antialiased pb-20">
+        <main id="main-content" className="min-h-screen bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] antialiased pb-20">
             <PublicNavbar />
 
             {/* Hero */}
@@ -132,9 +133,12 @@ const { data, error } = await supabase
                             <div key={i} className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 overflow-hidden shadow-[var(--ios-shadow-sm)]">
                                 <div className="px-5 py-3 border-b border-[rgb(var(--ios-separator))]/50 flex items-center justify-between">
                                     <span className="text-sm font-semibold">{ex.title}</span>
-                                    <span className="text-xs font-mono px-2 py-0.5 bg-[rgb(var(--ios-fill-tertiary))] rounded text-[rgb(var(--ios-text-tertiary))]">
-                                        {ex.lang}
-                                    </span>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xs font-mono px-2 py-0.5 bg-[rgb(var(--ios-fill-tertiary))] rounded text-[rgb(var(--ios-text-tertiary))]">
+                                            {ex.lang}
+                                        </span>
+                                        <CopyButton text={ex.code} />
+                                    </div>
                                 </div>
                                 <pre className="p-5 text-sm overflow-x-auto bg-slate-950 text-emerald-300 font-mono leading-relaxed">
                                     <code>{ex.code}</code>

@@ -14,32 +14,38 @@ interface BreadcrumbsProps {
 
 export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
     return (
-        <nav aria-label="Breadcrumb" className={cn("flex items-center overflow-x-auto text-sm text-slate-500 mb-6", className)}>
+        <nav aria-label="Breadcrumb" className={cn("flex items-center overflow-x-auto text-sm text-[rgb(var(--ios-text-tertiary))] mb-6", className)}>
             <Link
                 href="/"
-                className="flex items-center hover:text-blue-600 transition-colors"
+                className="flex items-center hover:text-[rgb(var(--ios-accent))] transition-colors"
                 title="หน้าหลัก"
             >
                 <Home className="w-4 h-4" />
             </Link>
 
-            {items.map((item, index) => (
-                <div key={index} className="flex items-center">
-                    <ChevronRight className="w-4 h-4 mx-2 text-slate-300" />
-                    {item.href ? (
-                        <Link
-                            href={item.href}
-                            className="hover:text-blue-600 transition-colors font-medium truncate max-w-[200px]"
-                        >
-                            {item.label}
-                        </Link>
-                    ) : (
-                        <span className="text-slate-900 font-semibold cursor-default truncate max-w-[200px]">
-                            {item.label}
-                        </span>
-                    )}
-                </div>
-            ))}
+            {items.map((item, index) => {
+                const isLast = index === items.length - 1;
+                return (
+                    <div key={index} className="flex items-center">
+                        <ChevronRight className="w-4 h-4 mx-2 text-[rgb(var(--ios-text-quaternary))]" />
+                        {item.href ? (
+                            <Link
+                                href={item.href}
+                                className="hover:text-[rgb(var(--ios-accent))] transition-colors font-medium truncate max-w-[200px]"
+                            >
+                                {item.label}
+                            </Link>
+                        ) : (
+                            <span
+                                className="text-[rgb(var(--ios-text-primary))] font-semibold cursor-default truncate max-w-[200px]"
+                                aria-current={isLast ? "page" : undefined}
+                            >
+                                {item.label}
+                            </span>
+                        )}
+                    </div>
+                );
+            })}
         </nav>
     );
 }
