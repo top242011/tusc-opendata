@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { PublicNavbar } from '@/components/public-navbar';
 import { Code2, Database, Download, Table2, Key, FileText, ArrowRight, Terminal, Info, Zap, BarChart3, Building2, FolderOpen } from 'lucide-react';
+import { CopyButton } from '@/components/ui/copy-button';
+import { Code2, Database, Download, Table2, Key, FileText, ArrowRight, Terminal, Info } from 'lucide-react';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://<your-project>.supabase.co';
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://your-domain.com';
@@ -277,7 +279,7 @@ console.log(\`Approval rate: \${stats.approval_rate}%\`);`,
     ];
 
     return (
-        <main className="min-h-screen bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] antialiased pb-20">
+        <main id="main-content" className="min-h-screen bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] antialiased pb-20">
             <PublicNavbar />
 
             {/* Hero */}
@@ -425,6 +427,21 @@ console.log(\`Approval rate: \${stats.approval_rate}%\`);`,
                                 <div className="size-3 rounded-full bg-yellow-500"></div>
                                 <div className="size-3 rounded-full bg-green-500"></div>
                                 <span className="ml-2 text-slate-500 text-xs tracking-widest font-sans">Supabase REST</span>
+                    <div className="space-y-6">
+                        {restExamples.map((ex, i) => (
+                            <div key={i} className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 overflow-hidden shadow-[var(--ios-shadow-sm)]">
+                                <div className="px-5 py-3 border-b border-[rgb(var(--ios-separator))]/50 flex items-center justify-between">
+                                    <span className="text-sm font-semibold">{ex.title}</span>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xs font-mono px-2 py-0.5 bg-[rgb(var(--ios-fill-tertiary))] rounded text-[rgb(var(--ios-text-tertiary))]">
+                                            {ex.lang}
+                                        </span>
+                                        <CopyButton text={ex.code} />
+                                    </div>
+                                </div>
+                                <pre className="p-5 text-sm overflow-x-auto bg-slate-950 text-emerald-300 font-mono leading-relaxed">
+                                    <code>{ex.code}</code>
+                                </pre>
                             </div>
                             <p className="text-slate-400">
                                 <span className="text-slate-500"># Endpoint</span>

@@ -7,6 +7,8 @@ import { CAMPUS_LABELS, Campus } from "@/lib/types";
 import { Search, MapPin, Layers, Briefcase, FileText, Wallet, Percent, Table2, Info, Inbox, ArrowRight, Clock } from "lucide-react";
 
 export const revalidate = 300;
+import { Search, MapPin, Layers, Briefcase, FileText, Wallet, Percent, Table2, Info } from "lucide-react";
+export const revalidate = 300; // 5 minutes
 
 export default async function OrganizationDetailsPage(props: { searchParams?: Promise<{ name?: string; q?: string; orgSearch?: string }> }) {
     const searchParams = props.searchParams ? await props.searchParams : {};
@@ -15,7 +17,7 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
     const orgSearchParam = searchParams.orgSearch;
     const supabase = await createPublicClient();
 
-    const { data: allProjectsData } = await supabase
+    const { data: allProjectsData, error } = await supabase
         .from('projects')
         .select('*')
         .order('budget_requested', { ascending: false });
@@ -133,13 +135,13 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
     const currentYear = new Date().getFullYear();
 
     return (
-        <main className="min-h-screen bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] pb-20 font-sans antialiased">
+        <main id="main-content" className="min-h-screen bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] pb-20 font-sans antialiased">
             <PublicNavbar />
 
-            <div className="flex-1 w-full max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col md:flex-row gap-8">
+            <div className="flex-1 w-full max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col lg:flex-row gap-8">
 
                 {/* Sidebar */}
-                <aside className="w-full md:w-80 flex-shrink-0 space-y-6">
+                <aside className="w-full lg:w-80 flex-shrink-0 space-y-6">
                     {/* Organization Selector */}
                     <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 p-5 shadow-[var(--ios-shadow-sm)]">
                         <h3 className="font-bold text-sm uppercase tracking-wider text-[rgb(var(--ios-text-tertiary))] mb-3 flex items-center gap-2">
@@ -327,7 +329,7 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
                     )}
 
                     {/* Projects Table */}
-                    <div className="flex justify-between items-end mt-8 mb-4">
+                    <div className="flex flex-wrap gap-4 justify-between items-end mt-8 mb-4">
                         <h3 className="text-xl font-bold text-[rgb(var(--ios-text-primary))] flex items-center gap-2">
                             <Table2 className="w-5 h-5 text-[rgb(var(--ios-accent))]" /> รายการโครงการ
                             {qParam && (
@@ -359,8 +361,8 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
                                 <thead>
                                     <tr className="bg-[rgb(var(--ios-fill-tertiary))] border-b border-[rgb(var(--ios-separator))]/50 text-xs uppercase tracking-wider text-[rgb(var(--ios-text-secondary))]">
                                         <th className="p-4 font-bold">ชื่อโครงการ</th>
-                                        <th className="p-4 font-bold text-right">งบที่ขอ</th>
-                                        <th className="p-4 font-bold text-right">ส่วนที่อนุมัติ</th>
+                                        <th className="p-4 font-bold text-right whitespace-nowrap">งบที่ขอ</th>
+                                        <th className="p-4 font-bold text-right whitespace-nowrap">ส่วนที่อนุมัติ</th>
                                         <th className="p-4 font-bold text-center">สถานะ</th>
                                         <th className="p-4 w-12 text-center"></th>
                                     </tr>
@@ -488,9 +490,9 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
                             <div className="px-4 py-3 border-t border-[rgb(var(--ios-separator))]/50 flex items-center justify-between text-sm text-[rgb(var(--ios-text-secondary))] bg-[rgb(var(--ios-bg-secondary))]">
                                 <span>แสดง {displayProjects.length} จาก {allOrgProjects.length} รายการ</span>
                                 <div className="flex gap-1">
-                                    <button className="px-2 py-1 border border-[rgb(var(--ios-separator))] rounded bg-white dark:bg-slate-800 text-[rgb(var(--ios-text-tertiary))] text-xs opacity-40 cursor-default">&lt;</button>
-                                    <button className="px-3 py-1 border border-[rgb(var(--ios-accent))] rounded bg-[rgb(var(--ios-accent))]/10 text-[rgb(var(--ios-accent))] font-bold text-xs">1</button>
-                                    <button className="px-2 py-1 border border-[rgb(var(--ios-separator))] rounded bg-white dark:bg-slate-800 text-[rgb(var(--ios-text-tertiary))] text-xs opacity-40 cursor-default">&gt;</button>
+                                    <button className="min-h-[44px] min-w-[44px] flex items-center justify-center border border-[rgb(var(--ios-separator))] rounded bg-white dark:bg-slate-800 text-[rgb(var(--ios-text-tertiary))] text-xs opacity-40 cursor-default">&lt;</button>
+                                    <button className="min-h-[44px] min-w-[44px] flex items-center justify-center border border-[rgb(var(--ios-accent))] rounded bg-[rgb(var(--ios-accent))]/10 text-[rgb(var(--ios-accent))] font-bold text-xs">1</button>
+                                    <button className="min-h-[44px] min-w-[44px] flex items-center justify-center border border-[rgb(var(--ios-separator))] rounded bg-white dark:bg-slate-800 text-[rgb(var(--ios-text-tertiary))] text-xs opacity-40 cursor-default">&gt;</button>
                                 </div>
                             </div>
                         )}

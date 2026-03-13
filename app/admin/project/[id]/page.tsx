@@ -5,14 +5,16 @@ import { useParams, useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { Project } from '@/lib/types';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, AlertCircle } from 'lucide-react';
 import { cn } from '@/utils/cn';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 
 // Components
 import { ProjectForm } from '@/components/project-form'; // Reusing for Tab 1 (will need slight adaptation or wrapper)
 import ProjectDetailForm from '@/components/admin/project-detail-form';
 import FileManager from '@/components/admin/file-manager';
 import { Toast } from '@/components/ui/toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AdminProjectEditPage() {
     const params = useParams();
@@ -54,11 +56,38 @@ export default function AdminProjectEditPage() {
         fetchProject();
     }, [id, supabase]);
 
-    if (loading) return <div className="p-8 text-center">กำลังโหลดข้อมูล...</div>;
-    if (!project) return <div className="p-8 text-center text-red-500">ไม่พบข้อมูลโครงการ</div>;
+    if (loading) return (
+        <div className="container mx-auto py-8 px-4 max-w-5xl space-y-6">
+            <div className="flex items-center gap-4">
+                <Skeleton className="h-10 w-10 rounded-full" />
+                <div className="space-y-2">
+                    <Skeleton className="h-6 w-48" />
+                    <Skeleton className="h-4 w-64" />
+                </div>
+            </div>
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-96 w-full rounded-lg" />
+        </div>
+    );
+
+    if (!project) return (
+        <div className="container mx-auto py-8 px-4 max-w-5xl">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-8 text-center space-y-4">
+                <AlertCircle className="w-12 h-12 text-red-400 mx-auto" />
+                <p className="text-red-700 font-medium">ไม่พบข้อมูลโครงการ</p>
+                <Link href="/admin" className="inline-block px-4 py-2 bg-slate-900 text-white rounded-md hover:bg-slate-800 text-sm">
+                    กลับไปหน้าจัดการ
+                </Link>
+            </div>
+        </div>
+    );
 
     return (
-        <div className="container mx-auto py-8 px-4 max-w-5xl">
+        <main id="main-content" className="container mx-auto py-8 px-4 max-w-5xl">
+            <Breadcrumbs items={[
+                { label: 'หน้าแรก', href: '/admin' },
+                { label: 'รายละเอียดโครงการ' },
+            ]} />
             {/* Header */}
             <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -145,6 +174,6 @@ export default function AdminProjectEditPage() {
                 isVisible={showToast}
                 onClose={() => setShowToast(false)}
             />
-        </div>
+        </main>
     );
 }

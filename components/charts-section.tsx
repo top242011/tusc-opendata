@@ -42,6 +42,35 @@ export function ChartsSection({ projects }: ChartsSectionProps) {
 
     const barData = Object.values(orgStats).sort((a: any, b: any) => b.requested - a.requested);
 
+    const truncateLabel = (label: string, maxLen = 18) =>
+        label.length > maxLen ? label.slice(0, maxLen) + '…' : label;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const CustomBarTooltip = ({ active, payload, label }: any) => {
+        if (!active || !payload?.length) return null;
+        return (
+            <div className="rounded-[var(--ios-radius-md)] border-0 shadow-lg bg-[rgb(var(--ios-bg-secondary))] p-3 text-sm max-w-[240px]">
+                <p className="font-semibold text-[rgb(var(--ios-text-primary))] mb-2 truncate">{label}</p>
+                {payload.map((entry: any, i: number) => (
+                    <div key={i} className="flex items-center justify-between gap-4">
+                        <span className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full" style={{ background: entry.color }} />
+                            <span className="text-[rgb(var(--ios-text-secondary))]">{entry.name}</span>
+                        </span>
+                        <span className="font-mono font-medium text-[rgb(var(--ios-text-primary))]">
+                            {formatTHB(entry.value)}
+                        </span>
+                    </div>
+                ))}
+                {payload.length === 2 && payload[0].value > 0 && (
+                    <div className="mt-2 pt-2 border-t border-[rgb(var(--ios-separator))] text-xs text-[rgb(var(--ios-text-tertiary))]">
+                        อนุมัติ {((payload[1].value / payload[0].value) * 100).toFixed(1)}% ของที่ขอ
+                    </div>
+                )}
+            </div>
+        );
+    };
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <Card className="flex flex-col">
@@ -49,7 +78,7 @@ export function ChartsSection({ projects }: ChartsSectionProps) {
                     <CardTitle>สัดส่วนสถานะโครงการ</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col">
-                    <div className="h-[280px]">
+                    <div className="min-h-[220px] md:min-h-[280px] h-[280px]" role="img" aria-label={`แผนภูมิวงกลมสัดส่วนสถานะโครงการ: ${pieData.map(d => `${d.name} ${d.value} โครงการ`).join(', ')}`}>
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
@@ -69,7 +98,7 @@ export function ChartsSection({ projects }: ChartsSectionProps) {
                                     contentStyle={{
                                         borderRadius: 'var(--ios-radius-md)',
                                         border: 'none',
-                                        boxShadow: 'var(--ios-shadow-lg)',
+                                        boxShadow: 'var(--ios-shadow-sm)',
                                         background: 'rgb(var(--ios-bg-secondary))',
                                         color: 'rgb(var(--ios-text-primary))'
                                     }}
@@ -119,7 +148,7 @@ export function ChartsSection({ projects }: ChartsSectionProps) {
                 <CardHeader>
                     <CardTitle>10 อันดับองค์กรที่เสนองบประมาณสูงสุด</CardTitle>
                 </CardHeader>
-                <CardContent className="h-[500px]">
+                <CardContent className="min-h-[300px] md:min-h-[500px] h-[500px]" role="img" aria-label="แผนภูมิแท่ง 10 อันดับองค์กรที่เสนองบประมาณสูงสุด">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart
                             layout="vertical"
@@ -136,14 +165,16 @@ export function ChartsSection({ projects }: ChartsSectionProps) {
                                 dataKey="name"
                                 type="category"
                                 width={120}
+                                tickFormatter={(name) => truncateLabel(name)}
                                 tick={{ fontSize: 11, fill: 'rgb(var(--ios-text-secondary))' }}
                             />
                             <Tooltip
                                 cursor={{ fill: 'rgb(var(--ios-fill-tertiary))' }}
+                                content={<CustomBarTooltip />}
                                 contentStyle={{
                                     borderRadius: 'var(--ios-radius-md)',
                                     border: 'none',
-                                    boxShadow: 'var(--ios-shadow-lg)',
+                                    boxShadow: 'var(--ios-shadow-sm)',
                                     background: 'rgb(var(--ios-bg-secondary))',
                                     color: 'rgb(var(--ios-text-primary))'
                                 }}

@@ -19,6 +19,7 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
     const [email, setEmail] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const supabase = createClient();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -26,6 +27,7 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
         if (!feedback.trim()) return;
 
         setIsSubmitting(true);
+        setError(null);
 
         try {
             const { error } = await supabase
@@ -47,7 +49,7 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
             }, 2000);
         } catch (err) {
             console.error('Feedback submission error:', err);
-            alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+            setError('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
         } finally {
             setIsSubmitting(false);
         }
@@ -65,6 +67,11 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
                 </div>
             ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    {error && (
+                        <div className="p-3 bg-[rgb(var(--ios-red))]/10 text-[rgb(var(--ios-red))] text-sm rounded-[var(--ios-radius-sm)]" role="alert">
+                            {error}
+                        </div>
+                    )}
                     <div className="space-y-2">
                         <Label htmlFor="feedback">รายละเอียดปัญหาหรือข้อเสนอแนะ</Label>
                         <Textarea

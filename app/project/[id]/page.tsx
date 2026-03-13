@@ -6,6 +6,7 @@ import { PublicNavbar } from "@/components/public-navbar";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { formatTHB, getStatusLabel } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Project, ProjectFile } from '@/lib/types';
 import { format } from 'date-fns';
 import { th } from 'date-fns/locale';
@@ -14,7 +15,6 @@ import { ReportButton } from "@/components/report-button";
 import { Tabs } from "@/components/ui/tabs";
 import { GeneralInfoTab, BudgetTab, FilesTab } from "@/components/project-detail-tabs";
 import { Wallet } from "lucide-react";
-
 interface PageProps {
     params: Promise<{ id: string }>;
 }
@@ -78,6 +78,20 @@ export default async function ProjectDetailPage(props: PageProps) {
             <PublicNavbar />
             <div className="py-8 px-4 animate-fade-up print:max-w-none">
                 <div className="max-w-4xl mx-auto print:max-w-none">
+        <main id="main-content" className="min-h-screen bg-[rgb(var(--ios-bg-primary))]">
+            <PublicNavbar />
+            <div className="py-8 px-4 animate-fade-up">
+                <div className="max-w-4xl mx-auto">
+                    {/* Back Button */}
+                    <div className="mb-4">
+                        <Button variant="ghost" size="sm" asChild>
+                            <Link href="/" className="gap-2">
+                                <ArrowLeft className="w-4 h-4" />
+                                กลับหน้าหลัก
+                            </Link>
+                        </Button>
+                    </div>
+
                     <Breadcrumbs
                         items={[
                             { label: 'โครงการทั้งหมด', href: '/' },
@@ -87,6 +101,7 @@ export default async function ProjectDetailPage(props: PageProps) {
 
                     {/* Header Card */}
                     <div className="bg-[rgb(var(--ios-bg-secondary))] px-8 py-8 shadow-[var(--ios-shadow-sm)] border rounded-[var(--ios-radius-lg)] mb-6 relative overflow-hidden print:shadow-none print:border-none">
+                    <div className="bg-[rgb(var(--ios-bg-secondary))] px-8 py-8 shadow-[var(--ios-shadow-sm)] border border-[rgb(var(--ios-separator))]/30 rounded-[var(--ios-radius-lg)] mb-6 relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-4 opacity-10">
                             <FileText className="w-32 h-32 text-[rgb(var(--ios-text-primary))]" />
                         </div>
@@ -112,6 +127,7 @@ export default async function ProjectDetailPage(props: PageProps) {
 
                             <div className="flex flex-wrap gap-2 mb-4">
                                 <Badge variant="outline" className="text-[rgb(var(--ios-text-secondary))] border-[rgb(var(--ios-separator))] bg-[rgb(var(--ios-bg-secondary))]">
+                                <Badge variant="outline" className="text-[rgb(var(--ios-text-tertiary))] border-[rgb(var(--ios-separator))] bg-[rgb(var(--ios-bg-secondary))]">
                                     ปีงบประมาณ {project.fiscal_year}
                                 </Badge>
                                 <Badge variant={
@@ -137,11 +153,20 @@ export default async function ProjectDetailPage(props: PageProps) {
                             <div>
                                 <p className="text-xs text-[rgb(var(--ios-text-secondary))] uppercase font-semibold">งบที่ได้รับอนุมัติ</p>
                                 <p className={`text-2xl font-mono font-bold ${project.budget_approved > 0 ? 'text-[rgb(var(--ios-accent))]' : 'text-[rgb(var(--ios-text-tertiary))]'}`}>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 pt-6 border-t border-[rgb(var(--ios-separator))]/30">
+                            <div>
+                                <p className="text-xs text-[rgb(var(--ios-text-tertiary))] uppercase font-semibold">งบที่เสนอขอ</p>
+                                <p className="text-lg font-mono font-medium text-[rgb(var(--ios-text-secondary))]">{formatTHB(project.budget_requested)}</p>
+                            </div>
+                            <div>
+                                <p className="text-xs text-[rgb(var(--ios-text-tertiary))] uppercase font-semibold">งบที่ได้รับอนุมัติ</p>
+                                <p className={`text-2xl font-mono font-bold ${project.budget_approved > 0 ? 'text-[rgb(var(--ios-accent))]' : 'text-[rgb(var(--ios-text-quaternary))]'}`}>
                                     {formatTHB(project.budget_approved)}
                                 </p>
                             </div>
                             <div>
                                 <p className="text-xs text-[rgb(var(--ios-text-secondary))] uppercase font-semibold">ผลการพิจารณา</p>
+                                <p className="text-xs text-[rgb(var(--ios-text-tertiary))] uppercase font-semibold">ผลการพิจารณา</p>
                                 <div className="flex items-center gap-2 mt-1">
                                     {project.budget_approved === project.budget_requested ? (
                                         <span className="text-[rgb(var(--ios-green))] text-sm font-medium flex items-center gap-1">
@@ -161,7 +186,6 @@ export default async function ProjectDetailPage(props: PageProps) {
                         </div>
                     </div>
 
-                    {/* Detail Sections (Official Document Style) */}
                     {/* Tabs Section */}
                     <div className="mb-8">
                         <Tabs
@@ -194,8 +218,6 @@ export default async function ProjectDetailPage(props: PageProps) {
 
                 </div>
             </div>
-        </div>
+        </main>
     );
 }
-
-
