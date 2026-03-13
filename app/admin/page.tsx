@@ -5,7 +5,7 @@ import { AdminProjectTable } from "@/components/admin-project-table";
 import Link from 'next/link';
 import { Project } from "@/lib/types";
 import { AdminNavbar } from "@/components/admin-navbar";
-import { Upload } from "lucide-react";
+import { Upload, AlertCircle } from "lucide-react";
 import { AdminQuickStart } from "@/components/admin/admin-quick-start";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
@@ -38,6 +38,13 @@ export default async function AdminPage() {
             <AdminNavbar userEmail={user?.email} />
 
             <div className="container mx-auto max-w-6xl px-4">
+                {error && (
+                    <Alert variant="destructive" className="mb-6">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>ไม่สามารถโหลดข้อมูลโครงการได้ กรุณาลองใหม่อีกครั้ง</AlertDescription>
+                    </Alert>
+                )}
+
                 {/* Usage Guide */}
                 <AdminQuickStart />
 

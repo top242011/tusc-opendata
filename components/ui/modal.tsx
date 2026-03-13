@@ -90,7 +90,7 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
             <div
                 ref={modalRef}
                 className={cn(
-                    "relative w-full sm:max-w-lg max-h-[90vh] overflow-hidden",
+                    "relative w-full sm:max-w-lg max-h-[90vh]",
                     "bg-[rgb(var(--ios-bg-secondary))]",
                     "rounded-t-[var(--ios-radius-xl)] sm:rounded-[var(--ios-radius-xl)]",
                     "shadow-[var(--ios-shadow-xl)]",

@@ -15,6 +15,7 @@ interface BreadcrumbsProps {
 export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
     return (
         <nav aria-label="Breadcrumb" className={cn("flex items-center text-sm text-[rgb(var(--ios-text-tertiary))] mb-6", className)}>
+        <nav aria-label="Breadcrumb" className={cn("flex items-center overflow-x-auto text-sm text-slate-500 mb-6", className)}>
             <Link
                 href="/"
                 className="flex items-center hover:text-[rgb(var(--ios-accent))] transition-colors"
@@ -46,6 +47,23 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
                     </div>
                 );
             })}
+            {items.map((item, index) => (
+                <div key={index} className="flex items-center">
+                    <ChevronRight className="w-4 h-4 mx-2 text-slate-300" />
+                    {item.href ? (
+                        <Link
+                            href={item.href}
+                            className="hover:text-blue-600 transition-colors font-medium truncate max-w-[200px]"
+                        >
+                            {item.label}
+                        </Link>
+                    ) : (
+                        <span className="text-slate-900 font-semibold cursor-default truncate max-w-[200px]">
+                            {item.label}
+                        </span>
+                    )}
+                </div>
+            ))}
         </nav>
     );
 }

@@ -15,7 +15,6 @@ import { ReportButton } from "@/components/report-button";
 import { Tabs } from "@/components/ui/tabs";
 import { GeneralInfoTab, BudgetTab, FilesTab } from "@/components/project-detail-tabs";
 import { Wallet } from "lucide-react";
-
 interface PageProps {
     params: Promise<{ id: string }>;
 }
@@ -71,6 +70,7 @@ export default async function ProjectDetailPage(props: PageProps) {
 
                     {/* Header Card */}
                     <div className="bg-[rgb(var(--ios-bg-secondary))] px-8 py-8 shadow-[var(--ios-shadow-sm)] border border-[rgb(var(--ios-separator))]/30 rounded-[var(--ios-radius-lg)] mb-6 relative overflow-hidden">
+                    <div className="bg-white px-4 sm:px-8 py-8 shadow-sm border rounded-lg mb-6 relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-4 opacity-10">
                             <FileText className="w-32 h-32 text-[rgb(var(--ios-text-primary))]" />
                         </div>

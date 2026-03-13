@@ -65,7 +65,7 @@ export function PublicNavbar() {
                             </button>
 
                             {/* Dropdown Menu */}
-                            <div className={`absolute top-full left-0 mt-1 w-72 bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-md)] shadow-[var(--ios-shadow-lg)] border border-[rgb(var(--ios-separator))]/50 transition-all duration-200 transform origin-top-left z-50 ${isToolsOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'}`}>
+                            <div className={`absolute top-full left-0 mt-1 w-72 max-w-[calc(100vw-2rem)] bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-md)] shadow-[var(--ios-shadow-lg)] border border-[rgb(var(--ios-separator))]/50 transition-all duration-200 transform origin-top-left z-[60] ${isToolsOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'}`}>
                                 <div className="p-2">
                                     <Link
                                         href="/tools/document-checker"
@@ -158,7 +158,7 @@ export function PublicNavbar() {
 
                 {/* Mobile Menu */}
                 {isMobileMenuOpen && (
-                    <div className="md:hidden border-t border-[rgb(var(--ios-separator))]/50 bg-[rgb(var(--ios-bg-secondary))] absolute w-full shadow-[var(--ios-shadow-lg)] animate-in slide-in-from-top-2 duration-200">
+                    <div className="md:hidden border-t border-[rgb(var(--ios-separator))]/50 bg-[rgb(var(--ios-bg-secondary))] absolute w-full z-50 max-h-[calc(100vh-3.5rem)] overflow-y-auto shadow-[var(--ios-shadow-lg)] animate-in slide-in-from-top-2 duration-200">
                         <div className="flex flex-col p-4 gap-1">
                             <Link
                                 href="/"

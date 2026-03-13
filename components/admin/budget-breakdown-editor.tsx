@@ -68,11 +68,11 @@ export default function BudgetBreakdownEditor({ value = [], onChange }: BudgetBr
                     onClick={handleAddItem}
                     className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium"
                 >
-                    <Plus className="w-4 h-4" /> เพิ่มรายการ
+                    <Plus className="w-4 h-4" /> <span>เพิ่มรายการ</span>
                 </button>
             </div>
 
-            <div className="border rounded-lg overflow-hidden bg-white shadow-sm">
+            <div className="border rounded-lg overflow-x-auto bg-white shadow-sm">
                 <table className="w-full text-sm text-left">
                     <thead className="bg-slate-50 border-b border-slate-200">
                         <tr>
@@ -141,7 +141,7 @@ export default function BudgetBreakdownEditor({ value = [], onChange }: BudgetBr
                                         <button
                                             type="button"
                                             onClick={() => handleRemoveItem(index)}
-                                            className="text-slate-400 hover:text-red-500 p-1 rounded transition-colors"
+                                            className="text-slate-400 hover:text-red-500 p-2.5 rounded transition-colors"
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </button>

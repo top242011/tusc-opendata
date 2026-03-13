@@ -33,6 +33,7 @@ export default function HelpTooltip({ content, children, position = 'top' }: Hel
             <button
                 type="button"
                 className="p-1 text-[rgb(var(--ios-text-quaternary))] hover:text-[rgb(var(--ios-accent))] transition-colors rounded-full hover:bg-[rgb(var(--ios-fill-tertiary))]"
+                className="p-3 text-slate-400 hover:text-blue-600 transition-colors rounded-full hover:bg-blue-50"
                 onMouseEnter={() => setIsVisible(true)}
                 onMouseLeave={() => setIsVisible(false)}
                 onFocus={() => setIsVisible(true)}
@@ -48,6 +49,7 @@ export default function HelpTooltip({ content, children, position = 'top' }: Hel
                     role="tooltip"
                     className={cn(
                         "absolute z-50 px-3 py-2 text-sm text-[rgb(var(--ios-text-primary))] bg-[rgb(var(--ios-bg-tertiary))] rounded-[var(--ios-radius-sm)] shadow-[var(--ios-shadow-lg)] max-w-xs whitespace-normal",
+                        "absolute z-[60] px-3 py-2 text-sm text-white bg-slate-800 rounded-lg shadow-lg max-w-xs whitespace-normal",
                         positionClasses[position],
                         "animate-scale-in"
                     )}

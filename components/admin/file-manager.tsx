@@ -6,6 +6,8 @@ import { ProjectFile } from '@/lib/types';
 import { Loader2, Trash2, FileText, FileArchive, Download, UploadCloud, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { th } from 'date-fns/locale';
+import { Toast } from '@/components/ui/toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface FileManagerProps {
     projectId: number;
@@ -16,6 +18,9 @@ export default function FileManager({ projectId }: FileManagerProps) {
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastType, setToastType] = useState<'success' | 'error'>('success');
+    const [showToast, setShowToast] = useState(false);
     const supabase = createClient();
 
     const fetchFiles = async () => {
@@ -85,6 +90,9 @@ export default function FileManager({ projectId }: FileManagerProps) {
         } catch (error: any) {
             console.error('Upload error:', error);
             setError(`อัปโหลดไม่สำเร็จ: ${error.message || 'Unknown error'}`);
+            setToastMessage(`อัปโหลดไม่สำเร็จ: ${error.message || 'Unknown error'}`);
+            setToastType('error');
+            setShowToast(true);
         } finally {
             setUploading(false);
             // Reset input
@@ -110,6 +118,9 @@ export default function FileManager({ projectId }: FileManagerProps) {
         } catch (error) {
             console.error('Delete error:', error);
             setError('ลบไฟล์ไม่ได้ กรุณาลองใหม่อีกครั้ง');
+            setToastMessage('ลบไฟล์ไม่ได้ กรุณาลองใหม่อีกครั้ง');
+            setToastType('error');
+            setShowToast(true);
         }
     };
 
@@ -119,7 +130,16 @@ export default function FileManager({ projectId }: FileManagerProps) {
         return <FileText className="w-5 h-5 text-slate-500" />;
     };
 
-    if (loading) return <div className="text-center py-4">กำลังโหลดข้อมูลเอกสาร...</div>;
+    if (loading) return (
+        <div className="space-y-6">
+            <Skeleton className="h-32 w-full rounded-lg" />
+            <div className="space-y-2">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+            </div>
+        </div>
+    );
 
     return (
         <div className="space-y-6">
@@ -130,6 +150,12 @@ export default function FileManager({ projectId }: FileManagerProps) {
                     <button onClick={() => setError(null)} className="ml-auto text-red-400 hover:text-red-600 text-xs">ปิด</button>
                 </div>
             )}
+            <Toast
+                message={toastMessage}
+                type={toastType}
+                isVisible={showToast}
+                onClose={() => setShowToast(false)}
+            />
             {/* Upload Area */}
             <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:bg-slate-50 transition-colors relative">
                 <input
@@ -150,7 +176,7 @@ export default function FileManager({ projectId }: FileManagerProps) {
             </div>
 
             {/* File List */}
-            <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+            <div className="bg-white rounded-lg border border-slate-200 overflow-x-auto">
                 <table className="w-full text-left text-sm">
                     <thead className="bg-slate-50 border-b border-slate-200">
                         <tr>
@@ -170,11 +196,13 @@ export default function FileManager({ projectId }: FileManagerProps) {
                         ) : (
                             files.map((file) => (
                                 <tr key={file.id} className="hover:bg-slate-50">
-                                    <td className="px-4 py-3 font-medium text-slate-800 flex items-center gap-3">
+                                    <td className="px-4 py-3 font-medium text-slate-800">
+                                        <div className="flex items-center gap-3">
                                         {getFileIcon(file.file_type)}
                                         <a href={file.file_url} target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-blue-600">
                                             {file.file_name}
                                         </a>
+                                        </div>
                                     </td>
                                     <td className="px-4 py-3 text-slate-500 uppercase">{file.file_type}</td>
                                     <td className="px-4 py-3 text-slate-500">
@@ -183,7 +211,7 @@ export default function FileManager({ projectId }: FileManagerProps) {
                                     <td className="px-4 py-3 text-right">
                                         <button
                                             onClick={() => handleDelete(file.id, file.file_name)}
-                                            className="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50"
+                                            className="text-red-500 hover:text-red-700 p-2.5 rounded hover:bg-red-50"
                                             title="ลบไฟล์"
                                         >
                                             <Trash2 className="w-4 h-4" />

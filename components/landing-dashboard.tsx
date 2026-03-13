@@ -115,7 +115,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
 
     // --- Dynamic Data for Timeline ---
     const yearStats = projects.reduce((acc, project) => {
-        const year = project.fiscal_year || 2567;
+        const year = project.fiscal_year || (new Date().getFullYear() + 543);
         if (!acc[year]) acc[year] = { req: 0, app: 0 };
         acc[year].req += Number(project.budget_requested);
         acc[year].app += Number(project.budget_approved);
@@ -133,7 +133,8 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
         timelineData.unshift({ year: timelineData[0].year - 1, approved: 0 });
     }
     if (timelineData.length === 0) {
-        for (let i = 0; i < 6; i++) timelineData.push({ year: 2562 + i, approved: 0 });
+        const currentBEYear = new Date().getFullYear() + 543;
+        for (let i = 0; i < 6; i++) timelineData.push({ year: currentBEYear - 5 + i, approved: 0 });
     }
 
     const maxTimelineY = Math.max(...timelineData.map(d => d.approved)) || 1;
@@ -168,6 +169,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
 
                 {/* Search Bar */}
                 <div className="flex flex-col w-full lg:w-auto lg:min-w-64 h-10 lg:max-w-sm mt-4 lg:mt-0 lg:mr-auto lg:ml-10">
+                <div className="hidden md:flex flex-col min-w-64 h-10 max-w-sm mr-auto ml-10">
                     <div className="flex w-full flex-1 items-stretch rounded-[var(--ios-radius-md)] h-full border border-[rgb(var(--ios-separator))] bg-white dark:bg-slate-800 overflow-hidden focus-within:ring-2 focus-within:ring-[rgb(var(--ios-accent))]/50 transition-all">
                         <div className="text-[rgb(var(--ios-text-tertiary))] flex items-center justify-center pl-3">
                             <Search className="w-5 h-5" />
@@ -204,7 +206,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                         </div>
                     </div>
                     <p className="text-[rgb(var(--ios-text-secondary))] text-sm font-medium mb-1">งบประมาณที่อนุมัติทั้งหมด</p>
-                    <p className="text-3xl font-bold text-[rgb(var(--ios-text-primary))] tracking-tight">{formatTHB(stats.totalApproved)}</p>
+                    <p className="text-2xl md:text-3xl font-bold text-[rgb(var(--ios-text-primary))] tracking-tight">{formatTHB(stats.totalApproved)}</p>
                     <div className="absolute bottom-0 left-0 h-1 bg-blue-500 w-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
 
@@ -216,7 +218,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                         </div>
                     </div>
                     <p className="text-[rgb(var(--ios-text-secondary))] text-sm font-medium mb-1">งบประมาณโครงการที่ขอ</p>
-                    <p className="text-3xl font-bold text-[rgb(var(--ios-text-primary))] tracking-tight">{formatTHB(stats.totalRequested)}</p>
+                    <p className="text-2xl md:text-3xl font-bold text-[rgb(var(--ios-text-primary))] tracking-tight">{formatTHB(stats.totalRequested)}</p>
                     <div className="absolute bottom-0 left-0 h-1 bg-amber-500 w-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
 
@@ -228,7 +230,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                         </div>
                     </div>
                     <p className="text-[rgb(var(--ios-text-secondary))] text-sm font-medium mb-1">จำนวนโครงการทั้งหมด</p>
-                    <p className="text-3xl font-bold text-[rgb(var(--ios-text-primary))] tracking-tight">{projects.length} โครงการ</p>
+                    <p className="text-2xl md:text-3xl font-bold text-[rgb(var(--ios-text-primary))] tracking-tight">{projects.length} โครงการ</p>
                     <div className="absolute bottom-0 left-0 h-1 bg-emerald-500 w-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
             </div>
@@ -248,8 +250,8 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                         <div className="p-6 flex-1">
                             {/* Simulated Treemap */}
                             <div className="w-full h-full min-h-[400px] flex flex-col gap-1">
-                                <div className="flex flex-1 gap-1">
-                                    <div className="w-[45%] bg-blue-600 hover:bg-blue-700 transition-colors p-4 flex flex-col justify-between text-white rounded-sm group relative cursor-pointer">
+                                <div className="flex flex-col md:flex-row flex-1 gap-1">
+                                    <div className="md:w-[45%] bg-blue-600 hover:bg-blue-700 transition-colors p-4 flex flex-col justify-between text-white rounded-sm group relative cursor-pointer">
                                         <span className="font-bold text-lg line-clamp-2">{t1.name}</span>
                                         <div className="flex items-end justify-between">
                                             <span className="text-2xl font-bold opacity-90">{formatSmallTHB(t1.approved)}</span>
@@ -282,22 +284,22 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="h-[120px] flex gap-1">
-                                    <div className="w-[30%] bg-amber-500 hover:bg-amber-600 transition-colors p-3 text-white rounded-sm flex flex-col justify-between cursor-pointer">
+                                <div className="h-auto md:h-[120px] flex flex-col md:flex-row gap-1">
+                                    <div className="md:w-[30%] bg-amber-500 hover:bg-amber-600 transition-colors p-3 text-white rounded-sm flex flex-col justify-between cursor-pointer">
                                         <span className="font-bold text-sm truncate w-full">{t5.name}</span>
                                         <div className="flex items-end justify-between w-full">
                                             <span className="text-base font-bold">{formatSmallTHB(t5.approved)}</span>
                                             <span className="text-xs bg-white/20 px-1 py-0.5 rounded backdrop-blur-sm ml-1">{getPct(t5.approved)}</span>
                                         </div>
                                     </div>
-                                    <div className="w-[25%] bg-rose-500 hover:bg-rose-600 transition-colors p-3 text-white rounded-sm flex flex-col justify-between cursor-pointer">
+                                    <div className="md:w-[25%] bg-rose-500 hover:bg-rose-600 transition-colors p-3 text-white rounded-sm flex flex-col justify-between cursor-pointer">
                                         <span className="font-bold text-sm truncate w-full">{t6.name}</span>
                                         <div className="flex items-end justify-between w-full">
                                             <span className="text-base font-bold">{formatSmallTHB(t6.approved)}</span>
                                             <span className="text-xs bg-white/20 px-1 py-0.5 rounded backdrop-blur-sm ml-1">{getPct(t6.approved)}</span>
                                         </div>
                                     </div>
-                                    <div className="w-[20%] bg-purple-500 hover:bg-purple-600 transition-colors p-3 text-white rounded-sm flex flex-col justify-between cursor-pointer">
+                                    <div className="md:w-[20%] bg-purple-500 hover:bg-purple-600 transition-colors p-3 text-white rounded-sm flex flex-col justify-between cursor-pointer">
                                         <span className="font-bold text-sm truncate w-full">{t7.name}</span>
                                         <div className="flex items-end justify-between w-full">
                                             <span className="text-base font-bold">{formatSmallTHB(t7.approved)}</span>
@@ -341,34 +343,34 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                             <p className="text-sm text-[rgb(var(--ios-text-secondary))]">ไม่มีข้อมูล</p>
                         )}
                     </div>
-                </div>
 
-                {/* Donut: สัดส่วนงบประมาณตามวิทยาเขต */}
-                <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 shadow-[var(--ios-shadow-sm)] p-6 flex-1 flex flex-col">
-                    <h3 className="text-lg font-bold text-[rgb(var(--ios-text-primary))] mb-2">สัดส่วนงบประมาณตามวิทยาเขต</h3>
-                    <div className="flex-1 flex items-center justify-center relative my-4">
-                        <div className="w-48 h-48 rounded-full relative" style={{ background: `conic-gradient(${finalGradient})` }}>
-                            <div className="absolute inset-0 m-auto w-32 h-32 bg-[rgb(var(--ios-bg-secondary))] rounded-full flex items-center justify-center flex-col shadow-inner">
-                                <span className="text-xs text-[rgb(var(--ios-text-secondary))] font-medium uppercase">รวมทั้งหมด</span>
-                                <span className="text-xl font-bold text-[rgb(var(--ios-text-primary))]">100%</span>
+                    {/* Donut: สัดส่วนงบประมาณตามวิทยาเขต */}
+                    <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 shadow-[var(--ios-shadow-sm)] p-6 flex-1 flex flex-col">
+                        <h3 className="text-lg font-bold text-[rgb(var(--ios-text-primary))] mb-2">สัดส่วนงบประมาณตามวิทยาเขต</h3>
+                        <div className="flex-1 flex items-center justify-center relative my-4">
+                            <div className="w-48 h-48 rounded-full relative" style={{ background: `conic-gradient(${finalGradient})` }}>
+                                <div className="absolute inset-0 m-auto w-32 h-32 bg-[rgb(var(--ios-bg-secondary))] rounded-full flex items-center justify-center flex-col shadow-inner">
+                                    <span className="text-xs text-[rgb(var(--ios-text-secondary))] font-medium uppercase">รวมทั้งหมด</span>
+                                    <span className="text-xl font-bold text-[rgb(var(--ios-text-primary))]">100%</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="flex flex-wrap justify-center gap-3 text-xs text-[rgb(var(--ios-text-secondary))] mt-4">
-                        {donutData.map(d => (
-                            <div key={d.name} className="flex items-center gap-1.5">
-                                <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: d.color }}></div>
-                                <span>{d.name} ({((d.val / cTotal) * 100).toFixed(1)}%)</span>
-                            </div>
-                        ))}
-                        {donutData.length === 0 && <span className="text-[rgb(var(--ios-text-secondary))]">ไม่มีข้อมูล</span>}
+                        <div className="flex flex-wrap justify-center gap-3 text-xs text-[rgb(var(--ios-text-secondary))] mt-4">
+                            {donutData.map(d => (
+                                <div key={d.name} className="flex items-center gap-1.5">
+                                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: d.color }}></div>
+                                    <span>{d.name} ({((d.val / cTotal) * 100).toFixed(1)}%)</span>
+                                </div>
+                            ))}
+                            {donutData.length === 0 && <span className="text-[rgb(var(--ios-text-secondary))]">ไม่มีข้อมูล</span>}
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* Timeline: แนวโน้มงบประมาณตามปี */}
             <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 shadow-[var(--ios-shadow-sm)] p-6 mb-8">
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex flex-wrap gap-3 justify-between items-center mb-6">
                     <div>
                         <h3 className="text-lg font-bold text-[rgb(var(--ios-text-primary))]">แนวโน้มงบประมาณโครงการ (5 ปีย้อนหลัง)</h3>
                         <p className="text-[rgb(var(--ios-text-secondary))] text-sm">งบประมาณที่ได้รับอนุมัติแยกตามปีงบประมาณ</p>
@@ -390,7 +392,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                     </div>
                 </div>
 
-                <div className="h-64 w-full relative pt-8 pb-6 px-4">
+                <div className="h-64 w-full relative pt-8 pb-6 pl-12 pr-4">
                     <div className="absolute inset-x-4 inset-y-6 flex flex-col justify-between text-xs text-[rgb(var(--ios-text-tertiary))] font-mono z-0">
                         <div className="border-b border-dashed border-[rgb(var(--ios-separator))] w-full h-0 relative"><span className="absolute -left-8 -top-2">{formatSmallTHB(maxTimelineY)}</span></div>
                         <div className="border-b border-dashed border-[rgb(var(--ios-separator))] w-full h-0 relative"><span className="absolute -left-8 -top-2">{formatSmallTHB(maxTimelineY * 0.75)}</span></div>
@@ -399,7 +401,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                         <div className="border-b border-solid border-[rgb(var(--ios-separator))]/80 w-full h-0 relative"><span className="absolute -left-8 -top-2">0</span></div>
                     </div>
 
-                    <svg className="absolute inset-x-4 inset-y-6 w-full h-[calc(100%-3rem)] z-10 overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <svg className="absolute inset-x-4 inset-y-6 w-full h-[calc(100%-3rem)] z-10" preserveAspectRatio="none" viewBox="0 0 100 100">
                         <defs>
                             <linearGradient id="chart-gradient" x1="0" x2="0" y1="0" y2="1">
                                 <stop offset="0%" stopColor="rgb(var(--ios-accent))" stopOpacity="0.2"></stop>

@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { Upload, Loader2, AlertCircle } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { createClient } from '@/utils/supabase/client';
+import { Toast } from '@/components/ui/toast';
 
 interface DocumentUploaderProps {
     onFileUploaded: (storagePath: string, fileName: string) => void;
@@ -15,6 +16,9 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
     const [isUploading, setIsUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastType, setToastType] = useState<'success' | 'error'>('error');
+    const [showToast, setShowToast] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
     const handleDrag = (e: React.DragEvent) => {
@@ -61,6 +65,9 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
             await uploadToStorage(file);
         } else {
             setError("รองรับเฉพาะไฟล์ PDF หรือ Excel (.xlsx) เท่านั้น");
+            setToastMessage("รองรับเฉพาะไฟล์ PDF หรือ Excel (.xlsx) เท่านั้น");
+            setToastType('error');
+            setShowToast(true);
         }
     };
 
@@ -87,6 +94,9 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
                 console.error('Upload error:', uploadError);
                 setUploadProgress(null);
                 setError('ไม่สามารถอัปโหลดไฟล์ได้: ' + uploadError.message);
+                setToastMessage('ไม่สามารถอัปโหลดไฟล์ได้: ' + uploadError.message);
+                setToastType('error');
+                setShowToast(true);
                 return;
             }
 
@@ -97,6 +107,9 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
             console.error('Upload error:', err);
             setUploadProgress(null);
             setError('เกิดข้อผิดพลาดในการอัปโหลดไฟล์');
+            setToastMessage('เกิดข้อผิดพลาดในการอัปโหลดไฟล์');
+            setToastType('error');
+            setShowToast(true);
         } finally {
             setIsUploading(false);
         }
@@ -137,6 +150,43 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
                         <Loader2 className="w-10 h-10 animate-spin text-[rgb(var(--ios-accent))]" />
                         <p className="font-medium">{uploadProgress || 'กำลังวิเคราะห์เอกสาร...'}</p>
                         <p className="text-xs">กรุณารอสักครู่ ระบบกำลังตรวจสอบตามกฎระเบียบ</p>
+        <>
+        <Toast
+            message={toastMessage}
+            type={toastType}
+            isVisible={showToast}
+            onClose={() => setShowToast(false)}
+        />
+        <form
+            className={cn(
+                "relative flex flex-col items-center justify-center w-full h-64 rounded-xl border-2 border-dashed transition-all cursor-pointer bg-slate-50",
+                dragActive ? "border-blue-500 bg-blue-50" : "border-slate-300 hover:border-slate-400",
+                isBusy ? "opacity-50 pointer-events-none" : ""
+            )}
+            onDragEnter={handleDrag}
+            onDragLeave={handleDrag}
+            onDragOver={handleDrag}
+            onDrop={handleDrop}
+            onClick={() => inputRef.current?.click()}
+        >
+            <input
+                ref={inputRef}
+                type="file"
+                className="hidden"
+                accept=".pdf,.xlsx,.xls"
+                onChange={handleChange}
+            />
+
+            {isBusy ? (
+                <div className="flex flex-col items-center gap-3 text-slate-500 animate-pulse">
+                    <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
+                    <p className="font-medium">{uploadProgress || 'กำลังวิเคราะห์เอกสาร...'}</p>
+                    <p className="text-xs">กรุณารอสักครู่ ระบบกำลังตรวจสอบตามกฎระเบียบ</p>
+                </div>
+            ) : (
+                <div className="flex flex-col items-center gap-3 text-slate-500">
+                    <div className="p-4 bg-white rounded-full shadow-sm">
+                        <Upload className="w-8 h-8 text-blue-600" />
                     </div>
                 ) : (
                     <div className="flex flex-col items-center gap-3 text-[rgb(var(--ios-text-secondary))]">
@@ -158,5 +208,7 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
                 </div>
             )}
         </div>
+        </form>
+        </>
     );
 }
