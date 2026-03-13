@@ -9,7 +9,7 @@ import { Modal } from "@/components/ui/modal";
 import { ProjectForm } from "@/components/project-form";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Edit2, Trash2, Plus, Search, Filter, X, ChevronDown, ChevronUp, FileText, CheckCircle, AlertCircle } from "lucide-react";
+import { Edit2, Trash2, Plus, Search, Filter, X, ChevronDown, ChevronUp, FileText, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { Toast } from "@/components/ui/toast";
 
@@ -23,6 +23,7 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
     const [deletingId, setDeletingId] = useState<number | null>(null);
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
+    const [toastType, setToastType] = useState<'success' | 'error'>('success');
 
     // --- Search & Filter State ---
     const [searchTerm, setSearchTerm] = useState('');
@@ -106,8 +107,15 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
     const handleDelete = async (id: number) => {
         if (!confirm("ต้องการลบโครงการนี้ใช่หรือไม่? แนะนำให้ตรวจสอบว่ามีไฟล์แนบหรือไม่ก่อนลบ")) return;
         setDeletingId(id);
-        await deleteProject(id);
-        setDeletingId(null);
+        try {
+            await deleteProject(id);
+        } catch (error) {
+            setToastMessage('ลบโครงการไม่สำเร็จ กรุณาลองใหม่อีกครั้ง');
+            setToastType('error');
+            setShowToast(true);
+        } finally {
+            setDeletingId(null);
+        }
     };
 
     return (
@@ -349,7 +357,11 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
                                                         title="ลบ"
                                                         disabled={deletingId === project.id}
                                                     >
-                                                        <Trash2 className="w-4 h-4" />
+                                                        {deletingId === project.id ? (
+                                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                                        ) : (
+                                                            <Trash2 className="w-4 h-4" />
+                                                        )}
                                                     </button>
                                                 </div>
                                             </td>
@@ -374,6 +386,7 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
                                 ? "แก้ไขข้อมูลสําเร็จ (ข้อมูลจะแสดงผลบนหน้าเว็บในอีก 5-10 นาที)"
                                 : "เพิ่มโครงการเรียบร้อย (ข้อมูลจะแสดงผลบนหน้าเว็บในอีก 5-10 นาที)"
                             );
+                            setToastType('success');
                             setShowToast(true);
                         }}
                         onCancel={() => setIsModalOpen(false)}
@@ -382,6 +395,7 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
 
                 <Toast
                     message={toastMessage}
+                    type={toastType}
                     isVisible={showToast}
                     onClose={() => setShowToast(false)}
                 />

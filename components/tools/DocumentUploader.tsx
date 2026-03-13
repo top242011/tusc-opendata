@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { Upload, FileText, FileSpreadsheet, AlertCircle, Loader2, CheckCircle } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { createClient } from '@/utils/supabase/client';
+import { Toast } from '@/components/ui/toast';
 
 interface DocumentUploaderProps {
     onFileUploaded: (storagePath: string, fileName: string) => void;
@@ -14,6 +15,9 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
     const [dragActive, setDragActive] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState<string | null>(null);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastType, setToastType] = useState<'success' | 'error'>('error');
+    const [showToast, setShowToast] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
     const handleDrag = (e: React.DragEvent) => {
@@ -50,7 +54,9 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
         ) {
             await uploadToStorage(file);
         } else {
-            alert("รองรับเฉพาะไฟล์ PDF หรือ Excel (.xlsx) เท่านั้น");
+            setToastMessage("รองรับเฉพาะไฟล์ PDF หรือ Excel (.xlsx) เท่านั้น");
+            setToastType('error');
+            setShowToast(true);
         }
     };
 
@@ -77,7 +83,9 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
             if (uploadError) {
                 console.error('Upload error:', uploadError);
                 setUploadProgress(null);
-                alert('ไม่สามารถอัปโหลดไฟล์ได้: ' + uploadError.message);
+                setToastMessage('ไม่สามารถอัปโหลดไฟล์ได้: ' + uploadError.message);
+                setToastType('error');
+                setShowToast(true);
                 return;
             }
 
@@ -89,7 +97,9 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
         } catch (err) {
             console.error('Upload error:', err);
             setUploadProgress(null);
-            alert('เกิดข้อผิดพลาดในการอัปโหลดไฟล์');
+            setToastMessage('เกิดข้อผิดพลาดในการอัปโหลดไฟล์');
+            setToastType('error');
+            setShowToast(true);
         } finally {
             setIsUploading(false);
         }
@@ -98,6 +108,13 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
     const isBusy = isUploading || isAnalyzing;
 
     return (
+        <>
+        <Toast
+            message={toastMessage}
+            type={toastType}
+            isVisible={showToast}
+            onClose={() => setShowToast(false)}
+        />
         <form
             className={cn(
                 "relative flex flex-col items-center justify-center w-full h-64 rounded-xl border-2 border-dashed transition-all cursor-pointer bg-slate-50",
@@ -136,5 +153,6 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
                 </div>
             )}
         </form>
+        </>
     );
 }

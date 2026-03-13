@@ -6,7 +6,7 @@ import { createClient } from "@/utils/supabase/client";
 import { PublicNavbar } from "@/components/public-navbar";
 import { formatTHB } from "@/lib/utils";
 import { Project } from "@/lib/types";
-import { Search, SlidersHorizontal, Eye } from "lucide-react";
+import { Search, SlidersHorizontal, Eye, AlertCircle } from "lucide-react";
 
 export default function ProjectsPage() {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -16,6 +16,7 @@ export default function ProjectsPage() {
     const [selectedOrgs, setSelectedOrgs] = useState<string[]>([]);
     const [orgSearchTerm, setOrgSearchTerm] = useState("");
     const [sortBy, setSortBy] = useState("งบประมาณ (มาก-น้อย)");
+    const [fetchError, setFetchError] = useState<string | null>(null);
     const supabase = createClient();
 
     useEffect(() => {
@@ -25,7 +26,9 @@ export default function ProjectsPage() {
                 .select('*')
                 .order('budget_requested', { ascending: false });
 
-            if (data) {
+            if (error) {
+                setFetchError('ไม่สามารถโหลดข้อมูลโครงการได้ กรุณาลองใหม่อีกครั้ง');
+            } else if (data) {
                 setProjects(data as Project[]);
             }
             setLoading(false);
@@ -100,6 +103,15 @@ export default function ProjectsPage() {
                     </div>
                 </div>
             </section>
+
+            {fetchError && (
+                <div className="max-w-[1400px] mx-auto px-4 md:px-10 mt-4">
+                    <div className="flex items-center gap-2 p-4 bg-red-50 text-red-700 rounded-lg border border-red-200 text-sm">
+                        <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                        {fetchError}
+                    </div>
+                </div>
+            )}
 
             {/* Main Content Layout */}
             <div className="flex-1 w-full max-w-[1400px] mx-auto px-4 md:px-10 py-8 flex flex-col lg:flex-row gap-8">

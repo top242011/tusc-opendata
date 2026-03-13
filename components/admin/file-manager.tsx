@@ -6,6 +6,8 @@ import { ProjectFile } from '@/lib/types';
 import { Loader2, Trash2, FileText, FileArchive, Download, UploadCloud } from 'lucide-react';
 import { format } from 'date-fns';
 import { th } from 'date-fns/locale';
+import { Toast } from '@/components/ui/toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface FileManagerProps {
     projectId: number;
@@ -15,6 +17,9 @@ export default function FileManager({ projectId }: FileManagerProps) {
     const [files, setFiles] = useState<ProjectFile[]>([]);
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastType, setToastType] = useState<'success' | 'error'>('success');
+    const [showToast, setShowToast] = useState(false);
     const supabase = createClient();
 
     const fetchFiles = async () => {
@@ -75,7 +80,9 @@ export default function FileManager({ projectId }: FileManagerProps) {
             fetchFiles();
         } catch (error: any) {
             console.error('Upload error:', error);
-            alert(`Upload failed: ${error.message || 'Unknown error'}`);
+            setToastMessage(`อัปโหลดไม่สำเร็จ: ${error.message || 'Unknown error'}`);
+            setToastType('error');
+            setShowToast(true);
         } finally {
             setUploading(false);
             // Reset input
@@ -100,7 +107,9 @@ export default function FileManager({ projectId }: FileManagerProps) {
             fetchFiles();
         } catch (error) {
             console.error('Delete error:', error);
-            alert('ลบไฟล์ไม่ได้ กรุณาลองใหม่อีกครั้ง');
+            setToastMessage('ลบไฟล์ไม่ได้ กรุณาลองใหม่อีกครั้ง');
+            setToastType('error');
+            setShowToast(true);
         }
     };
 
@@ -110,10 +119,25 @@ export default function FileManager({ projectId }: FileManagerProps) {
         return <FileText className="w-5 h-5 text-slate-500" />;
     };
 
-    if (loading) return <div className="text-center py-4">กำลังโหลดข้อมูลเอกสาร...</div>;
+    if (loading) return (
+        <div className="space-y-6">
+            <Skeleton className="h-32 w-full rounded-lg" />
+            <div className="space-y-2">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+            </div>
+        </div>
+    );
 
     return (
         <div className="space-y-6">
+            <Toast
+                message={toastMessage}
+                type={toastType}
+                isVisible={showToast}
+                onClose={() => setShowToast(false)}
+            />
             {/* Upload Area */}
             <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:bg-slate-50 transition-colors relative">
                 <input

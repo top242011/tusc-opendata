@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { createClient } from "@/utils/supabase/client";
 import { Loader2, Upload, X, FileText, CheckCircle } from "lucide-react";
+import { Toast } from "@/components/ui/toast";
 
 interface ReportIssueModalProps {
     isOpen: boolean;
@@ -24,6 +25,9 @@ export function ReportIssueModal({ isOpen, onClose, projectId, projectName }: Re
     const [attachments, setAttachments] = useState<File[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
     const supabase = createClient();
 
@@ -49,6 +53,12 @@ export function ReportIssueModal({ isOpen, onClose, projectId, projectName }: Re
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        const errors: Record<string, string> = {};
+        if (!description.trim()) errors.description = 'กรุณาระบุรายละเอียด';
+        setFieldErrors(errors);
+        if (Object.keys(errors).length > 0) return;
+
         setIsSubmitting(true);
 
         try {
@@ -105,11 +115,21 @@ export function ReportIssueModal({ isOpen, onClose, projectId, projectName }: Re
 
         } catch (error) {
             console.error("Error submitting report:", error);
-            alert("เกิดข้อผิดพลาดในการส่งข้อมูล กรุณาลองใหม่อีกครั้ง");
+            setToastMessage("เกิดข้อผิดพลาดในการส่งข้อมูล กรุณาลองใหม่อีกครั้ง");
+            setShowToast(true);
         } finally {
             setIsSubmitting(false);
         }
     };
+
+    const toastElement = (
+        <Toast
+            message={toastMessage}
+            type="error"
+            isVisible={showToast}
+            onClose={() => setShowToast(false)}
+        />
+    );
 
     if (isSuccess) {
         return (
@@ -123,6 +143,8 @@ export function ReportIssueModal({ isOpen, onClose, projectId, projectName }: Re
     }
 
     return (
+        <>
+        {toastElement}
         <Modal
             isOpen={isOpen}
             onClose={onClose}
@@ -160,9 +182,11 @@ export function ReportIssueModal({ isOpen, onClose, projectId, projectName }: Re
                         placeholder="กรุณาระบุรายละเอียดให้ชัดเจน..."
                         rows={4}
                         required
+                        className={fieldErrors.description ? 'border-red-400' : ''}
                         value={description}
-                        onChange={(e) => setDescription(e.target.value)}
+                        onChange={(e) => { setDescription(e.target.value); setFieldErrors(prev => ({ ...prev, description: '' })); }}
                     />
+                    {fieldErrors.description && <p className="text-red-500 text-xs mt-1">{fieldErrors.description}</p>}
                 </div>
 
                 {/* File Uploads */}
@@ -253,5 +277,6 @@ export function ReportIssueModal({ isOpen, onClose, projectId, projectName }: Re
                 </div>
             </form>
         </Modal>
+        </>
     );
 }

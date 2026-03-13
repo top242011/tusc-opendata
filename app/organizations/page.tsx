@@ -13,7 +13,7 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
     const qParam = searchParams.q;
     const supabase = await createPublicClient();
 
-    const { data: allProjectsData } = await supabase
+    const { data: allProjectsData, error } = await supabase
         .from('projects')
         .select('*')
         .order('budget_requested', { ascending: false });

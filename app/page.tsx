@@ -2,6 +2,8 @@ import { createClient, createPublicClient } from "@/utils/supabase/server";
 import { PublicNavbar } from "@/components/public-navbar";
 import { LandingDashboard } from "@/components/landing-dashboard";
 import { DashboardStats, Project } from "@/lib/types";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 import { getLatestFiscalYear } from '@/lib/data-queries';
 export const revalidate = 300; // 5 minutes
@@ -53,6 +55,16 @@ export default async function Home() {
   return (
     <main id="main-content" className="min-h-screen bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] pb-20 transition-colors duration-200 antialiased">
       <PublicNavbar />
+
+      {error && (
+        <div className="container mx-auto max-w-6xl px-4 mt-4">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>ไม่สามารถโหลดข้อมูลโครงการได้ กรุณาลองใหม่อีกครั้ง</AlertDescription>
+          </Alert>
+        </div>
+      )}
+
       <LandingDashboard projects={projects} stats={stats} />
 
       <footer className="mt-8 border-t border-[rgb(var(--ios-separator))]/40 py-6 text-center text-sm text-[rgb(var(--ios-text-secondary))]">
