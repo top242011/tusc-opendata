@@ -1,9 +1,10 @@
 "use client";
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { createClient } from "@/utils/supabase/client";
 import { useTheme } from '@/components/theme-provider';
+import { cn } from '@/utils/cn';
 import { Moon, Sun, LogOut, Home, FileWarning, Clock } from 'lucide-react';
 
 interface AdminNavbarProps {
@@ -12,6 +13,7 @@ interface AdminNavbarProps {
 
 export function AdminNavbar({ userEmail }: AdminNavbarProps) {
     const router = useRouter();
+    const pathname = usePathname();
     const supabase = createClient();
     const { resolvedTheme, setTheme } = useTheme();
 
@@ -23,13 +25,13 @@ export function AdminNavbar({ userEmail }: AdminNavbarProps) {
     const toggleTheme = () => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
 
     return (
-        <nav className="sticky top-0 z-30 ios-material-thick border-b border-[rgb(var(--ios-separator))]/50 transition-colors duration-200">
+        <nav className="sticky top-0 z-50 ios-material-thick border-b border-[rgb(var(--ios-separator))]/50 transition-colors duration-200">
             <div className="container mx-auto px-4 h-14 flex items-center justify-between">
                 {/* Left Side */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 min-w-0">
                     <Link
                         href="/admin"
-                        className="font-bold text-lg text-[rgb(var(--ios-accent))] hover:opacity-80 transition-opacity ios-press"
+                        className="font-bold text-lg text-[rgb(var(--ios-accent))] hover:opacity-80 transition-opacity ios-press truncate"
                     >
                         ระบบจัดการข้อมูล
                     </Link>
@@ -45,14 +47,24 @@ export function AdminNavbar({ userEmail }: AdminNavbarProps) {
                         </Link>
                         <Link
                             href="/admin/complaints"
-                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors ios-press"
+                            className={cn(
+                                "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors ios-press",
+                                pathname === '/admin/complaints'
+                                    ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10 border-b-2 border-[rgb(var(--ios-accent))]"
+                                    : "text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
+                            )}
                         >
                             <FileWarning className="w-4 h-4" />
                             จัดการข้อร้องเรียน
                         </Link>
                         <Link
                             href="/admin/activity-logs"
-                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors ios-press"
+                            className={cn(
+                                "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors ios-press",
+                                pathname === '/admin/activity-logs'
+                                    ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10 border-b-2 border-[rgb(var(--ios-accent))]"
+                                    : "text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
+                            )}
                         >
                             <Clock className="w-4 h-4" />
                             ประวัติการใช้งาน
@@ -61,33 +73,43 @@ export function AdminNavbar({ userEmail }: AdminNavbarProps) {
                 </div>
 
                 {/* Right Side */}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 min-w-0">
                     {/* Mobile Links */}
                     <div className="md:hidden flex gap-2 text-xs font-medium">
                         <Link
                             href="/"
-                            className="flex items-center gap-1 px-2 py-1.5 text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
+                            className="flex items-center justify-center min-w-[44px] min-h-[44px] text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
                         >
-                            <Home className="w-3.5 h-3.5" />
+                            <Home className="w-4 h-4" />
                         </Link>
                         <Link
                             href="/admin/complaints"
-                            className="flex items-center gap-1 px-2 py-1.5 text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
+                            className={cn(
+                                "flex items-center justify-center min-w-[44px] min-h-[44px] rounded-[var(--ios-radius-sm)] transition-colors",
+                                pathname === '/admin/complaints'
+                                    ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10"
+                                    : "text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
+                            )}
                         >
-                            <FileWarning className="w-3.5 h-3.5" />
+                            <FileWarning className="w-4 h-4" />
                         </Link>
                         <Link
                             href="/admin/activity-logs"
-                            className="flex items-center gap-1 px-2 py-1.5 text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
+                            className={cn(
+                                "flex items-center justify-center min-w-[44px] min-h-[44px] rounded-[var(--ios-radius-sm)] transition-colors",
+                                pathname === '/admin/activity-logs'
+                                    ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10"
+                                    : "text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
+                            )}
                         >
-                            <Clock className="w-3.5 h-3.5" />
+                            <Clock className="w-4 h-4" />
                         </Link>
                     </div>
 
                     {/* Theme Toggle */}
                     <button
                         onClick={toggleTheme}
-                        className="p-2 rounded-full bg-[rgb(var(--ios-fill-tertiary))] hover:bg-[rgb(var(--ios-fill-secondary))] transition-colors ios-press"
+                        className="p-2.5 rounded-full bg-[rgb(var(--ios-fill-tertiary))] hover:bg-[rgb(var(--ios-fill-secondary))] transition-colors ios-press"
                         aria-label={resolvedTheme === 'dark' ? 'เปลี่ยนเป็นโหมดสว่าง' : 'เปลี่ยนเป็นโหมดมืด'}
                     >
                         {resolvedTheme === 'dark' ? (

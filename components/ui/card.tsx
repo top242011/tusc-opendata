@@ -8,7 +8,7 @@ export function Card({ className, variant = "default", children, ...props }: Car
     return (
         <div
             className={cn(
-                "rounded-[var(--ios-radius-lg)] transition-colors duration-200",
+                "rounded-[var(--ios-radius-lg)] overflow-hidden transition-colors duration-200",
                 variant === "default" && "bg-[rgb(var(--ios-bg-secondary))] shadow-[var(--ios-shadow-md)]",
                 variant === "inset" && "bg-[rgb(var(--ios-bg-secondary))] mx-4",
                 variant === "plain" && "bg-transparent",

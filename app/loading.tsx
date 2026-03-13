@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Loading() {
@@ -15,102 +14,146 @@ export default function Loading() {
                 </div>
             </nav>
 
-            {/* Hero Section Skeleton */}
-            <section className="bg-gradient-to-br from-[rgb(var(--ios-accent))] via-blue-600 to-indigo-700 dark:from-blue-900 dark:via-blue-800 dark:to-indigo-900 py-16 md:py-20 px-4">
-                <div className="container mx-auto max-w-6xl flex flex-col items-center text-center space-y-6">
-                    <div className="w-16 h-16 rounded-[var(--ios-radius-lg)] bg-white/15 animate-pulse" />
-                    <div className="h-10 w-3/4 max-w-2xl bg-white/15 rounded-[var(--ios-radius-md)] animate-pulse" />
-                    <div className="h-6 w-1/2 max-w-xl bg-white/15 rounded-[var(--ios-radius-sm)] animate-pulse" />
-                    <div className="pt-6">
-                        <div className="h-20 w-40 bg-white/15 rounded-[var(--ios-radius-lg)] animate-pulse" />
+            {/* Hero Section Skeleton — matches main's LandingDashboard hero */}
+            <section className="bg-gradient-to-b from-[rgb(var(--ios-accent))]/5 to-transparent border-b border-[rgb(var(--ios-separator))]/30">
+                <div className="max-w-[1600px] mx-auto px-4 md:px-8 pt-10 pb-8">
+                    <div className="flex flex-col items-center text-center gap-4 max-w-2xl mx-auto">
+                        {/* Year badge */}
+                        <Skeleton className="h-6 w-44 rounded-full" />
+                        {/* Headline */}
+                        <Skeleton className="h-10 w-72 md:w-96" />
+                        <Skeleton className="h-8 w-56 md:w-72" />
+                        {/* Sub-text */}
+                        <Skeleton className="h-4 w-80" />
+                        <Skeleton className="h-4 w-64" />
+                        {/* Search bar */}
+                        <div className="w-full max-w-md mt-2">
+                            <Skeleton className="h-12 w-full rounded-[var(--ios-radius-lg)]" />
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <div className="container mx-auto max-w-7xl px-4 -mt-8 relative z-10 space-y-6">
-                {/* Stats Section Skeleton */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {[...Array(4)].map((_, i) => (
-                        <Card key={i}>
-                            <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <Skeleton className="h-4 w-24" />
-                                <Skeleton className="h-8 w-8 rounded-[var(--ios-radius-sm)]" />
-                            </CardHeader>
-                            <CardContent>
-                                <Skeleton className="h-8 w-32 mb-2" />
-                                <Skeleton className="h-3 w-24" />
-                            </CardContent>
-                        </Card>
+            {/* Main Content */}
+            <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-6">
+                {/* Action bar: title + export button */}
+                <div className="flex justify-between items-center mb-6">
+                    <Skeleton className="h-7 w-56" />
+                    <Skeleton className="h-9 w-32 rounded-[var(--ios-radius-md)]" />
+                </div>
+
+                {/* KPI / Insight Cards: 3 cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
+                    {[...Array(3)].map((_, i) => (
+                        <div
+                            key={i}
+                            className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] p-5 border border-[rgb(var(--ios-separator))]/50"
+                        >
+                            <div className="flex items-start justify-between mb-3">
+                                <Skeleton className="h-9 w-9 rounded-[var(--ios-radius-sm)]" />
+                                <Skeleton className="h-5 w-20 rounded-full" />
+                            </div>
+                            <Skeleton className="h-3 w-32 mb-2" />
+                            <Skeleton className="h-8 w-44" />
+                            <Skeleton className="h-3 w-36 mt-2" />
+                        </div>
                     ))}
                 </div>
 
-                {/* Charts Section Skeleton */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <Card className="h-[500px]">
-                        <CardHeader>
-                            <Skeleton className="h-5 w-40" />
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div className="flex justify-center py-6">
-                                <Skeleton className="h-48 w-48 rounded-full" />
-                            </div>
-                            <div className="grid grid-cols-2 gap-3">
-                                <Skeleton className="h-24 w-full rounded-[var(--ios-radius-md)]" />
-                                <Skeleton className="h-24 w-full rounded-[var(--ios-radius-md)]" />
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="h-[500px]">
-                        <CardHeader>
-                            <Skeleton className="h-5 w-56" />
-                        </CardHeader>
-                        <CardContent className="space-y-3 pt-4">
-                            {[...Array(8)].map((_, i) => (
-                                <div key={i} className="flex gap-2 items-center">
-                                    <Skeleton className="h-4 w-20" />
-                                    <Skeleton className="h-5 flex-1 rounded-[var(--ios-radius-sm)]" />
-                                </div>
-                            ))}
-                        </CardContent>
-                    </Card>
-                </div>
-
-                {/* Table Skeleton */}
-                <Card>
-                    <CardHeader>
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                            <Skeleton className="h-5 w-40" />
-                            <div className="flex gap-2 flex-wrap">
-                                <Skeleton className="h-10 w-48 rounded-[var(--ios-radius-sm)]" />
-                                <Skeleton className="h-10 w-28 rounded-[var(--ios-radius-sm)]" />
-                                <Skeleton className="h-10 w-28 rounded-[var(--ios-radius-sm)]" />
+                {/* Charts section: Treemap (col-span-2) + Sidebar */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    {/* Treemap card */}
+                    <div className="lg:col-span-2 bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 flex flex-col min-h-[500px]">
+                        <div className="p-5 border-b border-[rgb(var(--ios-separator))]/50 flex justify-between items-center">
+                            <div className="flex flex-col gap-1">
+                                <Skeleton className="h-5 w-64" />
+                                <Skeleton className="h-3 w-52" />
                             </div>
                         </div>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="rounded-[var(--ios-radius-md)] border border-[rgb(var(--ios-separator))] overflow-hidden">
-                            <div className="bg-[rgb(var(--ios-bg-tertiary))] px-4 py-3">
-                                <div className="grid grid-cols-5 gap-4">
-                                    {[...Array(5)].map((_, i) => (
-                                        <Skeleton key={i} className="h-4 w-full" />
-                                    ))}
-                                </div>
-                            </div>
-                            {[...Array(5)].map((_, i) => (
-                                <div key={i} className="border-t border-[rgb(var(--ios-separator))] px-4 py-4">
-                                    <div className="grid grid-cols-5 gap-4">
-                                        <Skeleton className="h-6 w-20 rounded-full" />
-                                        <Skeleton className="h-4 w-full" />
-                                        <Skeleton className="h-4 w-full" />
-                                        <Skeleton className="h-4 w-full" />
-                                        <Skeleton className="h-4 w-full" />
+                        {/* Desktop treemap blocks */}
+                        <div className="hidden md:flex p-5 flex-1 flex-col gap-1">
+                            <div className="flex flex-1 gap-1">
+                                <Skeleton className="w-[45%] rounded-sm" style={{ minHeight: 280 }} />
+                                <div className="flex flex-1 flex-col gap-1">
+                                    <Skeleton className="h-[60%] w-full rounded-sm" />
+                                    <div className="flex flex-1 gap-1">
+                                        <Skeleton className="flex-1 rounded-sm" />
+                                        <Skeleton className="flex-1 rounded-sm" />
                                     </div>
                                 </div>
+                            </div>
+                            <div className="h-[120px] flex gap-1">
+                                <Skeleton className="w-[30%] rounded-sm" />
+                                <Skeleton className="w-[25%] rounded-sm" />
+                                <Skeleton className="w-[20%] rounded-sm" />
+                                <Skeleton className="flex-1 rounded-sm" />
+                            </div>
+                        </div>
+                        {/* Mobile bar chart */}
+                        <div className="md:hidden p-5 space-y-3">
+                            {[...Array(5)].map((_, i) => (
+                                <div key={i} className="flex flex-col gap-1">
+                                    <div className="flex justify-between">
+                                        <Skeleton className="h-3 w-32" />
+                                        <Skeleton className="h-3 w-20" />
+                                    </div>
+                                    <Skeleton className="h-2 w-full rounded-full" />
+                                </div>
                             ))}
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+
+                    {/* Sidebar: Top 5 + Donut */}
+                    <div className="flex flex-col gap-6">
+                        {/* Top 5 Orgs */}
+                        <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 p-5">
+                            <Skeleton className="h-5 w-48 mb-5" />
+                            <div className="space-y-3">
+                                {[...Array(5)].map((_, i) => (
+                                    <div key={i} className="flex flex-col gap-1">
+                                        <div className="flex justify-between">
+                                            <Skeleton className="h-4 w-32" />
+                                            <Skeleton className="h-4 w-20" />
+                                        </div>
+                                        <Skeleton className="h-2 w-full rounded-full" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Campus Donut */}
+                        <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 p-5 flex flex-col">
+                            <Skeleton className="h-5 w-52 mb-4" />
+                            <div className="flex items-center justify-center my-4">
+                                <Skeleton className="w-48 h-48 rounded-full" />
+                            </div>
+                            <div className="flex flex-wrap justify-center gap-3">
+                                {[...Array(4)].map((_, i) => (
+                                    <div key={i} className="flex items-center gap-1.5">
+                                        <Skeleton className="w-2.5 h-2.5 rounded-full" />
+                                        <Skeleton className="h-3 w-20" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Timeline */}
+                <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 p-5 mb-8">
+                    <div className="flex justify-between items-center mb-6">
+                        <div className="flex flex-col gap-1">
+                            <Skeleton className="h-5 w-72" />
+                            <Skeleton className="h-3 w-56" />
+                        </div>
+                        <div className="flex gap-2">
+                            {[...Array(3)].map((_, i) => (
+                                <Skeleton key={i} className="h-7 w-14 rounded-[var(--ios-radius-sm)]" />
+                            ))}
+                        </div>
+                    </div>
+                    <Skeleton className="h-64 w-full rounded-[var(--ios-radius-md)]" />
+                </div>
             </div>
         </main>
     );

@@ -22,6 +22,7 @@ export function ProjectForm({ initialData, onSuccess, onCancel }: ProjectFormPro
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
     useEffect(() => {
         if (initialData) {
@@ -33,6 +34,16 @@ export function ProjectForm({ initialData, onSuccess, onCancel }: ProjectFormPro
         e.preventDefault();
         setLoading(true);
         setError(null);
+
+        const errors: Record<string, string> = {};
+        if (!formData.organization?.trim()) errors.organization = 'กรุณาระบุชื่อองค์กร';
+        if (!formData.project_name?.trim()) errors.project_name = 'กรุณาระบุชื่อโครงการ';
+        if (!formData.fiscal_year || formData.fiscal_year < 2500) errors.fiscal_year = 'กรุณาระบุปีงบประมาณที่ถูกต้อง';
+        setFieldErrors(errors);
+        if (Object.keys(errors).length > 0) {
+            setLoading(false);
+            return;
+        }
 
         try {
             let project: Project | undefined;
@@ -65,10 +76,11 @@ export function ProjectForm({ initialData, onSuccess, onCancel }: ProjectFormPro
                     <input
                         type="text"
                         required
-                        className="w-full mt-1 p-2 border rounded"
+                        className={`w-full mt-1 p-2 border rounded ${fieldErrors.organization ? 'border-red-400' : ''}`}
                         value={formData.organization}
-                        onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
+                        onChange={(e) => { setFormData({ ...formData, organization: e.target.value }); setFieldErrors(prev => ({ ...prev, organization: '' })); }}
                     />
+                    {fieldErrors.organization && <p className="text-red-500 text-xs mt-1">{fieldErrors.organization}</p>}
                 </div>
                 <div>
                     <label className="text-sm font-medium">วิทยาเขต</label>
@@ -91,20 +103,22 @@ export function ProjectForm({ initialData, onSuccess, onCancel }: ProjectFormPro
                     <input
                         type="number"
                         required
-                        className="w-full mt-1 p-2 border rounded"
+                        className={`w-full mt-1 p-2 border rounded ${fieldErrors.fiscal_year ? 'border-red-400' : ''}`}
                         value={formData.fiscal_year}
-                        onChange={(e) => setFormData({ ...formData, fiscal_year: parseInt(e.target.value) || 0 })}
+                        onChange={(e) => { setFormData({ ...formData, fiscal_year: parseInt(e.target.value) || 0 }); setFieldErrors(prev => ({ ...prev, fiscal_year: '' })); }}
                     />
+                    {fieldErrors.fiscal_year && <p className="text-red-500 text-xs mt-1">{fieldErrors.fiscal_year}</p>}
                 </div>
                 <div>
                     <label className="text-sm font-medium">ชื่อโครงการ</label>
                     <input
                         type="text"
                         required
-                        className="w-full mt-1 p-2 border rounded"
+                        className={`w-full mt-1 p-2 border rounded ${fieldErrors.project_name ? 'border-red-400' : ''}`}
                         value={formData.project_name}
-                        onChange={(e) => setFormData({ ...formData, project_name: e.target.value })}
+                        onChange={(e) => { setFormData({ ...formData, project_name: e.target.value }); setFieldErrors(prev => ({ ...prev, project_name: '' })); }}
                     />
+                    {fieldErrors.project_name && <p className="text-red-500 text-xs mt-1">{fieldErrors.project_name}</p>}
                 </div>
             </div>
 
