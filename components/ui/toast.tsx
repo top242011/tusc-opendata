@@ -14,11 +14,11 @@ interface ToastProps {
     duration?: number;
 }
 
-const toastConfig: Record<ToastType, { icon: typeof CheckCircle; label: string; colorVar: string }> = {
-    success: { icon: CheckCircle, label: 'สำเร็จ', colorVar: '--ios-green' },
-    error: { icon: AlertCircle, label: 'ข้อผิดพลาด', colorVar: '--ios-red' },
-    warning: { icon: AlertTriangle, label: 'คำเตือน', colorVar: '--ios-orange' },
-    info: { icon: Info, label: 'แจ้งเตือน', colorVar: '--ios-blue' },
+const toastConfig: Record<ToastType, { icon: typeof CheckCircle; label: string; bgClass: string; textClass: string }> = {
+    success: { icon: CheckCircle, label: 'สำเร็จ', bgClass: 'bg-[rgb(var(--ios-green))]/15', textClass: 'text-[rgb(var(--ios-green))]' },
+    error: { icon: AlertCircle, label: 'ข้อผิดพลาด', bgClass: 'bg-[rgb(var(--ios-red))]/15', textClass: 'text-[rgb(var(--ios-red))]' },
+    warning: { icon: AlertTriangle, label: 'คำเตือน', bgClass: 'bg-[rgb(var(--ios-orange))]/15', textClass: 'text-[rgb(var(--ios-orange))]' },
+    info: { icon: Info, label: 'แจ้งเตือน', bgClass: 'bg-[rgb(var(--ios-blue))]/15', textClass: 'text-[rgb(var(--ios-blue))]' },
 };
 
 export function Toast({ message, type = 'success', isVisible, onClose, duration = 3000 }: ToastProps) {
@@ -63,12 +63,12 @@ export function Toast({ message, type = 'success', isVisible, onClose, duration 
                 </div>
             )}
         >
-            <div className={`p-1.5 rounded-full bg-[rgb(var(${config.colorVar}))]/15`}>
-                <Icon className={`w-5 h-5 text-[rgb(var(${config.colorVar}))]`} />
+            <div className={cn("p-1.5 rounded-full", config.bgClass)}>
+                <Icon className={cn("w-5 h-5", config.textClass)} />
             </div>
 
             <div className="flex-1">
-                <p className={`text-xs font-semibold text-[rgb(var(${config.colorVar}))]`}>{config.label}</p>
+                <p className={cn("text-xs font-semibold", config.textClass)}>{config.label}</p>
                 <p className="text-sm font-medium text-[rgb(var(--ios-text-primary))]">{message}</p>
             </div>
 

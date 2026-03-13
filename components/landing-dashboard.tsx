@@ -425,6 +425,6 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                     </div>
                 </div>
             </div>
-        </div >
+        </div>
     );
 }
