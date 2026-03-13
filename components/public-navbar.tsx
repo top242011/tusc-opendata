@@ -3,12 +3,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { Shield, MessageCircle, LogIn, Menu, X, ChevronDown, Moon, Sun, FileText, Building2, MapPin, Code2, BookOpen } from 'lucide-react';
-import { usePathname } from 'next/navigation';
-import { Shield, MessageCircle, LogIn, Menu, X, ChevronDown, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FeedbackModal } from '@/components/feedback-modal';
 import { useTheme } from '@/components/theme-provider';
-import { cn } from '@/utils/cn';
 
 type DropdownKey = 'data' | 'tools' | null;
 
@@ -17,7 +14,6 @@ export function PublicNavbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState<DropdownKey>(null);
     const { resolvedTheme, setTheme } = useTheme();
-    const pathname = usePathname();
 
     const dataDropdownRef = useRef<HTMLDivElement>(null);
     const toolsDropdownRef = useRef<HTMLDivElement>(null);
@@ -77,12 +73,7 @@ export function PublicNavbar() {
                     <div className="hidden md:flex items-center gap-1">
                         <Link
                             href="/"
-                            className={cn(
-                                "px-4 py-2 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors ios-press",
-                                pathname === '/'
-                                    ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10 border-b-2 border-[rgb(var(--ios-accent))]"
-                                    : "text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
-                            )}
+                            className="px-4 py-2 text-sm font-medium text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors ios-press"
                         >
                             หน้าหลัก
                         </Link>
@@ -158,14 +149,6 @@ export function PublicNavbar() {
                                 onClick={() => toggleDropdown('tools')}
                                 aria-expanded={openDropdown === 'tools'}
                                 aria-haspopup="true"
-                                className={cn(
-                                    "flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors focus:outline-none ios-press",
-                                    pathname.startsWith('/tools')
-                                        ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10 border-b-2 border-[rgb(var(--ios-accent))]"
-                                        : "text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
-                                )}
-                                onClick={toggleTools}
-                                onBlur={() => setTimeout(() => setIsToolsOpen(false), 200)}
                             >
                                 เครื่องมือ
                                 <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${openDropdown === 'tools' ? 'rotate-180' : ''}`} />
@@ -176,8 +159,6 @@ export function PublicNavbar() {
                                 role="menu"
                                 aria-label="เครื่องมือ"
                             >
-                            {/* Dropdown Menu */}
-                            <div className={`absolute top-full left-0 mt-1 w-72 max-w-[calc(100vw-2rem)] bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-md)] shadow-[var(--ios-shadow-lg)] border border-[rgb(var(--ios-separator))]/50 transition-all duration-200 transform origin-top-left z-[60] ${isToolsOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'}`}>
                                 <div className="p-2">
                                     <Link
                                         href="/tools/document-checker"
@@ -216,26 +197,6 @@ export function PublicNavbar() {
                             className="px-4 py-2 text-sm font-medium text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors ios-press"
                         >
                             เกี่ยวกับ
-                            href="/organizations"
-                            className={cn(
-                                "px-4 py-2 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors ios-press",
-                                pathname.startsWith('/organizations')
-                                    ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10 border-b-2 border-[rgb(var(--ios-accent))]"
-                                    : "text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
-                            )}
-                        >
-                            หน่วยงาน / คณะ
-                        </Link>
-                        <Link
-                            href="/projects"
-                            className={cn(
-                                "px-4 py-2 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors ios-press",
-                                pathname.startsWith('/projects')
-                                    ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10 border-b-2 border-[rgb(var(--ios-accent))]"
-                                    : "text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
-                            )}
-                        >
-                            โครงการทั้งหมด
                         </Link>
                     </div>
 
@@ -282,7 +243,7 @@ export function PublicNavbar() {
                                 onClick={() => setIsFeedbackOpen(true)}
                             >
                                 <MessageCircle className="w-4 h-4" />
-                                <span>ส่งข้อเสนอแนะ</span>
+                                <span>Feedback</span>
                             </Button>
                         </div>
                     </div>
@@ -290,16 +251,11 @@ export function PublicNavbar() {
 
                 {/* Mobile Menu */}
                 {isMobileMenuOpen && (
-                    <div className="md:hidden border-t border-[rgb(var(--ios-separator))]/50 bg-[rgb(var(--ios-bg-secondary))] absolute w-full z-50 max-h-[calc(100vh-3.5rem)] overflow-y-auto shadow-[var(--ios-shadow-lg)] animate-in slide-in-from-top-2 duration-200">
+                    <div className="md:hidden border-t border-[rgb(var(--ios-separator))]/50 bg-[rgb(var(--ios-bg-secondary))] absolute w-full shadow-[var(--ios-shadow-lg)] animate-in slide-in-from-top-2 duration-200">
                         <div className="flex flex-col p-4 gap-1">
                             <Link
                                 href="/"
-                                className={cn(
-                                    "px-4 py-3 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors",
-                                    pathname === '/'
-                                        ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10"
-                                        : "text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
-                                )}
+                                className="px-4 py-3 text-sm font-medium text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 หน้าหลัก
@@ -351,13 +307,6 @@ export function PublicNavbar() {
                             <Link
                                 href="/api-docs"
                                 className="flex items-center gap-3 px-4 py-3 text-sm text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
-                                href="/organizations"
-                                className={cn(
-                                    "px-4 py-3 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors",
-                                    pathname.startsWith('/organizations')
-                                        ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10"
-                                        : "text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
-                                )}
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 <Code2 className="w-4 h-4 text-[rgb(var(--ios-indigo))]" />
@@ -369,13 +318,6 @@ export function PublicNavbar() {
                             <Link
                                 href="/about"
                                 className="px-4 py-3 text-sm font-medium text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
-                                href="/projects"
-                                className={cn(
-                                    "px-4 py-3 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors",
-                                    pathname.startsWith('/projects')
-                                        ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10"
-                                        : "text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
-                                )}
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 เกี่ยวกับ
