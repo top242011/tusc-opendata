@@ -279,7 +279,8 @@ export default function BulkImportWizard() {
                         </div>
                         <button
                             onClick={handleConfirmImport}
-                            className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 flex items-center gap-2"
+                            disabled={analyzedItems.length === 0}
+                            className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <Save className="w-4 h-4" />
                             Confirm Import All
@@ -297,6 +298,14 @@ export default function BulkImportWizard() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y">
+                                {analyzedItems.length === 0 && (
+                                    <tr>
+                                        <td colSpan={4} className="px-4 py-12 text-center text-slate-500">
+                                            <AlertCircle className="w-8 h-8 mx-auto mb-2 text-slate-400" />
+                                            <p>ไม่พบข้อมูลที่สามารถนำเข้าได้จากไฟล์ที่อัปโหลด</p>
+                                        </td>
+                                    </tr>
+                                )}
                                 {analyzedItems.map((item) => (
                                     <tr key={item.id} className="hover:bg-slate-50">
                                         <td className="px-4 py-3 align-top">

@@ -4,7 +4,8 @@ import { PublicNavbar } from "@/components/public-navbar";
 import { formatTHB } from "@/lib/utils";
 import { ProjectRowActions } from "@/components/project-row-actions";
 import { CAMPUS_LABELS, Campus } from "@/lib/types";
-import { Search, MapPin, Layers, Briefcase, FileText, Wallet, Percent, Table2, Info } from "lucide-react";
+import { Search, MapPin, Layers, Briefcase, FileText, Wallet, Percent, Table2, Info, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export const revalidate = 300;
 
@@ -14,7 +15,7 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
     const qParam = searchParams.q;
     const supabase = await createPublicClient();
 
-    const { data: allProjectsData } = await supabase
+    const { data: allProjectsData, error } = await supabase
         .from('projects')
         .select('*')
         .order('budget_requested', { ascending: false });
@@ -131,6 +132,15 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
     return (
         <main className="min-h-screen bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] pb-20 font-sans antialiased">
             <PublicNavbar />
+
+            {error && (
+                <div className="max-w-[1400px] mx-auto px-4 md:px-8 mt-4">
+                    <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>ไม่สามารถโหลดข้อมูลโครงการได้ กรุณาลองใหม่อีกครั้ง</AlertDescription>
+                    </Alert>
+                </div>
+            )}
 
             <div className="flex-1 w-full max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col md:flex-row gap-8">
 
@@ -388,11 +398,6 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
                         {displayProjects.length > 0 && (
                             <div className="px-4 py-3 border-t border-[rgb(var(--ios-separator))]/50 flex items-center justify-between text-sm text-[rgb(var(--ios-text-secondary))] bg-[rgb(var(--ios-bg-secondary))]">
                                 <span>แสดง {displayProjects.length} จาก {allOrgProjects.length} รายการ</span>
-                                <div className="flex gap-1">
-                                    <button className="px-2 py-1 border border-[rgb(var(--ios-separator))] rounded bg-white dark:bg-slate-800 text-[rgb(var(--ios-text-tertiary))] text-xs opacity-40 cursor-default">&lt;</button>
-                                    <button className="px-3 py-1 border border-[rgb(var(--ios-accent))] rounded bg-[rgb(var(--ios-accent))]/10 text-[rgb(var(--ios-accent))] font-bold text-xs">1</button>
-                                    <button className="px-2 py-1 border border-[rgb(var(--ios-separator))] rounded bg-white dark:bg-slate-800 text-[rgb(var(--ios-text-tertiary))] text-xs opacity-40 cursor-default">&gt;</button>
-                                </div>
                             </div>
                         )}
                     </div>

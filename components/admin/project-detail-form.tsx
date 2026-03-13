@@ -1,9 +1,10 @@
 import { useState, useRef } from 'react';
-import { Project, BudgetBreakdownItem } from '@/lib/types'; // Import BudgetBreakdownItem
+import { Project, BudgetBreakdownItem } from '@/lib/types';
 import { updateProjectDetails } from '@/lib/actions';
 import { Loader2, Save, Sparkles, Upload } from 'lucide-react';
 import BudgetBreakdownEditor from './budget-breakdown-editor';
 import { parseProjectPDF } from '@/lib/gemini';
+import { Toast } from '@/components/ui/toast';
 
 interface ProjectDetailFormProps {
     project: Project;
@@ -12,6 +13,9 @@ interface ProjectDetailFormProps {
 export default function ProjectDetailForm({ project }: ProjectDetailFormProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastType, setToastType] = useState<'success' | 'error'>('success');
+    const [showToast, setShowToast] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [formData, setFormData] = useState({
@@ -54,13 +58,19 @@ export default function ProjectDetailForm({ project }: ProjectDetailFormProps) {
                     budget_breakdown: (extracted.budget_breakdown as BudgetBreakdownItem[]) || prev.budget_breakdown,
                 }));
 
-                alert('ดึงข้อมูลสำเร็จ! กรุณาตรวจสอบความถูกต้องก่อนบันทึก');
+                setToastMessage('ดึงข้อมูลสำเร็จ! กรุณาตรวจสอบความถูกต้องก่อนบันทึก');
+                setToastType('success');
+                setShowToast(true);
             } else {
-                alert('ไม่สามารถวิเคราะห์ข้อมูลได้: ' + (result.error || 'Unknown error'));
+                setToastMessage('ไม่สามารถวิเคราะห์ข้อมูลได้: ' + (result.error || 'Unknown error'));
+                setToastType('error');
+                setShowToast(true);
             }
         } catch (error) {
             console.error(error);
-            alert('เกิดข้อผิดพลาดในการวิเคราะห์เอกสาร');
+            setToastMessage('เกิดข้อผิดพลาดในการวิเคราะห์เอกสาร');
+            setToastType('error');
+            setShowToast(true);
         } finally {
             setIsAnalyzing(false);
             if (fileInputRef.current) fileInputRef.current.value = '';
@@ -80,10 +90,14 @@ export default function ProjectDetailForm({ project }: ProjectDetailFormProps) {
                 objectives: objectivesArray,
                 sdg_goals: sdgArray
             });
-            alert('บันทึกข้อมูลเรียบร้อยแล้ว');
+            setToastMessage('บันทึกข้อมูลเรียบร้อยแล้ว');
+            setToastType('success');
+            setShowToast(true);
         } catch (error) {
             console.error(error);
-            alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+            setToastMessage('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+            setToastType('error');
+            setShowToast(true);
         } finally {
             setIsLoading(false);
         }
@@ -91,6 +105,12 @@ export default function ProjectDetailForm({ project }: ProjectDetailFormProps) {
 
     return (
         <div className="space-y-6">
+            <Toast
+                message={toastMessage}
+                type={toastType}
+                isVisible={showToast}
+                onClose={() => setShowToast(false)}
+            />
             {/* Auto-fill Section */}
             <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 flex items-center justify-between">
                 <div>
