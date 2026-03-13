@@ -119,7 +119,7 @@ export function BudgetTab({ project }: TabProps) {
 
             {/* Budget Breakdown Table */}
             {project.budget_breakdown && Array.isArray(project.budget_breakdown) && project.budget_breakdown.length > 0 ? (
-                <div className="overflow-hidden border rounded-lg">
+                <div className="border rounded-lg">
                     <div className="bg-slate-50 px-4 py-2 border-b border-slate-200 font-medium text-slate-700 text-sm">
                         รายละเอียดรายการ
                     </div>

@@ -286,7 +286,7 @@ export default function BulkImportWizard() {
                         </button>
                     </div>
 
-                    <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
+                    <div className="bg-white rounded-lg border shadow-sm overflow-x-auto">
                         <table className="w-full text-sm text-left">
                             <thead className="bg-slate-50 text-slate-500 font-medium border-b">
                                 <tr>

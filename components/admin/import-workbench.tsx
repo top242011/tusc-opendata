@@ -604,7 +604,7 @@ export default function ImportWorkbench() {
                                                                 <td className="px-4 py-3 text-right">
                                                                     <input
                                                                         type="number"
-                                                                        className="w-24 border rounded px-2 py-1 text-sm text-right focus:ring-2 focus:ring-blue-500 outline-none"
+                                                                        className="w-full max-w-24 border rounded px-2 py-1 text-sm text-right focus:ring-2 focus:ring-blue-500 outline-none"
                                                                         value={editFormData.budget_requested || 0}
                                                                         onChange={e => setEditFormData({ ...editFormData, budget_requested: parseFloat(e.target.value) })}
                                                                     />
@@ -612,7 +612,7 @@ export default function ImportWorkbench() {
                                                                 <td className="px-4 py-3 text-right">
                                                                     <input
                                                                         type="number"
-                                                                        className="w-24 border rounded px-2 py-1 text-sm text-right focus:ring-2 focus:ring-blue-500 outline-none font-bold"
+                                                                        className="w-full max-w-24 border rounded px-2 py-1 text-sm text-right focus:ring-2 focus:ring-blue-500 outline-none font-bold"
                                                                         value={editFormData.budget_approved || 0}
                                                                         onChange={e => setEditFormData({ ...editFormData, budget_approved: parseFloat(e.target.value) })}
                                                                     />
@@ -654,14 +654,14 @@ export default function ImportWorkbench() {
                                                                 <div className="flex items-center justify-center gap-1">
                                                                     <button
                                                                         onClick={() => handleStartEdit(item)}
-                                                                        className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                                                                        className="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
                                                                         title="แก้ไข"
                                                                     >
                                                                         <Pencil className="w-4 h-4" />
                                                                     </button>
                                                                     <button
                                                                         onClick={() => handleDeleteItem(item.id)}
-                                                                        className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                                                                        className="p-2.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                                                                         title="ลบ"
                                                                     >
                                                                         <Trash2 className="w-4 h-4" />

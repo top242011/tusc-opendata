@@ -134,7 +134,7 @@ export default function FileManager({ projectId }: FileManagerProps) {
             </div>
 
             {/* File List */}
-            <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+            <div className="bg-white rounded-lg border border-slate-200 overflow-x-auto">
                 <table className="w-full text-left text-sm">
                     <thead className="bg-slate-50 border-b border-slate-200">
                         <tr>
@@ -154,11 +154,13 @@ export default function FileManager({ projectId }: FileManagerProps) {
                         ) : (
                             files.map((file) => (
                                 <tr key={file.id} className="hover:bg-slate-50">
-                                    <td className="px-4 py-3 font-medium text-slate-800 flex items-center gap-3">
+                                    <td className="px-4 py-3 font-medium text-slate-800">
+                                        <div className="flex items-center gap-3">
                                         {getFileIcon(file.file_type)}
                                         <a href={file.file_url} target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-blue-600">
                                             {file.file_name}
                                         </a>
+                                        </div>
                                     </td>
                                     <td className="px-4 py-3 text-slate-500 uppercase">{file.file_type}</td>
                                     <td className="px-4 py-3 text-slate-500">
@@ -167,7 +169,7 @@ export default function FileManager({ projectId }: FileManagerProps) {
                                     <td className="px-4 py-3 text-right">
                                         <button
                                             onClick={() => handleDelete(file.id, file.file_name)}
-                                            className="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50"
+                                            className="text-red-500 hover:text-red-700 p-2.5 rounded hover:bg-red-50"
                                             title="ลบไฟล์"
                                         >
                                             <Trash2 className="w-4 h-4" />

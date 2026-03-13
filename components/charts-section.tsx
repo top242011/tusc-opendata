@@ -69,7 +69,7 @@ export function ChartsSection({ projects }: ChartsSectionProps) {
                                     contentStyle={{
                                         borderRadius: 'var(--ios-radius-md)',
                                         border: 'none',
-                                        boxShadow: 'var(--ios-shadow-lg)',
+                                        boxShadow: 'var(--ios-shadow-sm)',
                                         background: 'rgb(var(--ios-bg-secondary))',
                                         color: 'rgb(var(--ios-text-primary))'
                                     }}
@@ -119,7 +119,7 @@ export function ChartsSection({ projects }: ChartsSectionProps) {
                 <CardHeader>
                     <CardTitle>10 อันดับองค์กรที่เสนองบประมาณสูงสุด</CardTitle>
                 </CardHeader>
-                <CardContent className="h-[500px]">
+                <CardContent className="h-[350px] lg:h-[500px]">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart
                             layout="vertical"
@@ -135,7 +135,7 @@ export function ChartsSection({ projects }: ChartsSectionProps) {
                             <YAxis
                                 dataKey="name"
                                 type="category"
-                                width={120}
+                                width={80}
                                 tick={{ fontSize: 11, fill: 'rgb(var(--ios-text-secondary))' }}
                             />
                             <Tooltip
@@ -143,7 +143,7 @@ export function ChartsSection({ projects }: ChartsSectionProps) {
                                 contentStyle={{
                                     borderRadius: 'var(--ios-radius-md)',
                                     border: 'none',
-                                    boxShadow: 'var(--ios-shadow-lg)',
+                                    boxShadow: 'var(--ios-shadow-sm)',
                                     background: 'rgb(var(--ios-bg-secondary))',
                                     color: 'rgb(var(--ios-text-primary))'
                                 }}
