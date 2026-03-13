@@ -7,6 +7,7 @@ import { Project } from '@/lib/types';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { cn } from '@/utils/cn';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 
 // Components
 import { ProjectForm } from '@/components/project-form'; // Reusing for Tab 1 (will need slight adaptation or wrapper)
@@ -58,7 +59,11 @@ export default function AdminProjectEditPage() {
     if (!project) return <div className="p-8 text-center text-red-500">ไม่พบข้อมูลโครงการ</div>;
 
     return (
-        <div className="container mx-auto py-8 px-4 max-w-5xl">
+        <main id="main-content" className="container mx-auto py-8 px-4 max-w-5xl">
+            <Breadcrumbs items={[
+                { label: 'หน้าแรก', href: '/admin' },
+                { label: 'รายละเอียดโครงการ' },
+            ]} />
             {/* Header */}
             <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -145,6 +150,6 @@ export default function AdminProjectEditPage() {
                 isVisible={showToast}
                 onClose={() => setShowToast(false)}
             />
-        </div>
+        </main>
     );
 }

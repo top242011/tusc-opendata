@@ -129,7 +129,7 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
     const currentYear = new Date().getFullYear();
 
     return (
-        <main className="min-h-screen bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] pb-20 font-sans antialiased">
+        <main id="main-content" className="min-h-screen bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] pb-20 font-sans antialiased">
             <PublicNavbar />
 
             <div className="flex-1 w-full max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col md:flex-row gap-8">

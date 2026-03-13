@@ -24,6 +24,7 @@ export function ReportIssueModal({ isOpen, onClose, projectId, projectName }: Re
     const [attachments, setAttachments] = useState<File[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const supabase = createClient();
 
@@ -105,7 +106,7 @@ export function ReportIssueModal({ isOpen, onClose, projectId, projectName }: Re
 
         } catch (error) {
             console.error("Error submitting report:", error);
-            alert("เกิดข้อผิดพลาดในการส่งข้อมูล กรุณาลองใหม่อีกครั้ง");
+            setError("เกิดข้อผิดพลาดในการส่งข้อมูล กรุณาลองใหม่อีกครั้ง");
         } finally {
             setIsSubmitting(false);
         }
@@ -130,6 +131,11 @@ export function ReportIssueModal({ isOpen, onClose, projectId, projectName }: Re
             className="w-[95%] max-w-lg sm:max-w-xl"
         >
             <form onSubmit={handleSubmit} className="space-y-6">
+                {error && (
+                    <div className="p-3 bg-[rgb(var(--ios-red))]/10 text-[rgb(var(--ios-red))] text-sm rounded-[var(--ios-radius-sm)]" role="alert">
+                        {error}
+                    </div>
+                )}
 
                 {/* Type Selection */}
                 <div className="space-y-3">

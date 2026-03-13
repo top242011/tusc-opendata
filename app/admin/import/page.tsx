@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import ImportWorkbench from '@/components/admin/import-workbench';
 import AdminTutorial from '@/components/admin/admin-tutorial';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import Link from 'next/link';
 import { ArrowLeft, HelpCircle } from 'lucide-react';
 
@@ -10,11 +11,15 @@ export default function AdminImportPage() {
     const [showTutorial, setShowTutorial] = useState(false);
 
     return (
-        <div className="min-h-screen bg-slate-50/50">
+        <main id="main-content" className="min-h-screen bg-slate-50/50">
             {/* Tutorial Modal */}
             <AdminTutorial forceShow={showTutorial} onClose={() => setShowTutorial(false)} />
 
             <div className="container mx-auto py-10 px-4">
+                <Breadcrumbs items={[
+                    { label: 'หน้าแรก', href: '/admin' },
+                    { label: 'นำเข้าข้อมูล' },
+                ]} />
                 <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
                         <Link href="/admin" className="text-slate-500 hover:text-blue-600 flex items-center gap-2 mb-4 transition-colors">
@@ -41,6 +46,6 @@ export default function AdminImportPage() {
                     <ImportWorkbench />
                 </div>
             </div>
-        </div>
+        </main>
     );
 }

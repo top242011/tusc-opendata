@@ -2,7 +2,7 @@
 
 import { X } from "lucide-react";
 import { cn } from "@/utils/cn";
-import { useEffect } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 interface ModalProps {
     isOpen: boolean;
@@ -13,28 +13,72 @@ interface ModalProps {
 }
 
 export function Modal({ isOpen, onClose, title, children, className }: ModalProps) {
-    // Handle ESC key
+    const modalRef = useRef<HTMLDivElement>(null);
+    const previousFocusRef = useRef<HTMLElement | null>(null);
+
+    // Focus trap: cycle Tab/Shift+Tab within modal
+    const handleKeyDown = useCallback((e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+            onClose();
+            return;
+        }
+
+        if (e.key !== "Tab" || !modalRef.current) return;
+
+        const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstEl = focusableElements[0];
+        const lastEl = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+            if (document.activeElement === firstEl) {
+                e.preventDefault();
+                lastEl?.focus();
+            }
+        } else {
+            if (document.activeElement === lastEl) {
+                e.preventDefault();
+                firstEl?.focus();
+            }
+        }
+    }, [onClose]);
+
     useEffect(() => {
         if (!isOpen) return;
 
-        const handleEsc = (e: KeyboardEvent) => {
-            if (e.key === "Escape") onClose();
-        };
+        // Store previous focus
+        previousFocusRef.current = document.activeElement as HTMLElement;
 
-        document.addEventListener("keydown", handleEsc);
+        document.addEventListener("keydown", handleKeyDown);
         document.body.style.overflow = "hidden";
 
+        // Focus the modal or first focusable element
+        requestAnimationFrame(() => {
+            if (modalRef.current) {
+                const firstFocusable = modalRef.current.querySelector<HTMLElement>(
+                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                );
+                firstFocusable?.focus();
+            }
+        });
+
         return () => {
-            document.removeEventListener("keydown", handleEsc);
+            document.removeEventListener("keydown", handleKeyDown);
             document.body.style.overflow = "";
+            // Restore focus
+            previousFocusRef.current?.focus();
         };
-    }, [isOpen, onClose]);
+    }, [isOpen, handleKeyDown]);
 
     if (!isOpen) return null;
 
     return (
         <div
             className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
             onClick={(e) => {
                 if (e.target === e.currentTarget) onClose();
             }}
@@ -44,6 +88,7 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
 
             {/* Modal Content - iOS Sheet Style */}
             <div
+                ref={modalRef}
                 className={cn(
                     "relative w-full sm:max-w-lg max-h-[90vh] overflow-hidden",
                     "bg-[rgb(var(--ios-bg-secondary))]",
@@ -60,7 +105,7 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
 
                 {/* Header */}
                 <div className="flex items-center justify-between px-5 py-4 border-b border-[rgb(var(--ios-separator))]">
-                    <h2 className="ios-title text-[rgb(var(--ios-text-primary))]">{title}</h2>
+                    <h2 id="modal-title" className="ios-title text-[rgb(var(--ios-text-primary))]">{title}</h2>
                     <button
                         onClick={onClose}
                         className="p-2 -mr-2 rounded-full hover:bg-[rgb(var(--ios-fill-tertiary))] transition-colors ios-press"

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from 'react';
-import { Upload, FileText, FileSpreadsheet, AlertCircle, Loader2, CheckCircle } from 'lucide-react';
+import { Upload, Loader2, AlertCircle } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { createClient } from '@/utils/supabase/client';
 
@@ -14,6 +14,7 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
     const [dragActive, setDragActive] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
     const handleDrag = (e: React.DragEvent) => {
@@ -42,7 +43,16 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
         }
     };
 
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
     const validateAndUpload = async (file: File) => {
+        setError(null);
+
+        if (file.size > MAX_FILE_SIZE) {
+            setError(`ไฟล์มีขนาด ${(file.size / 1024 / 1024).toFixed(1)} MB เกินขนาดสูงสุดที่อนุญาต (10 MB)`);
+            return;
+        }
+
         if (
             file.type === "application/pdf" ||
             file.name.endsWith('.xlsx') ||
@@ -50,23 +60,22 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
         ) {
             await uploadToStorage(file);
         } else {
-            alert("รองรับเฉพาะไฟล์ PDF หรือ Excel (.xlsx) เท่านั้น");
+            setError("รองรับเฉพาะไฟล์ PDF หรือ Excel (.xlsx) เท่านั้น");
         }
     };
 
     const uploadToStorage = async (file: File) => {
         setIsUploading(true);
         setUploadProgress('กำลังอัปโหลดไฟล์...');
+        setError(null);
 
         try {
             const supabase = createClient();
 
-            // Generate unique file path
             const fileExt = file.name.split('.').pop();
             const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(7)}`;
             const storagePath = `${uniqueId}.${fileExt}`;
 
-            // Upload to temp-documents bucket
             const { error: uploadError } = await supabase.storage
                 .from('temp-documents')
                 .upload(storagePath, file, {
@@ -77,19 +86,17 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
             if (uploadError) {
                 console.error('Upload error:', uploadError);
                 setUploadProgress(null);
-                alert('ไม่สามารถอัปโหลดไฟล์ได้: ' + uploadError.message);
+                setError('ไม่สามารถอัปโหลดไฟล์ได้: ' + uploadError.message);
                 return;
             }
 
             setUploadProgress('อัปโหลดสำเร็จ กำลังวิเคราะห์...');
-
-            // Call parent with storage path
             onFileUploaded(storagePath, file.name);
 
         } catch (err) {
             console.error('Upload error:', err);
             setUploadProgress(null);
-            alert('เกิดข้อผิดพลาดในการอัปโหลดไฟล์');
+            setError('เกิดข้อผิดพลาดในการอัปโหลดไฟล์');
         } finally {
             setIsUploading(false);
         }
@@ -98,43 +105,58 @@ export default function DocumentUploader({ onFileUploaded, isAnalyzing }: Docume
     const isBusy = isUploading || isAnalyzing;
 
     return (
-        <form
-            className={cn(
-                "relative flex flex-col items-center justify-center w-full h-64 rounded-xl border-2 border-dashed transition-all cursor-pointer bg-slate-50",
-                dragActive ? "border-blue-500 bg-blue-50" : "border-slate-300 hover:border-slate-400",
-                isBusy ? "opacity-50 pointer-events-none" : ""
-            )}
-            onDragEnter={handleDrag}
-            onDragLeave={handleDrag}
-            onDragOver={handleDrag}
-            onDrop={handleDrop}
-            onClick={() => inputRef.current?.click()}
-        >
-            <input
-                ref={inputRef}
-                type="file"
-                className="hidden"
-                accept=".pdf,.xlsx,.xls"
-                onChange={handleChange}
-            />
+        <div className="space-y-3">
+            <div
+                className={cn(
+                    "relative flex flex-col items-center justify-center w-full h-64 rounded-xl border-2 border-dashed transition-all cursor-pointer",
+                    "bg-[rgb(var(--ios-fill-tertiary))]",
+                    dragActive ? "border-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/5" : "border-[rgb(var(--ios-separator))] hover:border-[rgb(var(--ios-text-quaternary))]",
+                    isBusy ? "opacity-50 pointer-events-none" : ""
+                )}
+                onDragEnter={handleDrag}
+                onDragLeave={handleDrag}
+                onDragOver={handleDrag}
+                onDrop={handleDrop}
+                onClick={() => inputRef.current?.click()}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') inputRef.current?.click(); }}
+                aria-label="อัปโหลดเอกสาร PDF หรือ Excel"
+            >
+                <input
+                    ref={inputRef}
+                    type="file"
+                    className="hidden"
+                    accept=".pdf,.xlsx,.xls"
+                    onChange={handleChange}
+                    aria-label="เลือกไฟล์เอกสาร"
+                />
 
-            {isBusy ? (
-                <div className="flex flex-col items-center gap-3 text-slate-500 animate-pulse">
-                    <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
-                    <p className="font-medium">{uploadProgress || 'กำลังวิเคราะห์เอกสาร...'}</p>
-                    <p className="text-xs">กรุณารอสักครู่ ระบบกำลังตรวจสอบตามกฎระเบียบ</p>
-                </div>
-            ) : (
-                <div className="flex flex-col items-center gap-3 text-slate-500">
-                    <div className="p-4 bg-white rounded-full shadow-sm">
-                        <Upload className="w-8 h-8 text-blue-600" />
+                {isBusy ? (
+                    <div className="flex flex-col items-center gap-3 text-[rgb(var(--ios-text-secondary))] animate-pulse">
+                        <Loader2 className="w-10 h-10 animate-spin text-[rgb(var(--ios-accent))]" />
+                        <p className="font-medium">{uploadProgress || 'กำลังวิเคราะห์เอกสาร...'}</p>
+                        <p className="text-xs">กรุณารอสักครู่ ระบบกำลังตรวจสอบตามกฎระเบียบ</p>
                     </div>
-                    <div className="text-center">
-                        <p className="font-medium text-slate-700">คลิกเพื่ออัปโหลด หรือลากไฟล์มาวาง</p>
-                        <p className="text-xs mt-1 text-slate-400">รองรับไฟล์ PDF หรือ Excel (.xlsx)</p>
+                ) : (
+                    <div className="flex flex-col items-center gap-3 text-[rgb(var(--ios-text-secondary))]">
+                        <div className="p-4 bg-[rgb(var(--ios-bg-secondary))] rounded-full shadow-[var(--ios-shadow-sm)]">
+                            <Upload className="w-8 h-8 text-[rgb(var(--ios-accent))]" />
+                        </div>
+                        <div className="text-center">
+                            <p className="font-medium text-[rgb(var(--ios-text-primary))]">คลิกเพื่ออัปโหลด หรือลากไฟล์มาวาง</p>
+                            <p className="text-xs mt-1 text-[rgb(var(--ios-text-quaternary))]">รองรับไฟล์ PDF หรือ Excel (.xlsx)</p>
+                        </div>
                     </div>
+                )}
+            </div>
+
+            {error && (
+                <div className="p-3 bg-[rgb(var(--ios-red))]/10 text-[rgb(var(--ios-red))] text-sm rounded-[var(--ios-radius-sm)] flex items-center gap-2" role="alert">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    {error}
                 </div>
             )}
-        </form>
+        </div>
     );
 }

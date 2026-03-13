@@ -34,7 +34,7 @@ export default async function AdminPage() {
     })) as Project[];
 
     return (
-        <div className="min-h-screen bg-slate-50 pb-20">
+        <main id="main-content" className="min-h-screen bg-slate-50 pb-20">
             <AdminNavbar userEmail={user?.email} />
 
             <div className="container mx-auto max-w-6xl px-4">
@@ -69,6 +69,6 @@ export default async function AdminPage() {
                     <AdminProjectTable projects={projects} />
                 </div>
             </div>
-        </div>
+        </main>
     );
 }

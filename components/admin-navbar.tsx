@@ -1,9 +1,10 @@
 "use client";
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { createClient } from "@/utils/supabase/client";
 import { useTheme } from '@/components/theme-provider';
+import { cn } from '@/utils/cn';
 import { Moon, Sun, LogOut, Home, FileWarning, Clock } from 'lucide-react';
 
 interface AdminNavbarProps {
@@ -12,6 +13,7 @@ interface AdminNavbarProps {
 
 export function AdminNavbar({ userEmail }: AdminNavbarProps) {
     const router = useRouter();
+    const pathname = usePathname();
     const supabase = createClient();
     const { resolvedTheme, setTheme } = useTheme();
 
@@ -45,14 +47,24 @@ export function AdminNavbar({ userEmail }: AdminNavbarProps) {
                         </Link>
                         <Link
                             href="/admin/complaints"
-                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors ios-press"
+                            className={cn(
+                                "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors ios-press",
+                                pathname === '/admin/complaints'
+                                    ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10 border-b-2 border-[rgb(var(--ios-accent))]"
+                                    : "text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
+                            )}
                         >
                             <FileWarning className="w-4 h-4" />
                             จัดการข้อร้องเรียน
                         </Link>
                         <Link
                             href="/admin/activity-logs"
-                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors ios-press"
+                            className={cn(
+                                "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors ios-press",
+                                pathname === '/admin/activity-logs'
+                                    ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10 border-b-2 border-[rgb(var(--ios-accent))]"
+                                    : "text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
+                            )}
                         >
                             <Clock className="w-4 h-4" />
                             ประวัติการใช้งาน
@@ -72,13 +84,23 @@ export function AdminNavbar({ userEmail }: AdminNavbarProps) {
                         </Link>
                         <Link
                             href="/admin/complaints"
-                            className="flex items-center gap-1 px-2 py-1.5 text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
+                            className={cn(
+                                "flex items-center gap-1 px-2 py-1.5 rounded-[var(--ios-radius-sm)] transition-colors",
+                                pathname === '/admin/complaints'
+                                    ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10"
+                                    : "text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
+                            )}
                         >
                             <FileWarning className="w-3.5 h-3.5" />
                         </Link>
                         <Link
                             href="/admin/activity-logs"
-                            className="flex items-center gap-1 px-2 py-1.5 text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
+                            className={cn(
+                                "flex items-center gap-1 px-2 py-1.5 rounded-[var(--ios-radius-sm)] transition-colors",
+                                pathname === '/admin/activity-logs'
+                                    ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10"
+                                    : "text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
+                            )}
                         >
                             <Clock className="w-3.5 h-3.5" />
                         </Link>

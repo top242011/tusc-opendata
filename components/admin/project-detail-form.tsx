@@ -1,9 +1,10 @@
 import { useState, useRef } from 'react';
-import { Project, BudgetBreakdownItem } from '@/lib/types'; // Import BudgetBreakdownItem
+import { Project, BudgetBreakdownItem } from '@/lib/types';
 import { updateProjectDetails } from '@/lib/actions';
 import { Loader2, Save, Sparkles, Upload } from 'lucide-react';
 import BudgetBreakdownEditor from './budget-breakdown-editor';
 import { parseProjectPDF } from '@/lib/gemini';
+import { Toast } from '@/components/ui/toast';
 
 interface ProjectDetailFormProps {
     project: Project;
@@ -12,6 +13,7 @@ interface ProjectDetailFormProps {
 export default function ProjectDetailForm({ project }: ProjectDetailFormProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [formData, setFormData] = useState({
@@ -54,13 +56,13 @@ export default function ProjectDetailForm({ project }: ProjectDetailFormProps) {
                     budget_breakdown: (extracted.budget_breakdown as BudgetBreakdownItem[]) || prev.budget_breakdown,
                 }));
 
-                alert('ดึงข้อมูลสำเร็จ! กรุณาตรวจสอบความถูกต้องก่อนบันทึก');
+                setToast({ message: 'ดึงข้อมูลสำเร็จ! กรุณาตรวจสอบความถูกต้องก่อนบันทึก', type: 'success' });
             } else {
-                alert('ไม่สามารถวิเคราะห์ข้อมูลได้: ' + (result.error || 'Unknown error'));
+                setToast({ message: 'ไม่สามารถวิเคราะห์ข้อมูลได้: ' + (result.error || 'Unknown error'), type: 'error' });
             }
         } catch (error) {
             console.error(error);
-            alert('เกิดข้อผิดพลาดในการวิเคราะห์เอกสาร');
+            setToast({ message: 'เกิดข้อผิดพลาดในการวิเคราะห์เอกสาร', type: 'error' });
         } finally {
             setIsAnalyzing(false);
             if (fileInputRef.current) fileInputRef.current.value = '';
@@ -80,10 +82,10 @@ export default function ProjectDetailForm({ project }: ProjectDetailFormProps) {
                 objectives: objectivesArray,
                 sdg_goals: sdgArray
             });
-            alert('บันทึกข้อมูลเรียบร้อยแล้ว');
+            setToast({ message: 'บันทึกข้อมูลเรียบร้อยแล้ว', type: 'success' });
         } catch (error) {
             console.error(error);
-            alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+            setToast({ message: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล', type: 'error' });
         } finally {
             setIsLoading(false);
         }
@@ -109,6 +111,7 @@ export default function ProjectDetailForm({ project }: ProjectDetailFormProps) {
                         className="hidden"
                         ref={fileInputRef}
                         onChange={handleFileChange}
+                        aria-label="อัปโหลดไฟล์ PDF สำหรับ Auto-fill"
                     />
                     <button
                         type="button"
@@ -134,8 +137,9 @@ export default function ProjectDetailForm({ project }: ProjectDetailFormProps) {
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">ผู้รับผิดชอบโครงการ</label>
+                        <label htmlFor="responsible_person" className="block text-sm font-medium text-slate-700 mb-1">ผู้รับผิดชอบโครงการ</label>
                         <input
+                            id="responsible_person"
                             type="text"
                             className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-100 outline-none border-slate-300"
                             placeholder="ชื่อ-สกุล, คณะ, เบอร์โทร"
@@ -144,8 +148,9 @@ export default function ProjectDetailForm({ project }: ProjectDetailFormProps) {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">อาจารย์ที่ปรึกษา</label>
+                        <label htmlFor="advisor" className="block text-sm font-medium text-slate-700 mb-1">อาจารย์ที่ปรึกษา</label>
                         <input
+                            id="advisor"
                             type="text"
                             className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-100 outline-none border-slate-300"
                             value={formData.advisor}
@@ -155,8 +160,9 @@ export default function ProjectDetailForm({ project }: ProjectDetailFormProps) {
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">ประเภทกิจกรรม</label>
+                    <label htmlFor="activity_type" className="block text-sm font-medium text-slate-700 mb-1">ประเภทกิจกรรม</label>
                     <input
+                        id="activity_type"
                         type="text"
                         className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-100 outline-none border-slate-300"
                         placeholder="เช่น วิชาการ, กีฬา, ศิลปวัฒนธรรม"
@@ -166,8 +172,9 @@ export default function ProjectDetailForm({ project }: ProjectDetailFormProps) {
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">หลักการและเหตุผล</label>
+                    <label htmlFor="rationale" className="block text-sm font-medium text-slate-700 mb-1">หลักการและเหตุผล</label>
                     <textarea
+                        id="rationale"
                         rows={6}
                         className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-100 outline-none border-slate-300"
                         value={formData.rationale}
@@ -177,8 +184,9 @@ export default function ProjectDetailForm({ project }: ProjectDetailFormProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">วัตถุประสงค์ (บรรทัดละ 1 ข้อ)</label>
+                        <label htmlFor="objectives" className="block text-sm font-medium text-slate-700 mb-1">วัตถุประสงค์ (บรรทัดละ 1 ข้อ)</label>
                         <textarea
+                            id="objectives"
                             rows={5}
                             className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-100 outline-none border-slate-300"
                             placeholder="- เพื่อ..."
@@ -187,8 +195,9 @@ export default function ProjectDetailForm({ project }: ProjectDetailFormProps) {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">เป้าหมาย / ตัวชี้วัด</label>
+                        <label htmlFor="targets" className="block text-sm font-medium text-slate-700 mb-1">เป้าหมาย / ตัวชี้วัด</label>
                         <textarea
+                            id="targets"
                             rows={5}
                             className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-100 outline-none border-slate-300"
                             value={formData.targets}
@@ -198,8 +207,9 @@ export default function ProjectDetailForm({ project }: ProjectDetailFormProps) {
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">SDG Goals (คั่นด้วยจุลภาค)</label>
+                    <label htmlFor="sdg_goals" className="block text-sm font-medium text-slate-700 mb-1">SDG Goals (คั่นด้วยจุลภาค)</label>
                     <input
+                        id="sdg_goals"
                         type="text"
                         className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-100 outline-none border-slate-300"
                         placeholder="เช่น SDG 1, SDG 4, SDG 17"
@@ -227,6 +237,15 @@ export default function ProjectDetailForm({ project }: ProjectDetailFormProps) {
                     </button>
                 </div>
             </form>
+
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    isVisible={!!toast}
+                    onClose={() => setToast(null)}
+                />
+            )}
         </div>
     );
 }

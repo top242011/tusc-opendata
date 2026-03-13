@@ -2,16 +2,19 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Shield, MessageCircle, LogIn, Menu, X, ChevronDown, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FeedbackModal } from '@/components/feedback-modal';
 import { useTheme } from '@/components/theme-provider';
+import { cn } from '@/utils/cn';
 
 export function PublicNavbar() {
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isToolsOpen, setIsToolsOpen] = useState(false);
     const { resolvedTheme, setTheme } = useTheme();
+    const pathname = usePathname();
 
     const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
     const toggleTools = () => setIsToolsOpen(!isToolsOpen);
@@ -35,7 +38,12 @@ export function PublicNavbar() {
                     <div className="hidden md:flex items-center gap-1">
                         <Link
                             href="/"
-                            className="px-4 py-2 text-sm font-medium text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors ios-press"
+                            className={cn(
+                                "px-4 py-2 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors ios-press",
+                                pathname === '/'
+                                    ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10 border-b-2 border-[rgb(var(--ios-accent))]"
+                                    : "text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
+                            )}
                         >
                             หน้าหลัก
                         </Link>
@@ -43,7 +51,12 @@ export function PublicNavbar() {
                         {/* Tools Dropdown */}
                         <div className="relative">
                             <button
-                                className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors focus:outline-none ios-press"
+                                className={cn(
+                                    "flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors focus:outline-none ios-press",
+                                    pathname.startsWith('/tools')
+                                        ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10 border-b-2 border-[rgb(var(--ios-accent))]"
+                                        : "text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
+                                )}
                                 onClick={toggleTools}
                                 onBlur={() => setTimeout(() => setIsToolsOpen(false), 200)}
                             >
@@ -73,13 +86,23 @@ export function PublicNavbar() {
 
                         <Link
                             href="/organizations"
-                            className="px-4 py-2 text-sm font-medium text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors ios-press"
+                            className={cn(
+                                "px-4 py-2 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors ios-press",
+                                pathname.startsWith('/organizations')
+                                    ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10 border-b-2 border-[rgb(var(--ios-accent))]"
+                                    : "text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
+                            )}
                         >
                             หน่วยงาน / คณะ
                         </Link>
                         <Link
                             href="/projects"
-                            className="px-4 py-2 text-sm font-medium text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors ios-press"
+                            className={cn(
+                                "px-4 py-2 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors ios-press",
+                                pathname.startsWith('/projects')
+                                    ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10 border-b-2 border-[rgb(var(--ios-accent))]"
+                                    : "text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
+                            )}
                         >
                             โครงการทั้งหมด
                         </Link>
@@ -127,7 +150,7 @@ export function PublicNavbar() {
                                 onClick={() => setIsFeedbackOpen(true)}
                             >
                                 <MessageCircle className="w-4 h-4" />
-                                <span>Feedback</span>
+                                <span>ส่งข้อเสนอแนะ</span>
                             </Button>
                         </div>
                     </div>
@@ -139,7 +162,12 @@ export function PublicNavbar() {
                         <div className="flex flex-col p-4 gap-1">
                             <Link
                                 href="/"
-                                className="px-4 py-3 text-sm font-medium text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
+                                className={cn(
+                                    "px-4 py-3 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors",
+                                    pathname === '/'
+                                        ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10"
+                                        : "text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
+                                )}
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 หน้าหลัก
@@ -161,14 +189,24 @@ export function PublicNavbar() {
 
                             <Link
                                 href="/organizations"
-                                className="px-4 py-3 text-sm font-medium text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
+                                className={cn(
+                                    "px-4 py-3 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors",
+                                    pathname.startsWith('/organizations')
+                                        ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10"
+                                        : "text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
+                                )}
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 หน่วยงาน / คณะ
                             </Link>
                             <Link
                                 href="/projects"
-                                className="px-4 py-3 text-sm font-medium text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
+                                className={cn(
+                                    "px-4 py-3 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors",
+                                    pathname.startsWith('/projects')
+                                        ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10"
+                                        : "text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
+                                )}
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 โครงการทั้งหมด

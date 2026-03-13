@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { ProjectFile } from '@/lib/types';
-import { Loader2, Trash2, FileText, FileArchive, Download, UploadCloud } from 'lucide-react';
+import { Loader2, Trash2, FileText, FileArchive, Download, UploadCloud, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { th } from 'date-fns/locale';
 
@@ -15,6 +15,7 @@ export default function FileManager({ projectId }: FileManagerProps) {
     const [files, setFiles] = useState<ProjectFile[]>([]);
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const supabase = createClient();
 
     const fetchFiles = async () => {
@@ -36,11 +37,19 @@ export default function FileManager({ projectId }: FileManagerProps) {
         fetchFiles();
     }, [projectId]);
 
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0) return;
 
-        setUploading(true);
         const file = e.target.files[0];
+
+        if (file.size > MAX_FILE_SIZE) {
+            setError(`ไฟล์มีขนาด ${(file.size / 1024 / 1024).toFixed(1)} MB เกินขนาดสูงสุดที่อนุญาต (10 MB)`);
+            return;
+        }
+
+        setUploading(true);
         const fileExt = file.name.split('.').pop();
         const fileName = `${projectId}/${Date.now()}.${fileExt}`;
         const filePath = `${fileName}`;
@@ -75,7 +84,7 @@ export default function FileManager({ projectId }: FileManagerProps) {
             fetchFiles();
         } catch (error: any) {
             console.error('Upload error:', error);
-            alert(`Upload failed: ${error.message || 'Unknown error'}`);
+            setError(`อัปโหลดไม่สำเร็จ: ${error.message || 'Unknown error'}`);
         } finally {
             setUploading(false);
             // Reset input
@@ -100,7 +109,7 @@ export default function FileManager({ projectId }: FileManagerProps) {
             fetchFiles();
         } catch (error) {
             console.error('Delete error:', error);
-            alert('ลบไฟล์ไม่ได้ กรุณาลองใหม่อีกครั้ง');
+            setError('ลบไฟล์ไม่ได้ กรุณาลองใหม่อีกครั้ง');
         }
     };
 
@@ -114,6 +123,13 @@ export default function FileManager({ projectId }: FileManagerProps) {
 
     return (
         <div className="space-y-6">
+            {error && (
+                <div className="p-3 bg-red-50 text-red-600 text-sm rounded-md flex items-center gap-2 border border-red-100" role="alert">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    {error}
+                    <button onClick={() => setError(null)} className="ml-auto text-red-400 hover:text-red-600 text-xs">ปิด</button>
+                </div>
+            )}
             {/* Upload Area */}
             <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:bg-slate-50 transition-colors relative">
                 <input

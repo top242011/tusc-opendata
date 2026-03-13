@@ -312,7 +312,7 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
                                                         <FileText className="w-4 h-4 text-blue-600" />
                                                     </div>
                                                 ) : (
-                                                    <div className="flex justify-center opacity-0 group-hover:opacity-100 transition-opacity" title="ขาดเอกสาร">
+                                                    <div className="flex justify-center opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 transition-opacity" title="ขาดเอกสาร">
                                                         <AlertCircle className="w-4 h-4 text-amber-400" />
                                                     </div>
                                                 )}
@@ -325,7 +325,7 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
                                                 )}
                                             </td>
                                             <td className="px-4 py-3">
-                                                <div className="flex items-center justify-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+                                                <div className="flex items-center justify-center gap-1 opacity-100 [@media(hover:hover)]:opacity-60 [@media(hover:hover)]:group-hover:opacity-100 transition-opacity">
                                                     <Link
                                                         href={`/admin/project/${project.id}`}
                                                         className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"
