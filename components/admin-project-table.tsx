@@ -267,7 +267,7 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
                 <CardContent>
                     <div className="rounded-md border overflow-x-auto min-h-[300px]">
                         <table className="w-full text-sm text-left">
-                            <thead className="bg-slate-50 text-slate-500 font-medium border-b sticky top-0">
+                            <thead className="bg-slate-50 text-slate-500 font-medium border-b">
                                 <tr>
                                     <th className="px-4 py-3 whitespace-nowrap">ID</th>
                                     <th className="px-4 py-3 whitespace-nowrap">ปี/ศูนย์</th>
