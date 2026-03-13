@@ -115,7 +115,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
 
     // --- Dynamic Data for Timeline ---
     const yearStats = projects.reduce((acc, project) => {
-        const year = project.fiscal_year || 2567;
+        const year = project.fiscal_year || (new Date().getFullYear() + 543);
         if (!acc[year]) acc[year] = { req: 0, app: 0 };
         acc[year].req += Number(project.budget_requested);
         acc[year].app += Number(project.budget_approved);
@@ -133,7 +133,8 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
         timelineData.unshift({ year: timelineData[0].year - 1, approved: 0 });
     }
     if (timelineData.length === 0) {
-        for (let i = 0; i < 6; i++) timelineData.push({ year: 2562 + i, approved: 0 });
+        const currentBEYear = new Date().getFullYear() + 543;
+        for (let i = 0; i < 6; i++) timelineData.push({ year: currentBEYear - 5 + i, approved: 0 });
     }
 
     const maxTimelineY = Math.max(...timelineData.map(d => d.approved)) || 1;

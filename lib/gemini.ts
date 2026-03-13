@@ -2,6 +2,7 @@
 
 import { GoogleGenAI } from '@google/genai';
 import * as XLSX from 'xlsx';
+import { GEMINI_MODEL } from './constants';
 
 export async function parseBudgetExcel(formData: FormData) {
     try {
@@ -22,7 +23,7 @@ export async function parseBudgetExcel(formData: FormData) {
         });
 
         // Use a smarter model for complex structure analysis
-        const model = 'gemini-2.5-flash-lite';
+        const model = GEMINI_MODEL;
 
         console.log(`[Gemini] Processing Excel with model: ${model}`);
 
@@ -124,7 +125,7 @@ export async function parseProjectPDF(formData: FormData) {
         });
 
         // Use requested model
-        const model = 'gemini-2.5-flash-lite';
+        const model = GEMINI_MODEL;
         console.log(`[Gemini] Processing file with model: ${model}`);
 
         // System instruction to act as Data Entry Clerk
@@ -226,7 +227,7 @@ export async function checkProjectDocument(formData: FormData, rules: any) {
             apiKey: process.env.GEMINI_API_KEY,
         });
 
-        const model = 'gemini-2.5-flash-lite';
+        const model = GEMINI_MODEL;
 
         const prompt = `
             You are an expert Auditor for Student Activity Budget at Thammasat University.

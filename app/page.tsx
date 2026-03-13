@@ -4,8 +4,9 @@ import { LandingDashboard } from "@/components/landing-dashboard";
 import { DashboardStats, Project } from "@/lib/types";
 
 import { getLatestFiscalYear } from '@/lib/data-queries';
+import { REVALIDATE_HOME } from '@/lib/constants';
 
-export const revalidate = 300; // 5 minutes
+export const revalidate = REVALIDATE_HOME;
 
 export default async function Home() {
   const supabase = await createPublicClient();
