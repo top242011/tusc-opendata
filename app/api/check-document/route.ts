@@ -4,6 +4,7 @@ import { GoogleGenAI } from '@google/genai';
 import * as XLSX from 'xlsx';
 import budgetRulesCentral from '@/lib/data/budget-rules.json';
 import budgetRulesLampang from '@/lib/data/budget-rules-lampang.json';
+import { GEMINI_MODEL, SUPABASE_TEMP_BUCKET } from '@/lib/constants';
 
 export async function POST(request: NextRequest) {
     try {
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
 
         // Download file from Supabase Storage
         const { data: fileData, error: downloadError } = await supabase.storage
-            .from('temp-documents')
+            .from(SUPABASE_TEMP_BUCKET)
             .download(storagePath);
 
         if (downloadError || !fileData) {
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest) {
             contentForAI = base64Data;
         } else {
             // Cleanup and return error
-            await supabase.storage.from('temp-documents').remove([storagePath]);
+            await supabase.storage.from(SUPABASE_TEMP_BUCKET).remove([storagePath]);
             return NextResponse.json(
                 { success: false, error: 'Unsupported file format' },
                 { status: 400 }
@@ -76,7 +77,7 @@ export async function POST(request: NextRequest) {
             apiKey: process.env.GEMINI_API_KEY,
         });
 
-        const model = 'gemini-2.5-flash-lite';
+        const model = GEMINI_MODEL;
 
         const prompt = `
             You are an expert Auditor for Student Activity Budget at Thammasat University.
@@ -135,7 +136,7 @@ export async function POST(request: NextRequest) {
         const jsonStr = text.replace(/```json/g, '').replace(/```/g, '').trim();
 
         // Cleanup: Delete temp file from storage
-        await supabase.storage.from('temp-documents').remove([storagePath]);
+        await supabase.storage.from(SUPABASE_TEMP_BUCKET).remove([storagePath]);
 
         try {
             const data = JSON.parse(jsonStr);

@@ -51,7 +51,7 @@ export async function analyzeFileForImport(formData: FormData): Promise<{ succes
 
             for (const row of rows) {
                 results.push({
-                    id: Math.random().toString(36).substring(7),
+                    id: crypto.randomUUID(),
                     fileName: file.name,
                     source: 'EXCEL',
                     status: 'NEW', // Will be re-evaluated later
@@ -88,7 +88,7 @@ export async function analyzeFileForImport(formData: FormData): Promise<{ succes
 
             const aiData = pdfResult.data;
             results.push({
-                id: Math.random().toString(36).substring(7),
+                id: crypto.randomUUID(),
                 fileName: file.name,
                 source: 'PDF',
                 status: 'NEW', // Will be re-evaluated later
@@ -217,7 +217,7 @@ export async function saveImportedProject(item: ImportPreviewItem, fileFormData:
             const file = fileFormData.get('file') as File;
             if (file && projectId) {
                 const fileExt = file.name.split('.').pop();
-                const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+                const fileName = `${Date.now()}_${crypto.randomUUID()}.${fileExt}`;
                 const filePath = `${projectId}/${fileName}`;
 
                 const { error: uploadError } = await supabase.storage

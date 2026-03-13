@@ -4,7 +4,6 @@ import { LandingDashboard } from "@/components/landing-dashboard";
 import { DashboardStats, Project } from "@/lib/types";
 
 import { getLatestFiscalYear } from '@/lib/data-queries';
-
 export const revalidate = 300; // 5 minutes
 
 export default async function Home() {
