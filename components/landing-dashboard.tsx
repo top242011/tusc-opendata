@@ -251,7 +251,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                         <p className="text-[rgb(var(--ios-text-secondary))] text-sm md:text-base max-w-lg leading-relaxed">
                             แพลตฟอร์มความโปร่งใสด้านงบประมาณ เปิดเผยข้อมูลโครงการ
                             งบที่ขอ งบที่อนุมัติ และสถานะการดำเนินงาน
-                            จากกองแผนงาน มธ.
+                            จากสภานักศึกษามหาวิทยาลัยธรรมศาสตร์
                         </p>
 
                         {/* Hero Search */}
