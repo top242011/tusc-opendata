@@ -114,7 +114,7 @@ export function ImportStepUpload({ state, dispatch }: Props) {
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-[rgb(var(--ios-text-secondary))] mb-1.5">
-                        วิทยาเขต
+                        ศูนย์การศึกษา
                     </label>
                     <select
                         value={state.campus}

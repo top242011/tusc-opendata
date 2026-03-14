@@ -64,10 +64,10 @@ export default async function CampusLandingPage() {
                         Campus Overview
                     </div>
                     <h1 className="text-3xl md:text-4xl font-bold text-[rgb(var(--ios-text-primary))] mb-3 tracking-tight">
-                        วิทยาเขต มหาวิทยาลัยธรรมศาสตร์
+                        ศูนย์การศึกษา มหาวิทยาลัยธรรมศาสตร์
                     </h1>
                     <p className="text-[rgb(var(--ios-text-secondary))] text-base md:text-lg max-w-2xl mx-auto">
-                        ภาพรวมงบประมาณและโครงการแยกตามวิทยาเขต
+                        ภาพรวมงบประมาณและโครงการแยกตามศูนย์การศึกษา
                     </p>
                 </div>
             </section>

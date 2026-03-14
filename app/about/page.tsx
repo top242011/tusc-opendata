@@ -45,7 +45,7 @@ export default function AboutPage() {
         },
         {
             label: 'จำแนกตามหน่วยงาน/คณะ',
-            desc: 'ข้อมูลสรุปแยกตามองค์กรนักศึกษาและศูนย์การศึกษา (รังสิต / ท่าพระจันทร์ / ลำปาง / ส่วนกลาง)',
+            desc: 'ข้อมูลสรุปแยกตามองค์กรนักศึกษาและวิทยาเขต (รังสิต / ท่าพระจันทร์ / ลำปาง / ส่วนกลาง)',
         },
         {
             label: 'สถานะการอนุมัติ',
@@ -184,16 +184,19 @@ export default function AboutPage() {
                             <div>
                                 <h3 className="font-bold text-lg mb-2">แหล่งที่มาของข้อมูล</h3>
                                 <p className="text-[rgb(var(--ios-text-secondary))] text-sm leading-relaxed mb-4">
-                                    ข้อมูลทั้งหมดได้รับการจัดเก็บและตรวจสอบโดยสภานักศึกษามหาวิทยาลัยธรรมศาสตร์
+                                    ข้อมูลทั้งหมดได้รับการจัดเก็บและตรวจสอบโดยกองแผนงาน มหาวิทยาลัยธรรมศาสตร์
                                     ก่อนนำมาเผยแพร่บนแพลตฟอร์มนี้ในรูปแบบ Open Data
                                     อัปเดตข้อมูลทุกปีงบประมาณ
                                 </p>
                                 <div className="flex flex-wrap gap-2">
                                     <span className="text-xs font-semibold px-3 py-1.5 bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))] rounded-full">
-                                        สภานักศึกษา มธ.
+                                        กองแผนงาน มธ.
                                     </span>
                                     <span className="text-xs font-semibold px-3 py-1.5 bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))] rounded-full">
                                         อัปเดตทุกปีงบประมาณ
+                                    </span>
+                                    <span className="text-xs font-semibold px-3 py-1.5 bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))] rounded-full">
+                                        Creative Commons CC BY
                                     </span>
                                 </div>
                             </div>

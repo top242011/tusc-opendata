@@ -134,8 +134,8 @@ export function PublicNavbar() {
                                             <MapPin className="w-5 h-5" />
                                         </div>
                                         <div>
-                                            <div className="text-sm font-semibold text-[rgb(var(--ios-text-primary))]">วิทยาเขต</div>
-                                            <div className="text-xs text-[rgb(var(--ios-text-secondary))] mt-0.5">ข้อมูลแยกตามวิทยาเขต</div>
+                                            <div className="text-sm font-semibold text-[rgb(var(--ios-text-primary))]">ศูนย์การศึกษา</div>
+                                            <div className="text-xs text-[rgb(var(--ios-text-secondary))] mt-0.5">ข้อมูลแยกตามศูนย์การศึกษา</div>
                                         </div>
                                     </Link>
                                 </div>
@@ -287,7 +287,7 @@ export function PublicNavbar() {
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 <MapPin className="w-4 h-4 text-[rgb(var(--ios-green))]" />
-                                วิทยาเขต
+                                ศูนย์การศึกษา
                             </Link>
 
                             <div className="my-2 h-px bg-[rgb(var(--ios-separator))]" />

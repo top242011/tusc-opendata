@@ -74,7 +74,7 @@ export default async function CampusDetailPage(props: { params: Promise<{ slug: 
                         className="inline-flex items-center gap-1.5 text-sm text-[rgb(var(--ios-accent))] hover:underline mb-4 ios-press"
                     >
                         <ArrowLeft className="w-4 h-4" />
-                        วิทยาเขตทั้งหมด
+                        ศูนย์การศึกษาทั้งหมด
                     </Link>
                     <div className="flex items-center gap-3 mb-3">
                         <div className="size-12 bg-[rgb(var(--ios-accent))]/10 rounded-[var(--ios-radius-md)] flex items-center justify-center text-[rgb(var(--ios-accent))]">
@@ -82,7 +82,7 @@ export default async function CampusDetailPage(props: { params: Promise<{ slug: 
                         </div>
                         <div>
                             <h1 className="text-3xl md:text-4xl font-bold text-[rgb(var(--ios-text-primary))] tracking-tight">
-                                วิทยาเขต{campusLabel}
+                                ศูนย์การศึกษา{campusLabel}
                             </h1>
                             <p className="text-[rgb(var(--ios-text-secondary))] text-sm mt-0.5">
                                 {allProjects.length} โครงการ
@@ -237,7 +237,7 @@ export default async function CampusDetailPage(props: { params: Promise<{ slug: 
                                     {allProjects.length === 0 && (
                                         <tr>
                                             <td colSpan={5} className="py-12 text-center text-[rgb(var(--ios-text-tertiary))] text-sm">
-                                                ไม่พบข้อมูลโครงการสำหรับวิทยาเขตนี้
+                                                ไม่พบข้อมูลโครงการสำหรับศูนย์การศึกษานี้
                                             </td>
                                         </tr>
                                     )}

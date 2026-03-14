@@ -71,7 +71,7 @@ export default async function OrganizationsPage({
                     defaultValue={params.campus}
                     className="px-3 py-2 text-sm rounded-[var(--ios-radius-sm)] border border-[rgb(var(--ios-separator))]/50 bg-[rgb(var(--ios-bg-primary))] text-[rgb(var(--ios-text-primary))]"
                 >
-                    <option value="">ทุกวิทยาเขต</option>
+                    <option value="">ทุกศูนย์การศึกษา</option>
                     {Object.entries(CAMPUS_LABELS).map(([k, v]) => (
                         <option key={k} value={k}>{v}</option>
                     ))}
@@ -110,7 +110,7 @@ export default async function OrganizationsPage({
                                 <tr className="bg-[rgb(var(--ios-fill-tertiary))]">
                                     <th className="px-4 py-2.5 text-left font-medium text-[rgb(var(--ios-text-secondary))]">ชื่อ</th>
                                     <th className="px-4 py-2.5 text-left font-medium text-[rgb(var(--ios-text-secondary))]">ประเภท</th>
-                                    <th className="px-4 py-2.5 text-left font-medium text-[rgb(var(--ios-text-secondary))]">วิทยาเขต</th>
+                                    <th className="px-4 py-2.5 text-left font-medium text-[rgb(var(--ios-text-secondary))]">ศูนย์การศึกษา</th>
                                     <th className="px-4 py-2.5 text-right font-medium text-[rgb(var(--ios-text-secondary))]">โครงการ</th>
                                     <th className="px-4 py-2.5 text-center font-medium text-[rgb(var(--ios-text-secondary))] w-28">จัดการ</th>
                                 </tr>

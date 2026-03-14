@@ -90,7 +90,7 @@ export function OrganizationForm({ organization, mode }: Props) {
                     </select>
                 </Field>
 
-                <Field label="วิทยาเขต">
+                <Field label="ศูนย์การศึกษา">
                     <select value={form.campus} onChange={e => update('campus', e.target.value)} className="input-field">
                         {Object.entries(CAMPUS_LABELS).map(([k, v]) => (
                             <option key={k} value={k}>{v}</option>

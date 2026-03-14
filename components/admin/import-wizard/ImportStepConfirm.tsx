@@ -94,7 +94,7 @@ export function ImportStepConfirm({ state, dispatch, onReset }: Props) {
                     <div className="space-y-3">
                         <SummaryRow icon={FileSpreadsheet} label="ไฟล์" value={state.file?.name || '—'} />
                         <SummaryRow icon={Building2} label="ปีงบประมาณ" value={`พ.ศ. ${fiscalYear}`} />
-                        <SummaryRow icon={Building2} label="วิทยาเขต" value={campus} />
+                        <SummaryRow icon={Building2} label="ศูนย์การศึกษา" value={campus} />
                         <div className="border-t border-[rgb(var(--ios-separator))]/30 pt-3 mt-3">
                             <SummaryRow
                                 icon={CheckCircle2}
