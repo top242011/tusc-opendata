@@ -25,7 +25,6 @@ interface LandingDashboardProps {
 export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
     const router = useRouter();
     const [heroSearch, setHeroSearch] = useState("");
-    const [activePeriod, setActivePeriod] = useState("ทั้งหมด");
 
     // --- Derived data ---
 
@@ -147,12 +146,9 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
             approved: yearStats[year].app,
         }));
 
-        // Fill to 6 points
-        while (data.length > 0 && data.length < 6) {
-            data.unshift({ year: data[0].year - 1, approved: 0 });
-        }
+        // Don't pad with fake years - only show actual data
         if (data.length === 0) {
-            for (let i = 0; i < 6; i++) data.push({ year: 2562 + i, approved: 0 });
+            data.push({ year: new Date().getFullYear() + 543, approved: 0 });
         }
         return data;
     }, [projects]);
@@ -162,18 +158,23 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
         [timelineData]
     );
 
+    const pointCount = timelineData.length;
     const svgPoints = useMemo(
         () =>
             timelineData.map((d, i) => ({
-                x: (i / 5) * 100,
+                x: pointCount === 1 ? 50 : (i / (pointCount - 1)) * 100,
                 y: 100 - (d.approved / maxTimelineY) * 90,
                 data: d,
             })),
-        [timelineData, maxTimelineY]
+        [timelineData, maxTimelineY, pointCount]
     );
 
-    const pathD = `M${svgPoints.map((p) => `${p.x},${p.y}`).join(" L")} V100 H0 Z`;
-    const linePathD = `M${svgPoints.map((p) => `${p.x},${p.y}`).join(" L")}`;
+    const pathD = pointCount === 1
+        ? `M0,${svgPoints[0].y} H100 V100 H0 Z`
+        : `M${svgPoints.map((p) => `${p.x},${p.y}`).join(" L")} V100 H0 Z`;
+    const linePathD = pointCount === 1
+        ? `M0,${svgPoints[0].y} H100`
+        : `M${svgPoints.map((p) => `${p.x},${p.y}`).join(" L")}`;
 
     // --- Helpers ---
 
@@ -651,7 +652,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
 
                 {/* ========== TIMELINE ========== */}
                 <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 shadow-[var(--ios-shadow-sm)] p-5 md:p-6 mb-6">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+                    <div className="flex justify-between items-center mb-6">
                         <div>
                             <h3 className="text-base font-bold text-[rgb(var(--ios-text-primary))] flex items-center gap-2">
                                 <TrendingUp className="w-4 h-4 text-[rgb(var(--ios-accent))]" />
@@ -660,21 +661,6 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                             <p className="text-[rgb(var(--ios-text-secondary))] text-xs mt-0.5">
                                 งบประมาณที่ได้รับอนุมัติแยกตามปีงบประมาณ
                             </p>
-                        </div>
-                        <div className="flex gap-1.5">
-                            {(["ทั้งหมด", "5Y", "1Y"] as const).map((period) => (
-                                <button
-                                    key={period}
-                                    onClick={() => setActivePeriod(period)}
-                                    className={`px-3 py-1.5 text-xs font-semibold rounded-[var(--ios-radius-sm)] transition-colors ${
-                                        activePeriod === period
-                                            ? "bg-[rgb(var(--ios-accent))] text-white"
-                                            : "bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-secondary))]"
-                                    }`}
-                                >
-                                    {period}
-                                </button>
-                            ))}
                         </div>
                     </div>
 
@@ -699,7 +685,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                         </div>
 
                         <svg
-                            className="absolute inset-x-4 inset-y-6 w-full h-[calc(100%-3rem)] z-10 overflow-visible"
+                            className="absolute inset-x-4 inset-y-6 w-full h-[calc(100%-3rem)] z-10 overflow-hidden"
                             preserveAspectRatio="none"
                             viewBox="0 0 100 100"
                         >
@@ -732,7 +718,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                             ))}
                         </svg>
 
-                        <div className="absolute bottom-0 left-4 right-4 flex justify-between text-[10px] md:text-xs text-[rgb(var(--ios-text-secondary))] font-medium pt-2">
+                        <div className={`absolute bottom-0 left-4 right-4 flex ${timelineData.length === 1 ? 'justify-center' : 'justify-between'} text-[10px] md:text-xs text-[rgb(var(--ios-text-secondary))] font-medium pt-2`}>
                             {timelineData.map((d) => (
                                 <span key={d.year}>{d.year}</span>
                             ))}
