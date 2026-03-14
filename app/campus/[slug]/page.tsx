@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createPublicClient } from "@/utils/supabase/server";
 import { PublicNavbar } from "@/components/public-navbar";
+import { Footer } from "@/components/footer";
 import { formatTHB } from "@/lib/utils";
 import { CAMPUS_LABELS, Campus } from "@/lib/types";
 import { MapPin, Briefcase, Wallet, Percent, Building2, Table2, ArrowLeft, FileText } from "lucide-react";
@@ -197,7 +198,7 @@ export default async function CampusDetailPage(props: { params: Promise<{ slug: 
                                             statusBadge = "bg-[rgb(var(--ios-green))]/10 text-[rgb(var(--ios-green))] border-[rgb(var(--ios-green))]/20";
                                             statusLabel = "อนุมัติเต็มจำนวน";
                                         } else if (proj.status === "ไม่อนุมัติ" || Number(proj.budget_approved) === 0) {
-                                            statusBadge = "bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700";
+                                            statusBadge = "bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))] border-[rgb(var(--ios-separator))]/50";
                                             statusLabel = "ไม่อนุมัติ";
                                         } else {
                                             statusBadge = "bg-[rgb(var(--ios-red))]/10 text-[rgb(var(--ios-red))] border-[rgb(var(--ios-red))]/20";
@@ -253,9 +254,7 @@ export default async function CampusDetailPage(props: { params: Promise<{ slug: 
                 </div>
             </div>
 
-            <footer className="mt-8 border-t border-[rgb(var(--ios-separator))]/40 py-6 text-center text-sm text-[rgb(var(--ios-text-secondary))]">
-                <p>&copy; {currentYear} Thammasat University Open Data Initiative. All rights reserved.</p>
-            </footer>
+            <Footer />
         </main>
     );
 }

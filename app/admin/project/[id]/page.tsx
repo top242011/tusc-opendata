@@ -75,7 +75,7 @@ export default function AdminProjectEditPage() {
             <div className="bg-red-50 border border-red-200 rounded-lg p-8 text-center space-y-4">
                 <AlertCircle className="w-12 h-12 text-red-400 mx-auto" />
                 <p className="text-red-700 font-medium">ไม่พบข้อมูลโครงการ</p>
-                <Link href="/admin" className="inline-block px-4 py-2 bg-slate-900 text-white rounded-md hover:bg-slate-800 text-sm">
+                <Link href="/admin" className="inline-block px-4 py-2 bg-[rgb(var(--ios-accent))] text-white rounded-[var(--ios-radius-md)] hover:opacity-90 text-sm">
                     กลับไปหน้าจัดการ
                 </Link>
             </div>
@@ -91,25 +91,25 @@ export default function AdminProjectEditPage() {
             {/* Header */}
             <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <Link href="/admin" className="p-2 hover:bg-slate-100 rounded-full transition">
-                        <ArrowLeft className="w-6 h-6 text-slate-600" />
+                    <Link href="/admin" className="p-2 hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-full transition">
+                        <ArrowLeft className="w-6 h-6 text-[rgb(var(--ios-text-secondary))]" />
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-800">แก้ไขโครงการ</h1>
-                        <p className="text-slate-500 text-sm">{project.project_name}</p>
+                        <h1 className="text-2xl font-bold text-[rgb(var(--ios-text-primary))]">แก้ไขโครงการ</h1>
+                        <p className="text-[rgb(var(--ios-text-secondary))] text-sm">{project.project_name}</p>
                     </div>
                 </div>
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-slate-200 mb-6">
+            <div className="flex border-b border-[rgb(var(--ios-separator))]/50 mb-6">
                 <button
                     onClick={() => setActiveTab('basic')}
                     className={cn(
                         "px-6 py-3 text-sm font-medium transition-colors border-b-2",
                         activeTab === 'basic'
-                            ? "border-blue-600 text-blue-600"
-                            : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+                            ? "border-[rgb(var(--ios-accent))] text-[rgb(var(--ios-accent))]"
+                            : "border-transparent text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-text-primary))] hover:border-[rgb(var(--ios-separator))]"
                     )}
                 >
                     ข้อมูลหลัก
@@ -119,8 +119,8 @@ export default function AdminProjectEditPage() {
                     className={cn(
                         "px-6 py-3 text-sm font-medium transition-colors border-b-2",
                         activeTab === 'details'
-                            ? "border-blue-600 text-blue-600"
-                            : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+                            ? "border-[rgb(var(--ios-accent))] text-[rgb(var(--ios-accent))]"
+                            : "border-transparent text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-text-primary))] hover:border-[rgb(var(--ios-separator))]"
                     )}
                 >
                     รายละเอียดโครงการ
@@ -130,8 +130,8 @@ export default function AdminProjectEditPage() {
                     className={cn(
                         "px-6 py-3 text-sm font-medium transition-colors border-b-2",
                         activeTab === 'files'
-                            ? "border-blue-600 text-blue-600"
-                            : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+                            ? "border-[rgb(var(--ios-accent))] text-[rgb(var(--ios-accent))]"
+                            : "border-transparent text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-text-primary))] hover:border-[rgb(var(--ios-separator))]"
                     )}
                 >
                     จัดการเอกสาร
@@ -139,7 +139,7 @@ export default function AdminProjectEditPage() {
             </div>
 
             {/* Content Actions */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
+            <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] shadow-[var(--ios-shadow-sm)] border border-[rgb(var(--ios-separator))]/50 p-6">
                 {activeTab === 'basic' && (
                     // Using existing form but injected with data. 
                     // IMPORTANT: ProjectForm logic currently expects to be in a Modal and handles its own state/submit via props.
