@@ -108,7 +108,7 @@ export function Footer() {
                         <div className="mt-4 pt-4 border-t border-[rgb(var(--ios-separator))]/40">
                             <p className="text-xs text-[rgb(var(--ios-text-tertiary))] leading-relaxed">
                                 ข้อมูลจัดทำโดย<br />
-                                กองแผนงาน มหาวิทยาลัยธรรมศาสตร์
+                                สภานักศึกษามหาวิทยาลัยธรรมศาสตร์
                             </p>
                         </div>
                     </div>
