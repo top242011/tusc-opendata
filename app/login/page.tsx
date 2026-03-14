@@ -58,7 +58,7 @@ export default function LoginPage() {
                             <Input
                                 type="email"
                                 required
-                                className="w-full h-11 rounded-md border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all"
+                                className="w-full h-11 rounded-[var(--ios-radius-md)] border border-[rgb(var(--ios-separator))]/50 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[rgb(var(--ios-accent))] transition-all"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder="name@example.com"
@@ -78,7 +78,7 @@ export default function LoginPage() {
                             <Input
                                 type={showPassword ? "text" : "password"}
                                 required
-                                className="w-full h-11 rounded-md border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all"
+                                className="w-full h-11 rounded-[var(--ios-radius-md)] border border-[rgb(var(--ios-separator))]/50 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[rgb(var(--ios-accent))] transition-all"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder="••••••••"
@@ -97,7 +97,7 @@ export default function LoginPage() {
                         <Button
                             type="submit"
                             disabled={loading}
-                            className="w-full h-11 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors shadow-sm hover:shadow"
+                            className="w-full h-11 bg-[rgb(var(--ios-accent))] text-white rounded-[var(--ios-radius-md)] text-sm font-medium hover:opacity-90 disabled:opacity-50 transition-opacity shadow-sm"
                         >
                             {loading ? 'กำลังเข้าสู่ระบบ...' : 'เข้าสู่ระบบ'}
                         </Button>

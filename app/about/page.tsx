@@ -94,7 +94,7 @@ export default function AboutPage() {
                         </Link>
                         <Link
                             href="/organizations"
-                            className="inline-flex items-center gap-2 px-6 py-3 border border-[rgb(var(--ios-separator))] bg-white dark:bg-slate-800 font-semibold rounded-[var(--ios-radius-md)] hover:bg-[rgb(var(--ios-fill-tertiary))] transition-colors"
+                            className="inline-flex items-center gap-2 px-6 py-3 border border-[rgb(var(--ios-separator))] bg-[rgb(var(--ios-bg-secondary))] font-semibold rounded-[var(--ios-radius-md)] hover:bg-[rgb(var(--ios-fill-tertiary))] transition-colors"
                         >
                             ดูตามหน่วยงาน
                         </Link>
@@ -224,7 +224,7 @@ export default function AboutPage() {
                         </Link>
                         <Link
                             href="/"
-                            className="inline-flex items-center gap-2 px-5 py-2.5 border border-[rgb(var(--ios-separator))] bg-white dark:bg-slate-800 font-semibold rounded-[var(--ios-radius-md)] hover:bg-[rgb(var(--ios-fill-tertiary))] transition-colors text-sm"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 border border-[rgb(var(--ios-separator))] bg-[rgb(var(--ios-bg-secondary))] font-semibold rounded-[var(--ios-radius-md)] hover:bg-[rgb(var(--ios-fill-tertiary))] transition-colors text-sm"
                         >
                             กลับหน้าหลัก
                         </Link>

@@ -132,7 +132,7 @@ function ProjectsContent() {
                                     if (e.target.checked) setSelectedStatuses(prev => [...prev, status]);
                                     else setSelectedStatuses(prev => prev.filter(s => s !== status));
                                 }}
-                                className="size-4 rounded border-[rgb(var(--ios-separator))] text-[rgb(var(--ios-accent))] focus:ring-[rgb(var(--ios-accent))] bg-white dark:bg-slate-800"
+                                className="size-4 rounded border-[rgb(var(--ios-separator))] text-[rgb(var(--ios-accent))] focus:ring-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-bg-secondary))]"
                             />
                             <span className="text-sm text-[rgb(var(--ios-text-secondary))] group-hover:text-[rgb(var(--ios-accent))] transition-colors">{status}</span>
                         </label>
@@ -148,7 +148,7 @@ function ProjectsContent() {
                 <div className="relative">
                     <Search className="absolute left-2.5 top-2.5 w-4 h-4 text-[rgb(var(--ios-text-tertiary))]" />
                     <input
-                        className="w-full pl-9 pr-3 py-1.5 text-sm bg-white dark:bg-slate-800 border border-[rgb(var(--ios-separator))] rounded-[var(--ios-radius-sm)] focus:ring-1 focus:ring-[rgb(var(--ios-accent))] focus:border-[rgb(var(--ios-accent))] outline-none transition-all"
+                        className="w-full pl-9 pr-3 py-1.5 text-sm bg-[rgb(var(--ios-bg-secondary))] border border-[rgb(var(--ios-separator))] rounded-[var(--ios-radius-sm)] focus:ring-1 focus:ring-[rgb(var(--ios-accent))] focus:border-[rgb(var(--ios-accent))] outline-none transition-all"
                         placeholder="ค้นหาหน่วยงาน..."
                         type="text"
                         value={orgSearchTerm}
@@ -165,7 +165,7 @@ function ProjectsContent() {
                                     if (e.target.checked) setSelectedOrgs(prev => [...prev, org]);
                                     else setSelectedOrgs(prev => prev.filter(o => o !== org));
                                 }}
-                                className="size-4 rounded border-[rgb(var(--ios-separator))] text-[rgb(var(--ios-accent))] focus:ring-[rgb(var(--ios-accent))] bg-white dark:bg-slate-800"
+                                className="size-4 rounded border-[rgb(var(--ios-separator))] text-[rgb(var(--ios-accent))] focus:ring-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-bg-secondary))]"
                             />
                             <span className="text-sm text-[rgb(var(--ios-text-secondary))] group-hover:text-[rgb(var(--ios-accent))] transition-colors truncate w-full" title={org}>{org}</span>
                         </label>
@@ -198,7 +198,7 @@ function ProjectsContent() {
                             <Search className="w-5 h-5 text-[rgb(var(--ios-text-tertiary))]" />
                         </div>
                         <input
-                            className="block w-full pl-12 pr-24 py-4 bg-white dark:bg-slate-800 border-2 border-[rgb(var(--ios-separator))]/40 rounded-[var(--ios-radius-lg)] text-[rgb(var(--ios-text-primary))] placeholder-[rgb(var(--ios-text-tertiary))] focus:outline-none focus:border-[rgb(var(--ios-accent))] focus:ring-4 focus:ring-[rgb(var(--ios-accent))]/10 transition-all font-sans"
+                            className="block w-full pl-12 pr-24 py-4 bg-[rgb(var(--ios-bg-secondary))] border-2 border-[rgb(var(--ios-separator))]/40 rounded-[var(--ios-radius-lg)] text-[rgb(var(--ios-text-primary))] placeholder-[rgb(var(--ios-text-tertiary))] focus:outline-none focus:border-[rgb(var(--ios-accent))] focus:ring-4 focus:ring-[rgb(var(--ios-accent))]/10 transition-all font-sans"
                             placeholder="ค้นหาชื่อโครงการ (เช่น อุปกรณ์การแพทย์, วิจัย 2567)..."
                             type="text"
                             value={searchTerm}
@@ -285,7 +285,7 @@ function ProjectsContent() {
                             <select
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value)}
-                                className="py-1.5 pl-3 pr-8 text-sm border border-[rgb(var(--ios-separator))]/50 rounded-[var(--ios-radius-sm)] bg-white dark:bg-slate-800 focus:ring-1 focus:ring-[rgb(var(--ios-accent))] cursor-pointer w-[160px] outline-none text-[rgb(var(--ios-text-primary))]">
+                                className="py-1.5 pl-3 pr-8 text-sm border border-[rgb(var(--ios-separator))]/50 rounded-[var(--ios-radius-sm)] bg-[rgb(var(--ios-bg-secondary))] focus:ring-1 focus:ring-[rgb(var(--ios-accent))] cursor-pointer w-[160px] outline-none text-[rgb(var(--ios-text-primary))]">
                                 <option>งบประมาณ (มาก-น้อย)</option>
                                 <option>งบประมาณ (น้อย-มาก)</option>
                                 <option>ล่าสุด</option>
@@ -295,7 +295,7 @@ function ProjectsContent() {
 
                     {/* Project Cards */}
                     {loading ? (
-                        <div className="flex justify-center py-12"><div className="w-8 h-8 rounded-full border-4 border-slate-200 border-t-[rgb(var(--ios-accent))] animate-spin"></div></div>
+                        <div className="flex justify-center py-12"><div className="w-8 h-8 rounded-full border-4 border-[rgb(var(--ios-separator))]/30 border-t-[rgb(var(--ios-accent))] animate-spin"></div></div>
                     ) : filteredProjects.length === 0 ? (
                         /* Better Empty State */
                         <div className="flex flex-col items-center justify-center py-16 px-6 bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-dashed border-[rgb(var(--ios-separator))]">
@@ -325,7 +325,7 @@ function ProjectsContent() {
                                 } else if (statusCategory === "ตัดงบบางส่วน") {
                                     statusBadge = "bg-[rgb(var(--ios-orange))]/10 text-[rgb(var(--ios-orange))] border-[rgb(var(--ios-orange))]/20";
                                 } else {
-                                    statusBadge = "bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700";
+                                    statusBadge = "bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))] border-[rgb(var(--ios-separator))]/50";
                                 }
 
                                 const requested = Number(proj.budget_requested);
@@ -335,7 +335,7 @@ function ProjectsContent() {
                                     ? "bg-[rgb(var(--ios-green))]"
                                     : statusCategory === "ตัดงบบางส่วน"
                                         ? "bg-[rgb(var(--ios-orange))]"
-                                        : "bg-slate-300 dark:bg-slate-600";
+                                        : "bg-[rgb(var(--ios-fill-secondary))]";
 
                                 return (
                                     <Link key={proj.id} href={`/project/${proj.id}`} className="block group">
@@ -430,7 +430,7 @@ export default function ProjectsPage() {
         <Suspense fallback={
             <main className="bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] flex flex-col min-h-screen font-sans antialiased">
                 <div className="flex justify-center items-center flex-1">
-                    <div className="w-8 h-8 rounded-full border-4 border-slate-200 border-t-[rgb(var(--ios-accent))] animate-spin" />
+                    <div className="w-8 h-8 rounded-full border-4 border-[rgb(var(--ios-separator))]/30 border-t-[rgb(var(--ios-accent))] animate-spin" />
                 </div>
             </main>
         }>
