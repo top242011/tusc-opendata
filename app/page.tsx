@@ -58,6 +58,7 @@ export default async function Home() {
 
       <footer className="mt-8 border-t border-[rgb(var(--ios-separator))]/40 py-6 text-center text-sm text-[rgb(var(--ios-text-secondary))]">
         <p>© {new Date().getFullYear()} Thammasat University Open Data Initiative. All rights reserved.</p>
+        <p className="mt-1">ข้อมูลจัดทำโดย สภานักศึกษามหาวิทยาลัยธรรมศาสตร์</p>
       </footer>
     </main>
   );
