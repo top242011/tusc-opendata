@@ -41,7 +41,7 @@ export function AdminQuickStart() {
                 </h2>
             </div>
             <CardContent className="p-0">
-                <div className="grid grid-cols-1 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-slate-100">
                     {steps.map((step, i) => (
                         <div key={i} className="p-6 hover:bg-slate-50 transition-colors group">
                             <div className="mb-3 p-3 bg-slate-50 rounded-lg w-fit group-hover:bg-white group-hover:shadow-sm transition-all border border-transparent group-hover:border-slate-100">

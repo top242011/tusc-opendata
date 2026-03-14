@@ -9,7 +9,7 @@ import { Modal } from "@/components/ui/modal";
 import { ProjectForm } from "@/components/project-form";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Edit2, Trash2, Plus, Search, Filter, X, ChevronDown, ChevronUp, FileText, CheckCircle, AlertCircle } from "lucide-react";
+import { Edit2, Trash2, Plus, Search, Filter, X, ChevronDown, ChevronUp, FileText, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { Toast } from "@/components/ui/toast";
 
@@ -23,6 +23,7 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
     const [deletingId, setDeletingId] = useState<number | null>(null);
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
+    const [toastType, setToastType] = useState<'success' | 'error'>('success');
 
     // --- Search & Filter State ---
     const [searchTerm, setSearchTerm] = useState('');
@@ -106,8 +107,15 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
     const handleDelete = async (id: number) => {
         if (!confirm("ต้องการลบโครงการนี้ใช่หรือไม่? แนะนำให้ตรวจสอบว่ามีไฟล์แนบหรือไม่ก่อนลบ")) return;
         setDeletingId(id);
-        await deleteProject(id);
-        setDeletingId(null);
+        try {
+            await deleteProject(id);
+        } catch (error) {
+            setToastMessage('ลบโครงการไม่สำเร็จ กรุณาลองใหม่อีกครั้ง');
+            setToastType('error');
+            setShowToast(true);
+        } finally {
+            setDeletingId(null);
+        }
     };
 
     return (
@@ -257,21 +265,21 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
                     )}
                 </CardHeader>
                 <CardContent>
-                    <div className="rounded-md border overflow-x-auto min-h-[300px]">
+                    <div className="bg-white rounded-lg border border-slate-200 overflow-x-auto min-h-[300px]">
                         <table className="w-full text-sm text-left">
-                            <thead className="bg-slate-50 text-slate-500 font-medium border-b sticky top-0">
+                            <thead className="bg-slate-50 border-b border-slate-200 sticky top-0">
                                 <tr>
-                                    <th className="px-4 py-3 whitespace-nowrap">ID</th>
-                                    <th className="px-4 py-3 whitespace-nowrap">ปี/ศูนย์</th>
-                                    <th className="px-4 py-3 min-w-[200px]">โครงการ / องค์กร</th>
-                                    <th className="px-4 py-3 whitespace-nowrap text-right">งบที่ขอ</th>
-                                    <th className="px-4 py-3 whitespace-nowrap text-right">งบที่ได้</th>
-                                    <th className="px-4 py-3 text-center whitespace-nowrap w-[50px]">ไฟล์</th>
-                                    <th className="px-4 py-3 text-center whitespace-nowrap">Status</th>
-                                    <th className="px-4 py-3 text-center whitespace-nowrap">Action</th>
+                                    <th className="px-4 py-3 font-medium text-slate-700 whitespace-nowrap">ID</th>
+                                    <th className="px-4 py-3 font-medium text-slate-700 whitespace-nowrap">ปี/ศูนย์</th>
+                                    <th className="px-4 py-3 font-medium text-slate-700 min-w-[200px]">โครงการ / องค์กร</th>
+                                    <th className="px-4 py-3 font-medium text-slate-700 whitespace-nowrap text-right">งบที่ขอ</th>
+                                    <th className="px-4 py-3 font-medium text-slate-700 whitespace-nowrap text-right">งบที่ได้</th>
+                                    <th className="px-4 py-3 font-medium text-slate-700 text-center whitespace-nowrap w-[50px]">ไฟล์</th>
+                                    <th className="px-4 py-3 font-medium text-slate-700 text-center whitespace-nowrap">Status</th>
+                                    <th className="px-4 py-3 font-medium text-slate-700 text-center whitespace-nowrap">Action</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y">
+                            <tbody className="divide-y divide-slate-100">
                                 {filteredProjects.length === 0 ? (
                                     <tr>
                                         <td colSpan={8} className="px-4 py-12 text-center text-slate-400">
@@ -312,7 +320,7 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
                                                         <FileText className="w-4 h-4 text-blue-600" />
                                                     </div>
                                                 ) : (
-                                                    <div className="flex justify-center opacity-0 group-hover:opacity-100 transition-opacity" title="ขาดเอกสาร">
+                                                    <div className="flex justify-center opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 transition-opacity" title="ขาดเอกสาร">
                                                         <AlertCircle className="w-4 h-4 text-amber-400" />
                                                     </div>
                                                 )}
@@ -325,7 +333,7 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
                                                 )}
                                             </td>
                                             <td className="px-4 py-3">
-                                                <div className="flex items-center justify-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+                                                <div className="flex items-center justify-center gap-1 opacity-100 [@media(hover:hover)]:opacity-60 [@media(hover:hover)]:group-hover:opacity-100 transition-opacity">
                                                     <Link
                                                         href={`/admin/project/${project.id}`}
                                                         className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"
@@ -349,7 +357,11 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
                                                         title="ลบ"
                                                         disabled={deletingId === project.id}
                                                     >
-                                                        <Trash2 className="w-4 h-4" />
+                                                        {deletingId === project.id ? (
+                                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                                        ) : (
+                                                            <Trash2 className="w-4 h-4" />
+                                                        )}
                                                     </button>
                                                 </div>
                                             </td>
@@ -374,6 +386,7 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
                                 ? "แก้ไขข้อมูลสําเร็จ (ข้อมูลจะแสดงผลบนหน้าเว็บในอีก 5-10 นาที)"
                                 : "เพิ่มโครงการเรียบร้อย (ข้อมูลจะแสดงผลบนหน้าเว็บในอีก 5-10 นาที)"
                             );
+                            setToastType('success');
                             setShowToast(true);
                         }}
                         onCancel={() => setIsModalOpen(false)}
@@ -382,6 +395,7 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
 
                 <Toast
                     message={toastMessage}
+                    type={toastType}
                     isVisible={showToast}
                     onClose={() => setShowToast(false)}
                 />
