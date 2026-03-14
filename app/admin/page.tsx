@@ -12,6 +12,7 @@ import {
     AlertCircle,
     Clock,
 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default async function AdminDashboardPage() {
     const supabase = await createClient();
@@ -36,6 +37,7 @@ export default async function AdminDashboardPage() {
             .limit(5),
     ]);
 
+    const error = projectsResult.error;
     const projects = (projectsResult.data || []).map((p: any) => ({
         ...p,
         has_files: p.project_files && p.project_files[0] && p.project_files[0].count > 0,
@@ -61,6 +63,13 @@ export default async function AdminDashboardPage() {
                     ภาพรวมระบบจัดการข้อมูล TU Open Data
                 </p>
             </div>
+
+            {error && (
+                <Alert variant="destructive" className="mb-6">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>ไม่สามารถโหลดข้อมูลโครงการได้ กรุณาลองใหม่อีกครั้ง</AlertDescription>
+                </Alert>
+            )}
 
             {/* Stats Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

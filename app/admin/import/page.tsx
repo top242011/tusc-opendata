@@ -1,7 +1,7 @@
 'use client';
 
 import { ImportWizard } from '@/components/admin/import-wizard/ImportWizard';
-import { HelpCircle, FileSpreadsheet } from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
 
 export default function AdminImportPage() {
     return (

@@ -94,20 +94,20 @@ export default function CheckResult({ data }: CheckResultProps) {
                                     !isExpanded && item.status !== 'PASS' ? "hidden" : "block" // Auto-expand non-pass items logic could be applied, but kept manual for now or controlled by state
                                 )}>
                                     <div className="p-3 bg-slate-50 rounded-md space-y-2">
-                                        <div className="grid grid-cols-[100px_1fr] gap-2">
+                                        <div className="grid grid-cols-[80px_1fr] sm:grid-cols-[100px_1fr] gap-2">
                                             <span className="text-slate-500 font-medium">รายละเอียด:</span>
                                             <span className="text-slate-700">{item.description}</span>
                                         </div>
 
                                         {item.issue && (
-                                            <div className="grid grid-cols-[100px_1fr] gap-2">
+                                            <div className="grid grid-cols-[80px_1fr] sm:grid-cols-[100px_1fr] gap-2">
                                                 <span className="text-red-500 font-medium">ปัญหา:</span>
                                                 <span className="text-red-700">{item.issue}</span>
                                             </div>
                                         )}
 
                                         {item.suggestion && (
-                                            <div className="grid grid-cols-[100px_1fr] gap-2">
+                                            <div className="grid grid-cols-[80px_1fr] sm:grid-cols-[100px_1fr] gap-2">
                                                 <span className="text-blue-500 font-medium">คำแนะนำ:</span>
                                                 <span className="text-blue-700">{item.suggestion}</span>
                                             </div>

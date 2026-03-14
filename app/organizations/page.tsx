@@ -4,14 +4,15 @@ import { PublicNavbar } from "@/components/public-navbar";
 import { formatTHB } from "@/lib/utils";
 import { ProjectRowActions } from "@/components/project-row-actions";
 import { CAMPUS_LABELS, ORGANIZATION_TYPE_LABELS, Campus, OrganizationType } from "@/lib/types";
-import { Search, MapPin, Layers, Briefcase, FileText, Wallet, Percent, Table2, Info, Building2 } from "lucide-react";
+import { Search, MapPin, Layers, Briefcase, FileText, Wallet, Percent, Table2, Info, Building2, Inbox, ArrowRight, Clock } from "lucide-react";
 
 export const revalidate = 300;
 
-export default async function OrganizationDetailsPage(props: { searchParams?: Promise<{ name?: string; q?: string }> }) {
+export default async function OrganizationDetailsPage(props: { searchParams?: Promise<{ name?: string; q?: string; orgSearch?: string }> }) {
     const searchParams = props.searchParams ? await props.searchParams : {};
     const orgNameParam = searchParams.name;
     const qParam = searchParams.q;
+    const orgSearchParam = searchParams.orgSearch;
     const supabase = await createPublicClient();
 
     // Fetch organizations from dedicated table
@@ -34,6 +35,9 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
     const uniqueOrgs = organizations.length > 0
         ? organizations.map(o => o.name)
         : Array.from(new Set(allProjects.map((p: any) => p.organization))).sort() as string[];
+    const filteredOrgs = orgSearchParam?.trim()
+        ? uniqueOrgs.filter(org => org.toLowerCase().includes(orgSearchParam.toLowerCase()))
+        : uniqueOrgs;
 
     const ORG_NAME = orgNameParam && uniqueOrgs.includes(orgNameParam)
         ? orgNameParam
@@ -157,8 +161,22 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
                         <h3 className="font-bold text-sm uppercase tracking-wider text-[rgb(var(--ios-text-tertiary))] mb-3 flex items-center gap-2">
                             <Layers className="w-4 h-4" /> เลือกหน่วยงาน
                         </h3>
+                        {/* Organization Search */}
+                        <form action="/organizations" method="get" className="mb-3">
+                            {orgNameParam && <input type="hidden" name="name" value={orgNameParam} />}
+                            <div className="relative">
+                                <Search className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-[rgb(var(--ios-text-tertiary))]" />
+                                <input
+                                    type="text"
+                                    name="orgSearch"
+                                    defaultValue={orgSearchParam || ""}
+                                    placeholder="ค้นหาหน่วยงาน..."
+                                    className="w-full pl-8 pr-3 py-2 text-sm bg-[rgb(var(--ios-fill-tertiary))] border border-[rgb(var(--ios-separator))]/30 rounded-[var(--ios-radius-sm)] focus:outline-none focus:border-[rgb(var(--ios-accent))] focus:ring-1 focus:ring-[rgb(var(--ios-accent))] text-[rgb(var(--ios-text-primary))] placeholder:text-[rgb(var(--ios-text-tertiary))]"
+                                />
+                            </div>
+                        </form>
                         <div className="space-y-1 max-h-[300px] overflow-y-auto pr-2">
-                            {uniqueOrgs.map(org => (
+                            {filteredOrgs.map(org => (
                                 <Link
                                     key={org}
                                     href={`/organizations?name=${encodeURIComponent(org)}`}
@@ -170,6 +188,9 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
                                     {org}
                                 </Link>
                             ))}
+                            {filteredOrgs.length === 0 && (
+                                <p className="text-xs text-[rgb(var(--ios-text-tertiary))] text-center py-4">ไม่พบหน่วยงานที่ตรงกัน</p>
+                            )}
                         </div>
                     </div>
 
@@ -232,6 +253,16 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
                         </div>
                     </div>
 
+                    {/* Comparison Hint */}
+                    <Link
+                        href="/projects"
+                        className="flex items-center gap-3 bg-[rgb(var(--ios-accent))]/5 border border-[rgb(var(--ios-accent))]/15 rounded-[var(--ios-radius-md)] px-4 py-3 text-sm text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-accent))]/10 transition-colors group"
+                    >
+                        <Info className="w-4 h-4 flex-shrink-0" />
+                        <span className="flex-1">เปรียบเทียบกับหน่วยงานอื่นได้ที่หน้า <span className="font-semibold">โครงการทั้งหมด</span></span>
+                        <ArrowRight className="w-4 h-4 flex-shrink-0 opacity-50 group-hover:opacity-100 transition-opacity" />
+                    </Link>
+
                     {/* General Info — dynamic from real data */}
                     <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 p-6 shadow-[var(--ios-shadow-sm)]">
                         <h3 className="font-bold text-sm uppercase tracking-wider text-[rgb(var(--ios-text-tertiary))] mb-4 flex items-center gap-2">
@@ -280,6 +311,9 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
                                 ภาพรวมงบประมาณ ปี {latestFiscalYear}
                             </h2>
                             <p className="text-[rgb(var(--ios-text-secondary))] text-sm">ข้อมูลการเสนอขอและการอนุมัติงบประมาณของหน่วยงาน</p>
+                            <p className="text-[rgb(var(--ios-text-tertiary))] text-xs mt-1 flex items-center gap-1">
+                                <Clock className="w-3 h-3" /> อัปเดตล่าสุด: ปีงบประมาณ {latestFiscalYear}
+                            </p>
                         </div>
                         <div className="flex gap-4">
                             <div className="text-right">
@@ -347,7 +381,8 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
                     </div>
 
                     <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 overflow-hidden shadow-[var(--ios-shadow-sm)]">
-                        <div className="overflow-x-auto">
+                        {/* Desktop Table */}
+                        <div className="hidden md:block overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead>
                                     <tr className="bg-[rgb(var(--ios-fill-tertiary))] border-b border-[rgb(var(--ios-separator))]/50 text-xs uppercase tracking-wider text-[rgb(var(--ios-text-secondary))]">
@@ -400,19 +435,83 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
                                             </tr>
                                         );
                                     })}
-                                    {displayProjects.length === 0 && (
-                                        <tr>
-                                            <td colSpan={5} className="py-12 text-center text-[rgb(var(--ios-text-tertiary))] text-sm">
-                                                {qParam
-                                                    ? `ไม่พบโครงการที่ตรงกับ "${qParam}"`
-                                                    : "ไม่พบข้อมูลโครงการสำหรับหน่วยงานนี้"
-                                                }
-                                            </td>
-                                        </tr>
-                                    )}
                                 </tbody>
                             </table>
                         </div>
+
+                        {/* Mobile Card Layout */}
+                        <div className="md:hidden divide-y divide-[rgb(var(--ios-separator))]/30">
+                            {displayProjects.map((proj: any) => {
+                                let statusBadge = "";
+                                if (proj.status === "อนุมัติ" || proj.budget_approved === proj.budget_requested) {
+                                    statusBadge = "bg-[rgb(var(--ios-green))]/10 text-[rgb(var(--ios-green))] border-[rgb(var(--ios-green))]/20";
+                                } else if (proj.status === "ไม่อนุมัติ") {
+                                    statusBadge = "bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700";
+                                } else {
+                                    statusBadge = "bg-[rgb(var(--ios-red))]/10 text-[rgb(var(--ios-red))] border-[rgb(var(--ios-red))]/20";
+                                }
+                                const statusLabel = proj.status === 'อนุมัติ' ? 'อนุมัติเต็มจำนวน' : (Number(proj.budget_approved) > 0 ? 'ตัดงบบางส่วน' : 'ไม่อนุมัติ');
+
+                                return (
+                                    <div key={proj.id} className="p-4 space-y-3">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-semibold text-[rgb(var(--ios-text-primary))] line-clamp-2 leading-snug">{proj.project_name}</p>
+                                                {proj.fiscal_year && (
+                                                    <p className="text-xs text-[rgb(var(--ios-text-tertiary))] mt-0.5">ปี {proj.fiscal_year}</p>
+                                                )}
+                                            </div>
+                                            <ProjectRowActions
+                                                projectName={proj.project_name}
+                                                organization={proj.organization}
+                                                budgetRequested={Number(proj.budget_requested)}
+                                                budgetApproved={Number(proj.budget_approved)}
+                                                status={proj.status}
+                                            />
+                                        </div>
+                                        <div className="flex items-center justify-between gap-2">
+                                            <div className="space-y-1">
+                                                <div className="flex items-center gap-2 text-xs">
+                                                    <span className="text-[rgb(var(--ios-text-tertiary))]">เสนอขอ</span>
+                                                    <span className="text-[rgb(var(--ios-text-secondary))] font-mono">{formatTHB(Number(proj.budget_requested))}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 text-xs">
+                                                    <span className="text-[rgb(var(--ios-text-tertiary))]">อนุมัติ</span>
+                                                    <span className="font-bold text-[rgb(var(--ios-text-primary))] font-mono">{formatTHB(Number(proj.budget_approved))}</span>
+                                                </div>
+                                            </div>
+                                            <span className={`inline-flex items-center justify-center px-2 py-1 rounded text-[10px] uppercase font-bold tracking-wider border whitespace-nowrap ${statusBadge}`}>
+                                                {statusLabel}
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* Empty State */}
+                        {displayProjects.length === 0 && (
+                            <div className="py-16 px-6 flex flex-col items-center justify-center text-center">
+                                {qParam ? (
+                                    <>
+                                        <Search className="w-12 h-12 text-[rgb(var(--ios-text-tertiary))]/40 mb-4" />
+                                        <p className="text-sm text-[rgb(var(--ios-text-tertiary))]">
+                                            ไม่พบโครงการที่ตรงกับ &ldquo;{qParam}&rdquo;
+                                        </p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Inbox className="w-16 h-16 text-[rgb(var(--ios-text-tertiary))]/30 mb-4" />
+                                        <p className="text-sm font-semibold text-[rgb(var(--ios-text-secondary))] mb-1">
+                                            ยังไม่มีข้อมูลโครงการสำหรับหน่วยงานนี้
+                                        </p>
+                                        <p className="text-xs text-[rgb(var(--ios-text-tertiary))]">
+                                            ข้อมูลจะถูกเพิ่มเมื่อมีการเสนอขอโครงการใหม่
+                                        </p>
+                                    </>
+                                )}
+                            </div>
+                        )}
                         {displayProjects.length > 0 && (
                             <div className="px-4 py-3 border-t border-[rgb(var(--ios-separator))]/50 flex items-center justify-between text-sm text-[rgb(var(--ios-text-secondary))] bg-[rgb(var(--ios-bg-secondary))]">
                                 <span>แสดง {displayProjects.length} จาก {allOrgProjects.length} รายการ</span>

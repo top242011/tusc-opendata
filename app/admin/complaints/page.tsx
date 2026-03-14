@@ -1,6 +1,8 @@
 import { createClient } from "@/utils/supabase/server";
 import { AdminComplaintsTable } from "@/components/admin-complaints-table";
 import { redirect } from "next/navigation";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 export default async function AdminComplaintsPage() {
     const supabase = await createClient();
@@ -32,6 +34,13 @@ export default async function AdminComplaintsPage() {
                     ตรวจสอบและจัดการข้อมูลที่มีผู้แจ้งเข้ามาจากหน้ารายละเอียดโครงการ
                 </p>
             </div>
+
+            {error && (
+                <Alert variant="destructive" className="mb-6">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>ไม่สามารถโหลดข้อร้องเรียนได้ กรุณาลองใหม่อีกครั้ง</AlertDescription>
+                </Alert>
+            )}
 
             <AdminComplaintsTable complaints={complaints || []} />
         </div>

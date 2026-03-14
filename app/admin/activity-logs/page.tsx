@@ -1,6 +1,8 @@
 import { createClient } from "@/utils/supabase/server";
 import { ActivityLogsTable } from "@/components/admin/activity-logs-table";
 import { redirect } from "next/navigation";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 export default async function ActivityLogsPage() {
     const supabase = await createClient();
@@ -28,6 +30,13 @@ export default async function ActivityLogsPage() {
                     ตรวจสอบประวัติการเพิ่ม แก้ไข และลบข้อมูลของผู้ดูแลระบบ
                 </p>
             </div>
+
+            {error && (
+                <Alert variant="destructive" className="mb-6">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>ไม่สามารถโหลดประวัติการใช้งานได้ กรุณาลองใหม่อีกครั้ง</AlertDescription>
+                </Alert>
+            )}
 
             <ActivityLogsTable logs={logs || []} />
         </div>
