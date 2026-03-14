@@ -1,24 +1,41 @@
+import { Skeleton } from "@/components/ui/skeleton";
+
+// Rendered inside AdminLayout (navbar + sidebar already provided)
 export default function AdminLoading() {
     return (
-        <div className="space-y-6 pt-6 animate-pulse">
-            <div className="flex justify-between items-center">
-                <div className="h-8 bg-slate-200 rounded w-1/4" />
-                <div className="h-10 bg-slate-200 rounded w-32" />
+        <div className="space-y-6">
+            {/* Quick start banner */}
+            <Skeleton className="h-32 w-full rounded-[var(--ios-radius-lg)]" />
+
+            {/* Alert banner */}
+            <Skeleton className="h-16 w-full rounded-[var(--ios-radius-lg)]" />
+
+            {/* Section header + import action */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <Skeleton className="h-8 w-40" />
+                <Skeleton className="h-12 w-56 rounded-[var(--ios-radius-lg)]" />
             </div>
+            <Skeleton className="h-14 w-full rounded-[var(--ios-radius-lg)]" />
 
-            <div className="h-32 bg-slate-100 rounded-lg" />
+            {/* Section heading */}
+            <Skeleton className="h-8 w-56" />
 
-            <div className="space-y-4">
-                <div className="h-12 bg-slate-200 rounded w-full" />
-                <div className="space-y-2">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                        <div key={i} className="h-16 bg-white border border-slate-100 rounded flex items-center p-4">
-                            <div className="h-4 bg-slate-100 rounded w-1/6 mr-4" />
-                            <div className="h-4 bg-slate-100 rounded w-1/3 mr-auto" />
-                            <div className="h-4 bg-slate-100 rounded w-20" />
-                        </div>
-                    ))}
-                </div>
+            {/* Search/filter bar */}
+            <Skeleton className="h-12 w-full rounded-[var(--ios-radius-lg)]" />
+
+            {/* Project rows */}
+            <div className="space-y-2">
+                {[...Array(5)].map((_, i) => (
+                    <div
+                        key={i}
+                        className="h-16 bg-[rgb(var(--ios-bg-secondary))] border border-[rgb(var(--ios-separator))]/50 rounded-[var(--ios-radius-lg)] flex items-center px-4 gap-4"
+                    >
+                        <Skeleton className="h-4 w-1/6" />
+                        <Skeleton className="h-4 w-1/3" />
+                        <Skeleton className="h-4 w-20 ml-auto" />
+                        <Skeleton className="h-8 w-16 rounded-[var(--ios-radius-sm)]" />
+                    </div>
+                ))}
             </div>
         </div>
     );
