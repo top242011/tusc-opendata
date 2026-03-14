@@ -419,8 +419,8 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                 {/* ========== MAIN CHART GRID ========== */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                     {/* Left: Treemap (desktop) / Bar chart (mobile) */}
-                    <div className="lg:col-span-2 flex flex-col gap-6">
-                        <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 shadow-[var(--ios-shadow-sm)] flex flex-col min-h-0">
+                    <div className="lg:col-span-2 flex flex-col gap-6 h-full">
+                        <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 shadow-[var(--ios-shadow-sm)] flex flex-col flex-1">
                             <div className="p-5 border-b border-[rgb(var(--ios-separator))]/50">
                                 <h3 className="text-base font-bold text-[rgb(var(--ios-text-primary))]">
                                     สัดส่วนงบประมาณตามคณะ/หน่วยงาน
@@ -431,8 +431,8 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                             </div>
 
                             {/* Desktop: Treemap */}
-                            <div className="hidden md:block p-5 flex-1">
-                                <div className="w-full min-h-[400px] flex flex-col gap-1">
+                            <div className="hidden md:flex flex-col p-5 flex-1">
+                                <div className="w-full flex-1 min-h-[400px] flex flex-col gap-1">
                                     <div className="flex flex-1 gap-1">
                                         <div
                                             className={`w-[45%] ${treemapColors[0]} transition-colors p-4 flex flex-col justify-between text-white rounded-sm cursor-pointer`}
