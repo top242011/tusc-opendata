@@ -1,6 +1,7 @@
 import { createClient, createPublicClient } from "@/utils/supabase/server";
 import { PublicNavbar } from "@/components/public-navbar";
 import { LandingDashboard } from "@/components/landing-dashboard";
+import { Footer } from "@/components/footer";
 import { DashboardStats, Project } from "@/lib/types";
 
 import { getLatestFiscalYear } from '@/lib/data-queries';
@@ -52,13 +53,10 @@ export default async function Home() {
   stats.approvalRate = moneyApprovalRate;
 
   return (
-    <main id="main-content" className="min-h-screen bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] pb-20 transition-colors duration-200 antialiased">
+    <main id="main-content" className="min-h-screen bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] transition-colors duration-200 antialiased">
       <PublicNavbar />
       <LandingDashboard projects={projects} stats={stats} />
-
-      <footer className="mt-8 border-t border-[rgb(var(--ios-separator))]/40 py-6 text-center text-sm text-[rgb(var(--ios-text-secondary))]">
-        <p>© {new Date().getFullYear()} Thammasat University Open Data Initiative. All rights reserved.</p>
-      </footer>
+      <Footer />
     </main>
   );
 }
