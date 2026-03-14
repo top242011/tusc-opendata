@@ -34,14 +34,14 @@ export function ProjectRowActions({ projectName, organization, budgetRequested, 
         <div className="flex gap-2 justify-end">
             <button
                 onClick={handleDownload}
-                className="text-[rgb(var(--ios-text-quaternary))] hover:text-[rgb(var(--ios-accent))] transition-colors"
+                className="p-3 text-[rgb(var(--ios-text-quaternary))] hover:text-[rgb(var(--ios-accent))] transition-colors"
                 title="ดาวน์โหลดข้อมูล"
             >
                 <Download className="w-[18px] h-[18px]" />
             </button>
             <button
                 onClick={handleShare}
-                className="text-[rgb(var(--ios-text-quaternary))] hover:text-[rgb(var(--ios-accent))] transition-colors"
+                className="p-3 text-[rgb(var(--ios-text-quaternary))] hover:text-[rgb(var(--ios-accent))] transition-colors"
                 title="คัดลอกลิงก์"
             >
                 <Share2 className="w-[18px] h-[18px]" />

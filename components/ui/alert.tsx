@@ -18,6 +18,8 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
             <div
                 ref={ref}
                 role="alert"
+                aria-live="polite"
+                aria-atomic="true"
                 className={cn(
                     "relative w-full rounded-[var(--ios-radius-md)] border p-4",
                     "[&>svg~*]:pl-8 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4",

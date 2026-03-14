@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { cn } from '@/utils/cn';
 
 interface Tab {
@@ -35,6 +35,30 @@ export function Tabs({ tabs, defaultTab, className }: TabsProps) {
         }
     }, [activeTab, tabs]);
 
+    // Arrow key navigation for tabs
+    const handleKeyDown = useCallback((e: React.KeyboardEvent, index: number) => {
+        let newIndex: number | null = null;
+
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+            e.preventDefault();
+            newIndex = (index + 1) % tabs.length;
+        } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+            e.preventDefault();
+            newIndex = (index - 1 + tabs.length) % tabs.length;
+        } else if (e.key === "Home") {
+            e.preventDefault();
+            newIndex = 0;
+        } else if (e.key === "End") {
+            e.preventDefault();
+            newIndex = tabs.length - 1;
+        }
+
+        if (newIndex !== null) {
+            setActiveTab(tabs[newIndex].id);
+            tabRefs.current[newIndex]?.focus();
+        }
+    }, [tabs]);
+
     return (
         <div className={cn(
             "bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] shadow-[var(--ios-shadow-md)] overflow-hidden transition-colors duration-200",
@@ -42,7 +66,11 @@ export function Tabs({ tabs, defaultTab, className }: TabsProps) {
         )}>
             {/* iOS Segmented Control Style Tab Headers */}
             <div className="p-2 bg-[rgb(var(--ios-bg-tertiary))]">
-                <div className="relative flex bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] p-1">
+                <div
+                    className="relative flex bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] p-1"
+                    role="tablist"
+                    aria-label="แท็บเนื้อหา"
+                >
                     {/* Sliding Indicator */}
                     <div
                         className="absolute top-1 bottom-1 bg-[rgb(var(--ios-bg-secondary))] rounded-[calc(var(--ios-radius-sm)-2px)] shadow-[var(--ios-shadow-sm)] transition-all duration-300 ease-out"
@@ -55,11 +83,14 @@ export function Tabs({ tabs, defaultTab, className }: TabsProps) {
                     {tabs.map((tab, index) => (
                         <button
                             key={tab.id}
+                            id={`tab-${tab.id}`}
                             ref={(el) => { tabRefs.current[index] = el; }}
                             role="tab"
                             aria-selected={activeTab === tab.id}
                             aria-controls={`panel-${tab.id}`}
+                            tabIndex={activeTab === tab.id ? 0 : -1}
                             onClick={() => setActiveTab(tab.id)}
+                            onKeyDown={(e) => handleKeyDown(e, index)}
                             className={cn(
                                 "relative flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold transition-colors duration-200 z-10 whitespace-nowrap ios-press",
                                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ios-accent))] focus-visible:ring-inset rounded-[calc(var(--ios-radius-sm)-2px)]",
@@ -91,8 +122,9 @@ export function Tabs({ tabs, defaultTab, className }: TabsProps) {
                     key={tab.id}
                     id={`panel-${tab.id}`}
                     role="tabpanel"
-                    aria-labelledby={tab.id}
+                    aria-labelledby={`tab-${tab.id}`}
                     hidden={activeTab !== tab.id}
+                    tabIndex={0}
                     className="p-5 md:p-6 animate-in fade-in duration-200"
                 >
                     {activeTab === tab.id && tab.content}

@@ -1,21 +1,59 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { Shield, MessageCircle, LogIn, Menu, X, ChevronDown, Moon, Sun } from 'lucide-react';
+import { Shield, MessageCircle, LogIn, Menu, X, ChevronDown, Moon, Sun, FileText, Building2, MapPin, Code2, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FeedbackModal } from '@/components/feedback-modal';
 import { useTheme } from '@/components/theme-provider';
 
+type DropdownKey = 'data' | 'tools' | null;
+
 export function PublicNavbar() {
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isToolsOpen, setIsToolsOpen] = useState(false);
+    const [openDropdown, setOpenDropdown] = useState<DropdownKey>(null);
     const { resolvedTheme, setTheme } = useTheme();
 
+    const dataDropdownRef = useRef<HTMLDivElement>(null);
+    const toolsDropdownRef = useRef<HTMLDivElement>(null);
+
     const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
-    const toggleTools = () => setIsToolsOpen(!isToolsOpen);
     const toggleTheme = () => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+
+    const toggleDropdown = useCallback((key: DropdownKey) => {
+        setOpenDropdown(prev => (prev === key ? null : key));
+    }, []);
+
+    const closeDropdowns = useCallback(() => {
+        setOpenDropdown(null);
+    }, []);
+
+    // Close dropdowns on Escape key
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                closeDropdowns();
+            }
+        };
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [closeDropdowns]);
+
+    // Close dropdowns when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (
+                openDropdown &&
+                dataDropdownRef.current && !dataDropdownRef.current.contains(e.target as Node) &&
+                toolsDropdownRef.current && !toolsDropdownRef.current.contains(e.target as Node)
+            ) {
+                closeDropdowns();
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [openDropdown, closeDropdowns]);
 
     return (
         <>
@@ -40,24 +78,93 @@ export function PublicNavbar() {
                             หน้าหลัก
                         </Link>
 
-                        {/* Tools Dropdown */}
-                        <div className="relative">
+                        {/* Data Dropdown */}
+                        <div className="relative" ref={dataDropdownRef}>
                             <button
                                 className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors focus:outline-none ios-press"
-                                onClick={toggleTools}
-                                onBlur={() => setTimeout(() => setIsToolsOpen(false), 200)}
+                                onClick={() => toggleDropdown('data')}
+                                aria-expanded={openDropdown === 'data'}
+                                aria-haspopup="true"
                             >
-                                เครื่องมือ
-                                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isToolsOpen ? 'rotate-180' : ''}`} />
+                                ข้อมูล
+                                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${openDropdown === 'data' ? 'rotate-180' : ''}`} />
                             </button>
 
-                            {/* Dropdown Menu */}
-                            <div className={`absolute top-full left-0 mt-1 w-72 bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-md)] shadow-[var(--ios-shadow-lg)] border border-[rgb(var(--ios-separator))]/50 transition-all duration-200 transform origin-top-left z-50 ${isToolsOpen ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'}`}>
+                            <div
+                                className={`absolute top-full left-0 mt-1 w-72 bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-md)] shadow-[var(--ios-shadow-lg)] border border-[rgb(var(--ios-separator))]/50 transition-all duration-200 transform origin-top-left z-50 ${openDropdown === 'data' ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'}`}
+                                role="menu"
+                                aria-label="ข้อมูล"
+                            >
+                                <div className="p-2">
+                                    <Link
+                                        href="/projects"
+                                        className="flex items-start gap-3 p-3 rounded-[var(--ios-radius-sm)] hover:bg-[rgb(var(--ios-fill-tertiary))] transition-colors group/item ios-press"
+                                        onClick={closeDropdowns}
+                                        role="menuitem"
+                                    >
+                                        <div className="p-2 bg-[rgb(var(--ios-accent))]/10 rounded-[var(--ios-radius-sm)] text-[rgb(var(--ios-accent))] group-hover/item:bg-[rgb(var(--ios-accent))]/15 transition-colors">
+                                            <FileText className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <div className="text-sm font-semibold text-[rgb(var(--ios-text-primary))]">โครงการทั้งหมด</div>
+                                            <div className="text-xs text-[rgb(var(--ios-text-secondary))] mt-0.5">ค้นหาและดูข้อมูลโครงการ</div>
+                                        </div>
+                                    </Link>
+                                    <Link
+                                        href="/organizations"
+                                        className="flex items-start gap-3 p-3 rounded-[var(--ios-radius-sm)] hover:bg-[rgb(var(--ios-fill-tertiary))] transition-colors group/item ios-press"
+                                        onClick={closeDropdowns}
+                                        role="menuitem"
+                                    >
+                                        <div className="p-2 bg-[rgb(var(--ios-blue))]/10 rounded-[var(--ios-radius-sm)] text-[rgb(var(--ios-blue))] group-hover/item:bg-[rgb(var(--ios-blue))]/15 transition-colors">
+                                            <Building2 className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <div className="text-sm font-semibold text-[rgb(var(--ios-text-primary))]">หน่วยงาน / คณะ</div>
+                                            <div className="text-xs text-[rgb(var(--ios-text-secondary))] mt-0.5">ดูข้อมูลหน่วยงานและคณะ</div>
+                                        </div>
+                                    </Link>
+                                    <Link
+                                        href="/campus"
+                                        className="flex items-start gap-3 p-3 rounded-[var(--ios-radius-sm)] hover:bg-[rgb(var(--ios-fill-tertiary))] transition-colors group/item ios-press"
+                                        onClick={closeDropdowns}
+                                        role="menuitem"
+                                    >
+                                        <div className="p-2 bg-[rgb(var(--ios-green))]/10 rounded-[var(--ios-radius-sm)] text-[rgb(var(--ios-green))] group-hover/item:bg-[rgb(var(--ios-green))]/15 transition-colors">
+                                            <MapPin className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <div className="text-sm font-semibold text-[rgb(var(--ios-text-primary))]">วิทยาเขต</div>
+                                            <div className="text-xs text-[rgb(var(--ios-text-secondary))] mt-0.5">ข้อมูลแยกตามวิทยาเขต</div>
+                                        </div>
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Tools Dropdown */}
+                        <div className="relative" ref={toolsDropdownRef}>
+                            <button
+                                className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors focus:outline-none ios-press"
+                                onClick={() => toggleDropdown('tools')}
+                                aria-expanded={openDropdown === 'tools'}
+                                aria-haspopup="true"
+                            >
+                                เครื่องมือ
+                                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${openDropdown === 'tools' ? 'rotate-180' : ''}`} />
+                            </button>
+
+                            <div
+                                className={`absolute top-full left-0 mt-1 w-72 bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-md)] shadow-[var(--ios-shadow-lg)] border border-[rgb(var(--ios-separator))]/50 transition-all duration-200 transform origin-top-left z-50 ${openDropdown === 'tools' ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'}`}
+                                role="menu"
+                                aria-label="เครื่องมือ"
+                            >
                                 <div className="p-2">
                                     <Link
                                         href="/tools/document-checker"
                                         className="flex items-start gap-3 p-3 rounded-[var(--ios-radius-sm)] hover:bg-[rgb(var(--ios-fill-tertiary))] transition-colors group/item ios-press"
-                                        onClick={() => setIsToolsOpen(false)}
+                                        onClick={closeDropdowns}
+                                        role="menuitem"
                                     >
                                         <div className="p-2 bg-[rgb(var(--ios-accent))]/10 rounded-[var(--ios-radius-sm)] text-[rgb(var(--ios-accent))] group-hover/item:bg-[rgb(var(--ios-accent))]/15 transition-colors">
                                             <Shield className="w-5 h-5" />
@@ -67,21 +174,29 @@ export function PublicNavbar() {
                                             <div className="text-xs text-[rgb(var(--ios-text-secondary))] mt-0.5">เช็คความถูกต้องตามระเบียบงบฯ</div>
                                         </div>
                                     </Link>
+                                    <Link
+                                        href="/api-docs"
+                                        className="flex items-start gap-3 p-3 rounded-[var(--ios-radius-sm)] hover:bg-[rgb(var(--ios-fill-tertiary))] transition-colors group/item ios-press"
+                                        onClick={closeDropdowns}
+                                        role="menuitem"
+                                    >
+                                        <div className="p-2 bg-[rgb(var(--ios-indigo))]/10 rounded-[var(--ios-radius-sm)] text-[rgb(var(--ios-indigo))] group-hover/item:bg-[rgb(var(--ios-indigo))]/15 transition-colors">
+                                            <Code2 className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <div className="text-sm font-semibold text-[rgb(var(--ios-text-primary))]">API Documentation</div>
+                                            <div className="text-xs text-[rgb(var(--ios-text-secondary))] mt-0.5">เอกสาร API สำหรับนักพัฒนา</div>
+                                        </div>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
 
                         <Link
-                            href="/organizations"
+                            href="/about"
                             className="px-4 py-2 text-sm font-medium text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors ios-press"
                         >
-                            หน่วยงาน / คณะ
-                        </Link>
-                        <Link
-                            href="/projects"
-                            className="px-4 py-2 text-sm font-medium text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors ios-press"
-                        >
-                            โครงการทั้งหมด
+                            เกี่ยวกับ
                         </Link>
                     </div>
 
@@ -104,6 +219,7 @@ export function PublicNavbar() {
                             className="md:hidden p-2.5 rounded-full bg-[rgb(var(--ios-fill-tertiary))] hover:bg-[rgb(var(--ios-fill-secondary))] transition-colors ios-press"
                             onClick={toggleMobileMenu}
                             aria-label={isMobileMenuOpen ? 'ปิดเมนู' : 'เปิดเมนู'}
+                            aria-expanded={isMobileMenuOpen}
                         >
                             {isMobileMenuOpen ? (
                                 <X className="w-5 h-5 text-[rgb(var(--ios-text-primary))]" />
@@ -145,7 +261,39 @@ export function PublicNavbar() {
                                 หน้าหลัก
                             </Link>
 
+                            {/* Mobile: Data Section */}
                             <div className="mt-2 mb-1 px-4">
+                                <div className="text-xs font-semibold text-[rgb(var(--ios-text-tertiary))] uppercase tracking-wide">ข้อมูล</div>
+                            </div>
+                            <Link
+                                href="/projects"
+                                className="flex items-center gap-3 px-4 py-3 text-sm text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                <FileText className="w-4 h-4 text-[rgb(var(--ios-accent))]" />
+                                โครงการทั้งหมด
+                            </Link>
+                            <Link
+                                href="/organizations"
+                                className="flex items-center gap-3 px-4 py-3 text-sm text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                <Building2 className="w-4 h-4 text-[rgb(var(--ios-blue))]" />
+                                หน่วยงาน / คณะ
+                            </Link>
+                            <Link
+                                href="/campus"
+                                className="flex items-center gap-3 px-4 py-3 text-sm text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                <MapPin className="w-4 h-4 text-[rgb(var(--ios-green))]" />
+                                วิทยาเขต
+                            </Link>
+
+                            <div className="my-2 h-px bg-[rgb(var(--ios-separator))]" />
+
+                            {/* Mobile: Tools Section */}
+                            <div className="mb-1 px-4">
                                 <div className="text-xs font-semibold text-[rgb(var(--ios-text-tertiary))] uppercase tracking-wide">เครื่องมือ</div>
                             </div>
                             <Link
@@ -156,22 +304,23 @@ export function PublicNavbar() {
                                 <Shield className="w-4 h-4 text-[rgb(var(--ios-accent))]" />
                                 ตรวจสอบเอกสารโครงการ
                             </Link>
+                            <Link
+                                href="/api-docs"
+                                className="flex items-center gap-3 px-4 py-3 text-sm text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                <Code2 className="w-4 h-4 text-[rgb(var(--ios-indigo))]" />
+                                API Documentation
+                            </Link>
 
                             <div className="my-2 h-px bg-[rgb(var(--ios-separator))]" />
 
                             <Link
-                                href="/organizations"
+                                href="/about"
                                 className="px-4 py-3 text-sm font-medium text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
-                                หน่วยงาน / คณะ
-                            </Link>
-                            <Link
-                                href="/projects"
-                                className="px-4 py-3 text-sm font-medium text-[rgb(var(--ios-text-primary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                โครงการทั้งหมด
+                                เกี่ยวกับ
                             </Link>
 
                             <div className="my-2 h-px bg-[rgb(var(--ios-separator))]" />

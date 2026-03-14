@@ -66,7 +66,7 @@ export default function AboutPage() {
     ];
 
     return (
-        <main className="min-h-screen bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] antialiased">
+        <main id="main-content" className="min-h-screen bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] antialiased">
             <PublicNavbar />
 
             {/* Hero */}
