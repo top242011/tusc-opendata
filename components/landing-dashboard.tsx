@@ -236,7 +236,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
             {/* Main Content Area */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                 {/* Main Chart Area */}
-                <div className="lg:col-span-2 flex flex-col gap-6">
+                <div className="lg:col-span-2 flex flex-col gap-6 h-full">
                     {/* Treemap: สัดส่วนงบประมาณตามหน่วยงาน */}
                     <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 shadow-[var(--ios-shadow-sm)] flex flex-col h-full min-h-[500px]">
                         <div className="p-6 border-b border-[rgb(var(--ios-separator))]/50 flex justify-between items-center">
@@ -343,9 +343,9 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                     </div>
                 </div>
 
-                {/* Donut: สัดส่วนงบประมาณตามวิทยาเขต */}
+                {/* Donut: สัดส่วนงบประมาณตามศูนย์การศึกษา */}
                 <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 shadow-[var(--ios-shadow-sm)] p-6 flex-1 flex flex-col">
-                    <h3 className="text-lg font-bold text-[rgb(var(--ios-text-primary))] mb-2">สัดส่วนงบประมาณตามวิทยาเขต</h3>
+                    <h3 className="text-lg font-bold text-[rgb(var(--ios-text-primary))] mb-2">สัดส่วนงบประมาณตามศูนย์การศึกษา</h3>
                     <div className="flex-1 flex items-center justify-center relative my-4">
                         <div className="w-48 h-48 rounded-full relative" style={{ background: `conic-gradient(${finalGradient})` }}>
                             <div className="absolute inset-0 m-auto w-32 h-32 bg-[rgb(var(--ios-bg-secondary))] rounded-full flex items-center justify-center flex-col shadow-inner">

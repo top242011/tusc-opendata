@@ -380,7 +380,7 @@ export default function ImportWorkbench() {
                                 </div>
                             </div>
                             <div className="grid gap-4">
-                                <label className="text-sm font-medium text-slate-700">2. เลือกศูนย์/วิทยาเขต</label>
+                                <label className="text-sm font-medium text-slate-700">2. เลือกศูนย์การศึกษา</label>
                                 <div className="grid grid-cols-2 gap-3">
                                     {CAMPUS_OPTIONS.map(c => (
                                         <button
