@@ -147,12 +147,9 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
             approved: yearStats[year].app,
         }));
 
-        // Fill to 6 points
-        while (data.length > 0 && data.length < 6) {
-            data.unshift({ year: data[0].year - 1, approved: 0 });
-        }
         if (data.length === 0) {
-            for (let i = 0; i < 6; i++) data.push({ year: 2562 + i, approved: 0 });
+            const currentYear = new Date().getFullYear() + 543;
+            data.push({ year: currentYear, approved: 0 });
         }
         return data;
     }, [projects]);
@@ -162,18 +159,21 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
         [timelineData]
     );
 
-    const svgPoints = useMemo(
-        () =>
-            timelineData.map((d, i) => ({
-                x: (i / 5) * 100,
-                y: 100 - (d.approved / maxTimelineY) * 90,
-                data: d,
-            })),
-        [timelineData, maxTimelineY]
-    );
+    const svgPoints = useMemo(() => {
+        const n = timelineData.length;
+        return timelineData.map((d, i) => ({
+            x: n === 1 ? 50 : (i / (n - 1)) * 100,
+            y: 100 - (d.approved / maxTimelineY) * 90,
+            data: d,
+        }));
+    }, [timelineData, maxTimelineY]);
 
-    const pathD = `M${svgPoints.map((p) => `${p.x},${p.y}`).join(" L")} V100 H0 Z`;
-    const linePathD = `M${svgPoints.map((p) => `${p.x},${p.y}`).join(" L")}`;
+    const pathD = svgPoints.length === 1
+        ? `M0,100 L50,${svgPoints[0].y} L100,100 Z`
+        : `M${svgPoints.map((p) => `${p.x},${p.y}`).join(" L")} V100 H0 Z`;
+    const linePathD = svgPoints.length === 1
+        ? ""
+        : `M${svgPoints.map((p) => `${p.x},${p.y}`).join(" L")}`;
 
     // --- Helpers ---
 
