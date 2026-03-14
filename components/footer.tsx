@@ -41,10 +41,10 @@ export function Footer() {
                         </p>
                         <div className="flex flex-wrap gap-2">
                             <span className="text-[10px] font-semibold px-2.5 py-1 bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-tertiary))] rounded-full">
-                                CC BY
+                                Open Data
                             </span>
                             <span className="text-[10px] font-semibold px-2.5 py-1 bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-tertiary))] rounded-full">
-                                Open Data
+                                สภานักศึกษา มธ.
                             </span>
                         </div>
                     </div>
@@ -108,7 +108,7 @@ export function Footer() {
                         <div className="mt-4 pt-4 border-t border-[rgb(var(--ios-separator))]/40">
                             <p className="text-xs text-[rgb(var(--ios-text-tertiary))] leading-relaxed">
                                 ข้อมูลจัดทำโดย<br />
-                                สภานักศึกษามหาวิทยาลัยธรรมศาสตร์
+                                สภานักศึกษา มหาวิทยาลัยธรรมศาสตร์
                             </p>
                         </div>
                     </div>
