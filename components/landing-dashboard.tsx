@@ -13,7 +13,6 @@ interface LandingDashboardProps {
 
 export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
     const router = useRouter();
-    const [activePeriod, setActivePeriod] = useState('ทั้งหมด');
     const [headerSearch, setHeaderSearch] = useState('');
 
     const latestYear = projects.length > 0
@@ -128,23 +127,25 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
         approved: yearStats[year].app
     }));
 
-    // Fill to 6 points if less
-    while (timelineData.length > 0 && timelineData.length < 6) {
-        timelineData.unshift({ year: timelineData[0].year - 1, approved: 0 });
-    }
+    // Don't pad with fake years - only show actual data
     if (timelineData.length === 0) {
-        for (let i = 0; i < 6; i++) timelineData.push({ year: 2562 + i, approved: 0 });
+        timelineData.push({ year: new Date().getFullYear() + 543, approved: 0 });
     }
 
     const maxTimelineY = Math.max(...timelineData.map(d => d.approved)) || 1;
+    const pointCount = timelineData.length;
     const svgPoints = timelineData.map((d, i) => {
-        const x = (i / 5) * 100;
+        const x = pointCount === 1 ? 50 : (i / (pointCount - 1)) * 100;
         const y = 100 - ((d.approved / maxTimelineY) * 90);  // 10% padding top
         return { x, y, data: d };
     });
 
-    const pathD = `M${svgPoints.map(p => `${p.x},${p.y}`).join(' L')} V100 H0 Z`;
-    const linePathD = `M${svgPoints.map(p => `${p.x},${p.y}`).join(' L')}`;
+    const pathD = pointCount === 1
+        ? `M0,${svgPoints[0].y} H100 V100 H0 Z`
+        : `M${svgPoints.map(p => `${p.x},${p.y}`).join(' L')} V100 H0 Z`;
+    const linePathD = pointCount === 1
+        ? `M0,${svgPoints[0].y} H100`
+        : `M${svgPoints.map(p => `${p.x},${p.y}`).join(' L')}`;
 
     const formatSmallTHB = (n: number) => {
         if (n >= 1e9) return `฿${(n / 1e9).toFixed(1)}B`;
@@ -238,7 +239,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                 {/* Main Chart Area */}
                 <div className="lg:col-span-2 flex flex-col gap-6">
                     {/* Treemap: สัดส่วนงบประมาณตามหน่วยงาน */}
-                    <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 shadow-[var(--ios-shadow-sm)] flex flex-col h-full min-h-[500px]">
+                    <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 shadow-[var(--ios-shadow-sm)] flex flex-col h-full">
                         <div className="p-6 border-b border-[rgb(var(--ios-separator))]/50 flex justify-between items-center">
                             <div>
                                 <h3 className="text-lg font-bold text-[rgb(var(--ios-text-primary))]">สัดส่วนงบประมาณตามคณะ/หน่วยงาน</h3>
@@ -247,7 +248,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                         </div>
                         <div className="p-6 flex-1">
                             {/* Simulated Treemap */}
-                            <div className="w-full h-full min-h-[400px] flex flex-col gap-1">
+                            <div className="w-full h-full flex flex-col gap-1">
                                 <div className="flex flex-1 gap-1">
                                     <div className="w-[45%] bg-blue-600 hover:bg-blue-700 transition-colors p-4 flex flex-col justify-between text-white rounded-sm group relative cursor-pointer">
                                         <span className="font-bold text-lg line-clamp-2">{t1.name}</span>
@@ -370,23 +371,8 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
             <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 shadow-[var(--ios-shadow-sm)] p-6 mb-8">
                 <div className="flex justify-between items-center mb-6">
                     <div>
-                        <h3 className="text-lg font-bold text-[rgb(var(--ios-text-primary))]">แนวโน้มงบประมาณโครงการ (5 ปีย้อนหลัง)</h3>
+                        <h3 className="text-lg font-bold text-[rgb(var(--ios-text-primary))]">แนวโน้มงบประมาณโครงการ</h3>
                         <p className="text-[rgb(var(--ios-text-secondary))] text-sm">งบประมาณที่ได้รับอนุมัติแยกตามปีงบประมาณ</p>
-                    </div>
-                    <div className="flex gap-2">
-                        {(['ทั้งหมด', '5Y', '1Y'] as const).map(period => (
-                            <button
-                                key={period}
-                                onClick={() => setActivePeriod(period)}
-                                className={`px-3 py-1.5 text-xs font-semibold rounded-[var(--ios-radius-sm)] transition-colors ${
-                                    activePeriod === period
-                                        ? 'bg-[rgb(var(--ios-accent))] text-white'
-                                        : 'bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-secondary))]'
-                                }`}
-                            >
-                                {period}
-                            </button>
-                        ))}
                     </div>
                 </div>
 
@@ -399,7 +385,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                         <div className="border-b border-solid border-[rgb(var(--ios-separator))]/80 w-full h-0 relative"><span className="absolute -left-8 -top-2">0</span></div>
                     </div>
 
-                    <svg className="absolute inset-x-4 inset-y-6 w-full h-[calc(100%-3rem)] z-10 overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <svg className="absolute inset-x-4 inset-y-6 w-full h-[calc(100%-3rem)] z-10 overflow-hidden" preserveAspectRatio="none" viewBox="0 0 100 100">
                         <defs>
                             <linearGradient id="chart-gradient" x1="0" x2="0" y1="0" y2="1">
                                 <stop offset="0%" stopColor="rgb(var(--ios-accent))" stopOpacity="0.2"></stop>
@@ -416,7 +402,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                         ))}
                     </svg>
 
-                    <div className="absolute bottom-0 left-4 right-4 flex justify-between text-xs text-[rgb(var(--ios-text-secondary))] font-medium pt-2">
+                    <div className={`absolute bottom-0 left-4 right-4 flex ${timelineData.length === 1 ? 'justify-center' : 'justify-between'} text-xs text-[rgb(var(--ios-text-secondary))] font-medium pt-2`}>
                         {timelineData.map(d => (
                             <span key={d.year}>{d.year}</span>
                         ))}

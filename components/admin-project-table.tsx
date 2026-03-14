@@ -257,21 +257,21 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
                     )}
                 </CardHeader>
                 <CardContent>
-                    <div className="rounded-md border overflow-x-auto min-h-[300px]">
+                    <div className="bg-white rounded-lg border border-slate-200 overflow-x-auto min-h-[300px]">
                         <table className="w-full text-sm text-left">
-                            <thead className="bg-slate-50 text-slate-500 font-medium border-b sticky top-0">
+                            <thead className="bg-slate-50 border-b border-slate-200 sticky top-0">
                                 <tr>
-                                    <th className="px-4 py-3 whitespace-nowrap">ID</th>
-                                    <th className="px-4 py-3 whitespace-nowrap">ปี/ศูนย์</th>
-                                    <th className="px-4 py-3 min-w-[200px]">โครงการ / องค์กร</th>
-                                    <th className="px-4 py-3 whitespace-nowrap text-right">งบที่ขอ</th>
-                                    <th className="px-4 py-3 whitespace-nowrap text-right">งบที่ได้</th>
-                                    <th className="px-4 py-3 text-center whitespace-nowrap w-[50px]">ไฟล์</th>
-                                    <th className="px-4 py-3 text-center whitespace-nowrap">Status</th>
-                                    <th className="px-4 py-3 text-center whitespace-nowrap">Action</th>
+                                    <th className="px-4 py-3 font-medium text-slate-700 whitespace-nowrap">ID</th>
+                                    <th className="px-4 py-3 font-medium text-slate-700 whitespace-nowrap">ปี/ศูนย์</th>
+                                    <th className="px-4 py-3 font-medium text-slate-700 min-w-[200px]">โครงการ / องค์กร</th>
+                                    <th className="px-4 py-3 font-medium text-slate-700 whitespace-nowrap text-right">งบที่ขอ</th>
+                                    <th className="px-4 py-3 font-medium text-slate-700 whitespace-nowrap text-right">งบที่ได้</th>
+                                    <th className="px-4 py-3 font-medium text-slate-700 text-center whitespace-nowrap w-[50px]">ไฟล์</th>
+                                    <th className="px-4 py-3 font-medium text-slate-700 text-center whitespace-nowrap">Status</th>
+                                    <th className="px-4 py-3 font-medium text-slate-700 text-center whitespace-nowrap">Action</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y">
+                            <tbody className="divide-y divide-slate-100">
                                 {filteredProjects.length === 0 ? (
                                     <tr>
                                         <td colSpan={8} className="px-4 py-12 text-center text-slate-400">

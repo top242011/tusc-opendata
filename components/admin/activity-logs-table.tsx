@@ -71,23 +71,23 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
     };
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
             {/* Controls */}
-            <div className="p-4 border-b bg-slate-50/50 flex flex-col md:flex-row gap-4 justify-between items-center">
-                <div className="relative w-full md:w-96">
+            <div className="px-4 py-3 border-b bg-slate-50 flex flex-col md:flex-row gap-3 justify-between items-center">
+                <div className="relative w-full md:w-80">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
                     <input
                         type="text"
                         placeholder="ค้นหาด้วยอีเมล หรือ ชื่อข้อมูล..."
-                        className="w-full pl-9 pr-4 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                        className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
 
-                <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
+                <div className="flex gap-2 w-full md:w-auto overflow-x-auto">
                     <select
-                        className="text-sm border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                        className="text-sm border border-slate-200 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                         value={filterAction}
                         onChange={(e) => setFilterAction(e.target.value)}
                     >
@@ -98,7 +98,7 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
                     </select>
 
                     <select
-                        className="text-sm border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                        className="text-sm border border-slate-200 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                         value={filterEntity}
                         onChange={(e) => setFilterEntity(e.target.value)}
                     >
@@ -112,21 +112,21 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
 
             {/* Table */}
             <div className="overflow-x-auto">
-                <table className="w-full text-sm text-slate-600">
-                    <thead className="bg-slate-50 text-slate-700 font-medium border-b">
+                <table className="w-full text-sm text-left">
+                    <thead className="bg-slate-50 border-b border-slate-200">
                         <tr>
-                            <th className="px-6 py-3 text-left w-48">เวลา</th>
-                            <th className="px-6 py-3 text-left w-64">ผู้ใช้งาน</th>
-                            <th className="px-6 py-3 text-left w-32">การกระทำ</th>
-                            <th className="px-6 py-3 text-left w-32">ประเภท</th>
-                            <th className="px-6 py-3 text-left">ข้อมูล</th>
-                            <th className="px-6 py-3 text-right w-16"></th>
+                            <th className="px-4 py-3 font-medium text-slate-700 w-48">เวลา</th>
+                            <th className="px-4 py-3 font-medium text-slate-700 w-64">ผู้ใช้งาน</th>
+                            <th className="px-4 py-3 font-medium text-slate-700 w-32">การกระทำ</th>
+                            <th className="px-4 py-3 font-medium text-slate-700 w-32">ประเภท</th>
+                            <th className="px-4 py-3 font-medium text-slate-700">ข้อมูล</th>
+                            <th className="px-4 py-3 font-medium text-slate-700 text-right w-16"></th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                         {filteredLogs.length === 0 ? (
                             <tr>
-                                <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
+                                <td colSpan={6} className="px-4 py-8 text-center text-slate-500">
                                     ไม่พบข้อมูลประวัติการใช้งาน
                                 </td>
                             </tr>
@@ -138,25 +138,25 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
                                         className={cn("hover:bg-slate-50 transition-colors cursor-pointer", expandedRows.includes(log.id) && "bg-slate-50")}
                                         onClick={() => toggleRow(log.id)}
                                     >
-                                        <td className="px-6 py-4 whitespace-nowrap text-slate-500">
+                                        <td className="px-4 py-3 whitespace-nowrap text-slate-500">
                                             {format(new Date(log.created_at), "d MMM yyyy HH:mm", { locale: th })}
                                         </td>
-                                        <td className="px-6 py-4 truncate max-w-[200px]" title={log.user_email}>
+                                        <td className="px-4 py-3 truncate max-w-[200px]" title={log.user_email}>
                                             {log.user_email}
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-4 py-3">
                                             <div className="flex items-center gap-2">
                                                 {getActionIcon(log.action)}
                                                 <span>{getActionLabel(log.action)}</span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-4 py-3">
                                             {getEntityBadge(log.entity_type)}
                                         </td>
-                                        <td className="px-6 py-4 font-medium text-slate-900 truncate max-w-[300px]">
+                                        <td className="px-4 py-3 font-medium text-slate-800 truncate max-w-[300px]">
                                             {log.entity_name}
                                         </td>
-                                        <td className="px-6 py-4 text-right">
+                                        <td className="px-4 py-3 text-right">
                                             {expandedRows.includes(log.id) ? (
                                                 <ChevronUp className="w-4 h-4 text-slate-400 ml-auto" />
                                             ) : (
@@ -166,7 +166,7 @@ export function ActivityLogsTable({ logs }: ActivityLogsTableProps) {
                                     </tr>
                                     {expandedRows.includes(log.id) && (
                                         <tr className="bg-slate-50/50">
-                                            <td colSpan={6} className="px-6 py-4 pl-14">
+                                            <td colSpan={6} className="px-4 py-3 pl-12">
                                                 <div className="bg-white border rounded-lg p-4 font-mono text-xs text-slate-600 overflow-x-auto">
                                                     <pre>{JSON.stringify(log.details, null, 2)}</pre>
                                                 </div>

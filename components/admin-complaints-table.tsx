@@ -58,18 +58,18 @@ export function AdminComplaintsTable({ complaints: initialComplaints }: AdminCom
 
     return (
         <>
-            <div className="rounded-md border bg-white shadow-sm overflow-hidden">
+            <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
-                        <thead className="bg-slate-50 text-slate-500 font-medium border-b">
+                        <thead className="bg-slate-50 border-b border-slate-200">
                             <tr>
-                                <th className="px-4 py-3 whitespace-nowrap">วันที่แจ้ง</th>
-                                <th className="px-4 py-3 whitespace-nowrap">ประเภท</th>
-                                <th className="px-4 py-3">โครงการ</th>
-                                <th className="px-4 py-3">รายละเอียด</th>
-                                <th className="px-4 py-3 whitespace-nowrap">หลักฐาน</th>
-                                <th className="px-4 py-3 whitespace-nowrap">สถานะ</th>
-                                <th className="px-4 py-3 whitespace-nowrap text-right">จัดการ</th>
+                                <th className="px-4 py-3 font-medium text-slate-700 whitespace-nowrap">วันที่แจ้ง</th>
+                                <th className="px-4 py-3 font-medium text-slate-700 whitespace-nowrap">ประเภท</th>
+                                <th className="px-4 py-3 font-medium text-slate-700">โครงการ</th>
+                                <th className="px-4 py-3 font-medium text-slate-700">รายละเอียด</th>
+                                <th className="px-4 py-3 font-medium text-slate-700 whitespace-nowrap">หลักฐาน</th>
+                                <th className="px-4 py-3 font-medium text-slate-700 whitespace-nowrap">สถานะ</th>
+                                <th className="px-4 py-3 font-medium text-slate-700 whitespace-nowrap text-right">จัดการ</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">

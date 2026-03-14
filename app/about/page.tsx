@@ -184,19 +184,16 @@ export default function AboutPage() {
                             <div>
                                 <h3 className="font-bold text-lg mb-2">แหล่งที่มาของข้อมูล</h3>
                                 <p className="text-[rgb(var(--ios-text-secondary))] text-sm leading-relaxed mb-4">
-                                    ข้อมูลทั้งหมดได้รับการจัดเก็บและตรวจสอบโดยกองแผนงาน มหาวิทยาลัยธรรมศาสตร์
+                                    ข้อมูลทั้งหมดได้รับการจัดเก็บและตรวจสอบโดยสภานักศึกษามหาวิทยาลัยธรรมศาสตร์
                                     ก่อนนำมาเผยแพร่บนแพลตฟอร์มนี้ในรูปแบบ Open Data
                                     อัปเดตข้อมูลทุกปีงบประมาณ
                                 </p>
                                 <div className="flex flex-wrap gap-2">
                                     <span className="text-xs font-semibold px-3 py-1.5 bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))] rounded-full">
-                                        กองแผนงาน มธ.
+                                        สภานักศึกษา มธ.
                                     </span>
                                     <span className="text-xs font-semibold px-3 py-1.5 bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))] rounded-full">
                                         อัปเดตทุกปีงบประมาณ
-                                    </span>
-                                    <span className="text-xs font-semibold px-3 py-1.5 bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))] rounded-full">
-                                        Creative Commons CC BY
                                     </span>
                                 </div>
                             </div>
