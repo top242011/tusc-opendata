@@ -420,7 +420,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                 {/* ========== MAIN CHART GRID ========== */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                     {/* Left: Treemap (desktop) / Bar chart (mobile) */}
-                    <div className="lg:col-span-2 flex flex-col gap-6">
+                    <div className="lg:col-span-2 flex flex-col gap-6 h-full">
                         <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 shadow-[var(--ios-shadow-sm)] flex flex-col min-h-0">
                             <div className="p-5 border-b border-[rgb(var(--ios-separator))]/50">
                                 <h3 className="text-base font-bold text-[rgb(var(--ios-text-primary))]">
@@ -613,7 +613,7 @@ export function LandingDashboard({ projects, stats }: LandingDashboardProps) {
                         {/* Campus Donut (inside sidebar) */}
                         <div className="bg-[rgb(var(--ios-bg-secondary))] rounded-[var(--ios-radius-lg)] border border-[rgb(var(--ios-separator))]/50 shadow-[var(--ios-shadow-sm)] p-5 flex flex-col">
                             <h3 className="text-base font-bold text-[rgb(var(--ios-text-primary))] mb-2">
-                                สัดส่วนงบประมาณตามวิทยาเขต
+                                สัดส่วนงบประมาณตามศูนย์การศึกษา
                             </h3>
                             <div className="flex items-center justify-center relative my-4">
                                 <div

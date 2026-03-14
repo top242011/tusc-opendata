@@ -195,13 +195,13 @@ export function AdminProjectTable({ projects }: AdminProjectTableProps) {
 
                             {/* 2. Campus */}
                             <div className="space-y-1">
-                                <label className="text-xs font-semibold text-slate-500">วิทยาเขต</label>
+                                <label className="text-xs font-semibold text-slate-500">ศูนย์การศึกษา</label>
                                 <select
                                     className="w-full text-sm border rounded-md p-2 bg-slate-50"
                                     value={filterCampus}
                                     onChange={(e) => setFilterCampus(e.target.value)}
                                 >
-                                    <option value="all">ทุกวิทยาเขต</option>
+                                    <option value="all">ทุกศูนย์การศึกษา</option>
                                     <option value="central">ส่วนกลาง</option>
                                     <option value="thaprachan">ท่าพระจันทร์</option>
                                     <option value="rangsit">รังสิต</option>

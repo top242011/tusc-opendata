@@ -156,7 +156,7 @@ export function ProjectForm({ initialData, onSuccess, onCancel }: ProjectFormPro
                     )}
                 </div>
                 <div>
-                    <label className="text-sm font-medium">วิทยาเขต</label>
+                    <label className="text-sm font-medium">ศูนย์การศึกษา</label>
                     <select
                         className="w-full mt-1 p-2 border rounded bg-white"
                         value={formData.campus || 'central'}

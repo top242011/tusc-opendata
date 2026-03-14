@@ -8,7 +8,7 @@ export function AdminQuickStart() {
         {
             icon: <Calendar className="w-6 h-6 text-blue-600" />,
             title: "1. ระบุข้อมูลตั้งต้น",
-            desc: "เลือกปีงบประมาณและศูนย์/วิทยาเขตที่ต้องการนำเข้าข้อมูล"
+            desc: "เลือกปีงบประมาณและศูนย์การศึกษาที่ต้องการนำเข้าข้อมูล"
         },
         {
             icon: <FileText className="w-6 h-6 text-orange-500" />,

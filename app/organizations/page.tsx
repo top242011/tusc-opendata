@@ -289,7 +289,7 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
                             )}
                             {primaryCampus && CAMPUS_LABELS[primaryCampus] && (
                                 <div className="flex justify-between items-start gap-2">
-                                    <span className="text-[rgb(var(--ios-text-secondary))] flex-shrink-0">วิทยาเขตหลัก</span>
+                                    <span className="text-[rgb(var(--ios-text-secondary))] flex-shrink-0">ศูนย์การศึกษาหลัก</span>
                                     <span className="font-semibold">{CAMPUS_LABELS[primaryCampus]}</span>
                                 </div>
                             )}
