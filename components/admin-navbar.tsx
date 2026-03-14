@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { createClient } from "@/utils/supabase/client";
 import { useTheme } from '@/components/theme-provider';
 import { cn } from '@/utils/cn';
-import { Moon, Sun, LogOut, Home, FileWarning, Clock } from 'lucide-react';
+import { Moon, Sun, LogOut, Home } from 'lucide-react';
 
 interface AdminNavbarProps {
     userEmail?: string;
@@ -25,18 +25,18 @@ export function AdminNavbar({ userEmail }: AdminNavbarProps) {
     const toggleTheme = () => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
 
     return (
-        <nav className="sticky top-0 z-50 ios-material-thick border-b border-[rgb(var(--ios-separator))]/50 transition-colors duration-200">
-            <div className="container mx-auto px-4 h-14 flex items-center justify-between">
+        <nav className="sticky top-0 z-30 ios-material-thick border-b border-[rgb(var(--ios-separator))]/50 transition-colors duration-200">
+            <div className="px-4 h-14 flex items-center justify-between">
                 {/* Left Side */}
                 <div className="flex items-center gap-2 min-w-0">
                     <Link
                         href="/admin"
                         className="font-bold text-lg text-[rgb(var(--ios-accent))] hover:opacity-80 transition-opacity ios-press truncate"
                     >
-                        ระบบจัดการข้อมูล
+                        TU Open Data Admin
                     </Link>
 
-                    {/* Desktop Links */}
+                    {/* Desktop Home Link */}
                     <div className="hidden md:flex items-center gap-1 ml-4">
                         <Link
                             href="/"
@@ -45,64 +45,18 @@ export function AdminNavbar({ userEmail }: AdminNavbarProps) {
                             <Home className="w-4 h-4" />
                             กลับหน้าหลัก
                         </Link>
-                        <Link
-                            href="/admin/complaints"
-                            className={cn(
-                                "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors ios-press",
-                                pathname === '/admin/complaints'
-                                    ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10 border-b-2 border-[rgb(var(--ios-accent))]"
-                                    : "text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
-                            )}
-                        >
-                            <FileWarning className="w-4 h-4" />
-                            จัดการข้อร้องเรียน
-                        </Link>
-                        <Link
-                            href="/admin/activity-logs"
-                            className={cn(
-                                "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--ios-radius-sm)] transition-colors ios-press",
-                                pathname === '/admin/activity-logs'
-                                    ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10 border-b-2 border-[rgb(var(--ios-accent))]"
-                                    : "text-[rgb(var(--ios-text-secondary))] hover:text-[rgb(var(--ios-accent))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
-                            )}
-                        >
-                            <Clock className="w-4 h-4" />
-                            ประวัติการใช้งาน
-                        </Link>
                     </div>
                 </div>
 
                 {/* Right Side */}
                 <div className="flex items-center gap-3 min-w-0">
-                    {/* Mobile Links */}
+                    {/* Mobile Home Link */}
                     <div className="md:hidden flex gap-2 text-xs font-medium">
                         <Link
                             href="/"
                             className="flex items-center justify-center min-w-[44px] min-h-[44px] text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-tertiary))] rounded-[var(--ios-radius-sm)] transition-colors"
                         >
                             <Home className="w-4 h-4" />
-                        </Link>
-                        <Link
-                            href="/admin/complaints"
-                            className={cn(
-                                "flex items-center justify-center min-w-[44px] min-h-[44px] rounded-[var(--ios-radius-sm)] transition-colors",
-                                pathname === '/admin/complaints'
-                                    ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10"
-                                    : "text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
-                            )}
-                        >
-                            <FileWarning className="w-4 h-4" />
-                        </Link>
-                        <Link
-                            href="/admin/activity-logs"
-                            className={cn(
-                                "flex items-center justify-center min-w-[44px] min-h-[44px] rounded-[var(--ios-radius-sm)] transition-colors",
-                                pathname === '/admin/activity-logs'
-                                    ? "text-[rgb(var(--ios-accent))] bg-[rgb(var(--ios-accent))]/10"
-                                    : "text-[rgb(var(--ios-text-secondary))] hover:bg-[rgb(var(--ios-fill-tertiary))]"
-                            )}
-                        >
-                            <Clock className="w-4 h-4" />
                         </Link>
                     </div>
 
@@ -121,7 +75,7 @@ export function AdminNavbar({ userEmail }: AdminNavbarProps) {
 
                     {/* User Email */}
                     {userEmail && (
-                        <span className="text-sm text-[rgb(var(--ios-text-secondary))] hidden sm:inline-block max-w-[150px] truncate">
+                        <span className="text-sm text-[rgb(var(--ios-text-secondary))] hidden sm:inline-block max-w-[180px] truncate">
                             {userEmail}
                         </span>
                     )}

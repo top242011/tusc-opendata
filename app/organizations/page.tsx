@@ -3,8 +3,8 @@ import { createPublicClient } from "@/utils/supabase/server";
 import { PublicNavbar } from "@/components/public-navbar";
 import { formatTHB } from "@/lib/utils";
 import { ProjectRowActions } from "@/components/project-row-actions";
-import { CAMPUS_LABELS, Campus } from "@/lib/types";
-import { Search, MapPin, Layers, Briefcase, FileText, Wallet, Percent, Table2, Info, Inbox, ArrowRight, Clock } from "lucide-react";
+import { CAMPUS_LABELS, ORGANIZATION_TYPE_LABELS, Campus, OrganizationType } from "@/lib/types";
+import { Search, MapPin, Layers, Briefcase, FileText, Wallet, Percent, Table2, Info, Building2, Inbox, ArrowRight, Clock } from "lucide-react";
 
 export const revalidate = 300;
 
@@ -15,13 +15,26 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
     const orgSearchParam = searchParams.orgSearch;
     const supabase = await createPublicClient();
 
+    // Fetch organizations from dedicated table
+    const { data: orgsData } = await supabase
+        .from('organizations')
+        .select('*')
+        .eq('is_active', true)
+        .order('name');
+
+    const organizations = (orgsData || []) as { id: number; name: string; short_name?: string; type: OrganizationType; campus: Campus; contact_person?: string; description?: string }[];
+
     const { data: allProjectsData } = await supabase
         .from('projects')
         .select('*')
         .order('budget_requested', { ascending: false });
 
     const allProjects = allProjectsData || [];
-    const uniqueOrgs = Array.from(new Set(allProjects.map((p: any) => p.organization))).sort() as string[];
+
+    // Use organizations table for sidebar; fall back to project text field if table is empty
+    const uniqueOrgs = organizations.length > 0
+        ? organizations.map(o => o.name)
+        : Array.from(new Set(allProjects.map((p: any) => p.organization))).sort() as string[];
     const filteredOrgs = orgSearchParam?.trim()
         ? uniqueOrgs.filter(org => org.toLowerCase().includes(orgSearchParam.toLowerCase()))
         : uniqueOrgs;
@@ -132,6 +145,9 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
 
     const currentYear = new Date().getFullYear();
 
+    // Find organization metadata from organizations table
+    const orgRecord = organizations.find(o => o.name === ORG_NAME);
+
     return (
         <main className="min-h-screen bg-[rgb(var(--ios-bg-grouped))] text-[rgb(var(--ios-text-primary))] pb-20 font-sans antialiased">
             <PublicNavbar />
@@ -183,7 +199,13 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
                         <div className="size-24 bg-[rgb(var(--ios-accent))]/10 rounded-full flex items-center justify-center mb-4 text-[rgb(var(--ios-accent))]">
                             <Layers className="w-12 h-12" />
                         </div>
-                        <h1 className="text-xl font-bold mb-4 text-[rgb(var(--ios-text-primary))] leading-snug">{ORG_NAME}</h1>
+                        <h1 className="text-xl font-bold mb-2 text-[rgb(var(--ios-text-primary))] leading-snug">{ORG_NAME}</h1>
+                        {orgRecord?.type && (
+                            <p className="text-xs text-[rgb(var(--ios-text-tertiary))] mb-4 flex items-center gap-1">
+                                <Building2 className="w-3 h-3" />
+                                {ORGANIZATION_TYPE_LABELS[orgRecord.type] || orgRecord.type}
+                            </p>
+                        )}
 
                         {/* Dynamic badges from real data */}
                         <div className="flex flex-wrap justify-center gap-2 mb-6">
@@ -247,6 +269,12 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
                             <Info className="w-4 h-4" /> ข้อมูลทั่วไป
                         </h3>
                         <div className="space-y-3 text-sm">
+                            {orgRecord?.description && (
+                                <div>
+                                    <p className="text-[rgb(var(--ios-text-secondary))] text-xs leading-relaxed">{orgRecord.description}</p>
+                                    <div className="h-px bg-[rgb(var(--ios-separator))]/30 my-3" />
+                                </div>
+                            )}
                             <div className="flex justify-between items-start gap-2">
                                 <span className="text-[rgb(var(--ios-text-secondary))] flex-shrink-0">ปีงบประมาณล่าสุด</span>
                                 <span className="font-semibold">{latestFiscalYear}</span>
