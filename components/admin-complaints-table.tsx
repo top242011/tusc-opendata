@@ -9,6 +9,7 @@ import { th } from "date-fns/locale";
 import { ExternalLink, FileText, Image as ImageIcon, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { Modal } from "@/components/ui/modal";
+import { Toast } from "@/components/ui/toast";
 
 interface Complaint {
     id: number;
@@ -31,6 +32,10 @@ interface AdminComplaintsTableProps {
 export function AdminComplaintsTable({ complaints: initialComplaints }: AdminComplaintsTableProps) {
     const [complaints, setComplaints] = useState(initialComplaints);
     const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
+    const [statusError, setStatusError] = useState<string | null>(null);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastType, setToastType] = useState<'success' | 'error'>('success');
+    const [showToast, setShowToast] = useState(false);
     const supabase = createClient();
 
     const handleStatusChange = async (id: number, newStatus: string) => {
@@ -42,7 +47,11 @@ export function AdminComplaintsTable({ complaints: initialComplaints }: AdminCom
         if (!error) {
             setComplaints(prev => prev.map(c => c.id === id ? { ...c, status: newStatus as any } : c));
         } else {
-            alert("Failed to update status");
+            setStatusError("ไม่สามารถอัปเดตสถานะได้ กรุณาลองใหม่");
+            setTimeout(() => setStatusError(null), 4000);
+            setToastMessage('อัปเดตสถานะไม่สำเร็จ กรุณาลองใหม่อีกครั้ง');
+            setToastType('error');
+            setShowToast(true);
         }
     };
 
@@ -58,6 +67,12 @@ export function AdminComplaintsTable({ complaints: initialComplaints }: AdminCom
 
     return (
         <>
+            <Toast
+                message={toastMessage}
+                type={toastType}
+                isVisible={showToast}
+                onClose={() => setShowToast(false)}
+            />
             <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
@@ -120,7 +135,7 @@ export function AdminComplaintsTable({ complaints: initialComplaints }: AdminCom
                                             <select
                                                 value={complaint.status}
                                                 onChange={(e) => handleStatusChange(complaint.id, e.target.value)}
-                                                className="text-xs border rounded px-2 py-1 bg-white hover:border-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                                className="text-sm border rounded px-3 py-2 bg-white hover:border-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                             >
                                                 <option value="pending">รอดำเนินการ</option>
                                                 <option value="acknowledged">รับเรื่องแล้ว</option>
@@ -186,7 +201,7 @@ export function AdminComplaintsTable({ complaints: initialComplaints }: AdminCom
                                             >
                                                 {isImage ? (
                                                     // eslint-disable-next-line @next/next/no-img-element
-                                                    <img src={publicUrl} alt="evidence" className="w-full h-full object-cover" />
+                                                    <img src={publicUrl} alt="evidence" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                                                 ) : (
                                                     <div className="flex flex-col items-center justify-center h-full text-slate-500">
                                                         <FileText className="w-8 h-8 mb-2" />

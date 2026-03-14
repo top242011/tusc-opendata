@@ -1,0 +1,33 @@
+import { createClient } from '@/utils/supabase/server';
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
+import { OrganizationForm } from '@/components/admin/organization-form';
+
+export default async function NewOrganizationPage() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) redirect('/login');
+
+    return (
+        <div>
+            <div className="mb-6">
+                <Link
+                    href="/admin/organizations"
+                    className="inline-flex items-center gap-1 text-sm text-[rgb(var(--ios-accent))] hover:underline mb-3"
+                >
+                    <ArrowLeft className="w-4 h-4" />
+                    กลับ
+                </Link>
+                <h1 className="text-2xl font-bold text-[rgb(var(--ios-text-primary))]">เพิ่มองค์กรใหม่</h1>
+                <p className="text-sm text-[rgb(var(--ios-text-secondary))] mt-1">
+                    กรอกข้อมูลองค์กร ชมรม หรือหน่วยงาน
+                </p>
+            </div>
+
+            <div className="bg-[rgb(var(--ios-bg-primary))] rounded-[var(--ios-radius)] border border-[rgb(var(--ios-separator))]/50 p-5">
+                <OrganizationForm mode="create" />
+            </div>
+        </div>
+    );
+}
