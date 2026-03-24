@@ -18,6 +18,7 @@ import {
     ChevronLeft,
     ChevronRight,
     Home,
+    BarChart3,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -37,6 +38,7 @@ const NAV_GROUPS: NavGroup[] = [
         title: '',
         items: [
             { label: 'แดชบอร์ด', href: '/admin', icon: LayoutDashboard },
+            { label: 'วิเคราะห์ข้อมูล', href: '/admin/analytics', icon: BarChart3 },
         ],
     },
     {
