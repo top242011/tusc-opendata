@@ -538,7 +538,6 @@ function AllocationSection({ data }: { data: AnalyticsData }) {
                                                 );
                                             }}
                                         />
-                                        <Legend />
                                     </PieChart>
                                 </ResponsiveContainer>
                             </div>
