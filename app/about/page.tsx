@@ -94,7 +94,7 @@ export default function AboutPage() {
                         </Link>
                         <Link
                             href="/organizations"
-                            className="inline-flex items-center gap-2 px-6 py-3 border border-[rgb(var(--ios-separator))] bg-white dark:bg-slate-800 font-semibold rounded-[var(--ios-radius-md)] hover:bg-[rgb(var(--ios-fill-tertiary))] transition-colors"
+                            className="inline-flex items-center gap-2 px-6 py-3 border border-[rgb(var(--ios-separator))] bg-[rgb(var(--ios-bg-secondary))] font-semibold rounded-[var(--ios-radius-md)] hover:bg-[rgb(var(--ios-fill-tertiary))] transition-colors"
                         >
                             ดูตามหน่วยงาน
                         </Link>
@@ -184,19 +184,19 @@ export default function AboutPage() {
                             <div>
                                 <h3 className="font-bold text-lg mb-2">แหล่งที่มาของข้อมูล</h3>
                                 <p className="text-[rgb(var(--ios-text-secondary))] text-sm leading-relaxed mb-4">
-                                    ข้อมูลทั้งหมดได้รับการจัดเก็บและตรวจสอบโดยกองแผนงาน มหาวิทยาลัยธรรมศาสตร์
-                                    ก่อนนำมาเผยแพร่บนแพลตฟอร์มนี้ในรูปแบบ Open Data
+                                    ข้อมูลทั้งหมดจัดทำโดยสภานักศึกษามหาวิทยาลัยธรรมศาสตร์
+                                    และนำมาเผยแพร่บนแพลตฟอร์มนี้ในรูปแบบ Open Data
                                     อัปเดตข้อมูลทุกปีงบประมาณ
                                 </p>
                                 <div className="flex flex-wrap gap-2">
                                     <span className="text-xs font-semibold px-3 py-1.5 bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))] rounded-full">
-                                        กองแผนงาน มธ.
+                                        สภานักศึกษา มธ.
                                     </span>
                                     <span className="text-xs font-semibold px-3 py-1.5 bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))] rounded-full">
                                         อัปเดตทุกปีงบประมาณ
                                     </span>
                                     <span className="text-xs font-semibold px-3 py-1.5 bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))] rounded-full">
-                                        Creative Commons CC BY
+                                        Open Data
                                     </span>
                                 </div>
                             </div>
@@ -224,7 +224,7 @@ export default function AboutPage() {
                         </Link>
                         <Link
                             href="/"
-                            className="inline-flex items-center gap-2 px-5 py-2.5 border border-[rgb(var(--ios-separator))] bg-white dark:bg-slate-800 font-semibold rounded-[var(--ios-radius-md)] hover:bg-[rgb(var(--ios-fill-tertiary))] transition-colors text-sm"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 border border-[rgb(var(--ios-separator))] bg-[rgb(var(--ios-bg-secondary))] font-semibold rounded-[var(--ios-radius-md)] hover:bg-[rgb(var(--ios-fill-tertiary))] transition-colors text-sm"
                         >
                             กลับหน้าหลัก
                         </Link>

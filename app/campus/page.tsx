@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createPublicClient } from "@/utils/supabase/server";
 import { PublicNavbar } from "@/components/public-navbar";
+import { Footer } from "@/components/footer";
 import { formatTHB } from "@/lib/utils";
 import { CAMPUS_LABELS, Campus } from "@/lib/types";
 import { MapPin, Briefcase, Wallet, Percent, ArrowRight, Building2 } from "lucide-react";
@@ -159,9 +160,7 @@ export default async function CampusLandingPage() {
                 </div>
             </section>
 
-            <footer className="mt-8 border-t border-[rgb(var(--ios-separator))]/40 py-6 text-center text-sm text-[rgb(var(--ios-text-secondary))]">
-                <p>&copy; {currentYear} Thammasat University Open Data Initiative. All rights reserved.</p>
-            </footer>
+            <Footer />
         </main>
     );
 }

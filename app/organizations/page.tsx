@@ -374,7 +374,7 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
                                     name="q"
                                     defaultValue={qParam || ""}
                                     placeholder="ค้นหาโครงการ..."
-                                    className="w-48 sm:w-64 pl-9 pr-3 py-2 text-sm bg-white dark:bg-slate-800 border border-[rgb(var(--ios-separator))]/50 rounded-[var(--ios-radius-md)] focus:outline-none focus:border-[rgb(var(--ios-accent))] focus:ring-1 focus:ring-[rgb(var(--ios-accent))] text-[rgb(var(--ios-text-primary))] placeholder:text-[rgb(var(--ios-text-tertiary))]"
+                                    className="w-48 sm:w-64 pl-9 pr-3 py-2 text-sm bg-[rgb(var(--ios-bg-secondary))] border border-[rgb(var(--ios-separator))]/50 rounded-[var(--ios-radius-md)] focus:outline-none focus:border-[rgb(var(--ios-accent))] focus:ring-1 focus:ring-[rgb(var(--ios-accent))] text-[rgb(var(--ios-text-primary))] placeholder:text-[rgb(var(--ios-text-tertiary))]"
                                 />
                             </div>
                         </form>
@@ -399,7 +399,7 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
                                         if (proj.status === "อนุมัติ" || proj.budget_approved === proj.budget_requested) {
                                             statusBadge = "bg-[rgb(var(--ios-green))]/10 text-[rgb(var(--ios-green))] border-[rgb(var(--ios-green))]/20";
                                         } else if (proj.status === "ไม่อนุมัติ") {
-                                            statusBadge = "bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700";
+                                            statusBadge = "bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))] border-[rgb(var(--ios-separator))]/50";
                                         } else {
                                             statusBadge = "bg-[rgb(var(--ios-red))]/10 text-[rgb(var(--ios-red))] border-[rgb(var(--ios-red))]/20";
                                         }
@@ -446,7 +446,7 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
                                 if (proj.status === "อนุมัติ" || proj.budget_approved === proj.budget_requested) {
                                     statusBadge = "bg-[rgb(var(--ios-green))]/10 text-[rgb(var(--ios-green))] border-[rgb(var(--ios-green))]/20";
                                 } else if (proj.status === "ไม่อนุมัติ") {
-                                    statusBadge = "bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700";
+                                    statusBadge = "bg-[rgb(var(--ios-fill-tertiary))] text-[rgb(var(--ios-text-secondary))] border-[rgb(var(--ios-separator))]/50";
                                 } else {
                                     statusBadge = "bg-[rgb(var(--ios-red))]/10 text-[rgb(var(--ios-red))] border-[rgb(var(--ios-red))]/20";
                                 }
@@ -516,9 +516,9 @@ export default async function OrganizationDetailsPage(props: { searchParams?: Pr
                             <div className="px-4 py-3 border-t border-[rgb(var(--ios-separator))]/50 flex items-center justify-between text-sm text-[rgb(var(--ios-text-secondary))] bg-[rgb(var(--ios-bg-secondary))]">
                                 <span>แสดง {displayProjects.length} จาก {allOrgProjects.length} รายการ</span>
                                 <div className="flex gap-1">
-                                    <button className="px-2 py-1 border border-[rgb(var(--ios-separator))] rounded bg-white dark:bg-slate-800 text-[rgb(var(--ios-text-tertiary))] text-xs opacity-40 cursor-default">&lt;</button>
+                                    <button className="px-2 py-1 border border-[rgb(var(--ios-separator))] rounded bg-[rgb(var(--ios-bg-secondary))] text-[rgb(var(--ios-text-tertiary))] text-xs opacity-40 cursor-default">&lt;</button>
                                     <button className="px-3 py-1 border border-[rgb(var(--ios-accent))] rounded bg-[rgb(var(--ios-accent))]/10 text-[rgb(var(--ios-accent))] font-bold text-xs">1</button>
-                                    <button className="px-2 py-1 border border-[rgb(var(--ios-separator))] rounded bg-white dark:bg-slate-800 text-[rgb(var(--ios-text-tertiary))] text-xs opacity-40 cursor-default">&gt;</button>
+                                    <button className="px-2 py-1 border border-[rgb(var(--ios-separator))] rounded bg-[rgb(var(--ios-bg-secondary))] text-[rgb(var(--ios-text-tertiary))] text-xs opacity-40 cursor-default">&gt;</button>
                                 </div>
                             </div>
                         )}
